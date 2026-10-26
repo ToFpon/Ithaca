@@ -35,7 +35,7 @@ msgstr "Varia von Giant Pink Robots https://github.com/giantpinkrobots/varia"
 msgid "Téléchargement terminé"
 msgstr "Download abgeschlossen"
 
-#: ithaca/app.py:136 ithaca/ui/row.py:161
+#: ithaca/app.py:136 ithaca/ui/row.py:163
 msgid "Afficher dans le dossier"
 msgstr "Im Ordner anzeigen"
 
@@ -95,7 +95,7 @@ msgstr "{0} Min. {1} s"
 msgid "{0} min"
 msgstr "{0} Min."
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:47
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:49
 msgid "En attente"
 msgstr "Wartend"
 
@@ -103,7 +103,7 @@ msgstr "Wartend"
 msgid "En cours"
 msgstr "Läuft"
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:43
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:45
 msgid "En pause"
 msgstr "Pausiert"
 
@@ -111,7 +111,7 @@ msgstr "Pausiert"
 msgid "Terminé"
 msgstr "Abgeschlossen"
 
-#: ithaca/ui/details.py:20 ithaca/ui/row.py:39
+#: ithaca/ui/details.py:20 ithaca/ui/row.py:41
 msgid "Échec"
 msgstr "Fehlgeschlagen"
 
@@ -163,7 +163,7 @@ msgstr "Abgeschlossen am"
 msgid "Adresse copiée"
 msgstr "Adresse kopiert"
 
-#: ithaca/ui/details.py:25 ithaca/ui/row.py:80
+#: ithaca/ui/details.py:25 ithaca/ui/row.py:82
 msgid "Détails du téléchargement"
 msgstr "Download-Details"
 
@@ -175,7 +175,7 @@ msgstr "Datei"
 msgid "Ouvrir le dossier"
 msgstr "Ordner öffnen"
 
-#: ithaca/ui/details.py:44 ithaca/ui/row.py:170
+#: ithaca/ui/details.py:44 ithaca/ui/row.py:172
 msgid "Copier l'adresse"
 msgstr "Adresse kopieren"
 
@@ -403,67 +403,71 @@ msgstr "Server überlastet, später erneut versuchen"
 msgid "somme de contrôle incorrecte"
 msgstr "Prüfsumme stimmt nicht"
 
-#: ithaca/ui/row.py:36
+#: ithaca/ui/row.py:31
+msgid "le serveur refuse trop de requêtes, réessayez dans quelques minutes"
+msgstr "der Server lehnt zu viele Anfragen ab, in ein paar Minuten erneut versuchen"
+
+#: ithaca/ui/row.py:38
 msgid "{0} — Terminé"
 msgstr "{0} — Abgeschlossen"
 
-#: ithaca/ui/row.py:40
+#: ithaca/ui/row.py:42
 msgid "{0} sur {1}"
 msgstr "{0} von {1}"
 
-#: ithaca/ui/row.py:45
+#: ithaca/ui/row.py:47
 msgid "Nouvelle tentative ({0}/{1})…"
 msgstr "Neuer Versuch ({0}/{1})…"
 
-#: ithaca/ui/row.py:55
+#: ithaca/ui/row.py:57
 msgid "{0} %"
 msgstr "{0} %"
 
-#: ithaca/ui/row.py:117 ithaca/ui/row.py:159
+#: ithaca/ui/row.py:119 ithaca/ui/row.py:161
 msgid "Ouvrir"
 msgstr "Öffnen"
 
-#: ithaca/ui/row.py:118 ithaca/ui/row.py:121 ithaca/ui/row.py:175
+#: ithaca/ui/row.py:120 ithaca/ui/row.py:123 ithaca/ui/row.py:177
 msgid "Retirer de la liste"
 msgstr "Aus der Liste entfernen"
 
-#: ithaca/ui/row.py:171
+#: ithaca/ui/row.py:173
 msgid "Détails"
 msgstr "Details"
 
-#: ithaca/ui/row.py:39
+#: ithaca/ui/row.py:41
 msgid "Échec : {0}"
 msgstr "Fehlgeschlagen: {0}"
 
-#: ithaca/ui/row.py:43
+#: ithaca/ui/row.py:45
 msgid "En pause — {0}"
 msgstr "Pausiert — {0}"
 
-#: ithaca/ui/row.py:47
+#: ithaca/ui/row.py:49
 msgid "En attente — {0}"
 msgstr "Wartend — {0}"
 
-#: ithaca/ui/row.py:50
+#: ithaca/ui/row.py:52
 msgid "{0} restantes"
 msgstr "noch {0}"
 
-#: ithaca/ui/row.py:120 ithaca/ui/row.py:167
+#: ithaca/ui/row.py:122 ithaca/ui/row.py:169
 msgid "Réessayer"
 msgstr "Erneut versuchen"
 
-#: ithaca/ui/row.py:163 ithaca/ui/row.py:126
+#: ithaca/ui/row.py:165 ithaca/ui/row.py:128
 msgid "Mettre en pause"
 msgstr "Pausieren"
 
-#: ithaca/ui/row.py:176
+#: ithaca/ui/row.py:178
 msgid "Mettre à la corbeille"
 msgstr "In den Papierkorb verschieben"
 
-#: ithaca/ui/row.py:178 ithaca/ui/row.py:124 ithaca/ui/row.py:127
+#: ithaca/ui/row.py:180 ithaca/ui/row.py:126 ithaca/ui/row.py:129
 msgid "Annuler le téléchargement"
 msgstr "Download abbrechen"
 
-#: ithaca/ui/row.py:123 ithaca/ui/row.py:165
+#: ithaca/ui/row.py:125 ithaca/ui/row.py:167
 msgid "Reprendre"
 msgstr "Fortsetzen"
 

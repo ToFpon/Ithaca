@@ -259,6 +259,60 @@ class EngineTest(Base):
         settings["simultaneous"] = 5
 
 
+class RationedTest(Base):
+    """Serveur qui refuse les requêtes au-delà de quelques-unes par fenêtre (HTTP 429, comme
+    proof.ovh.net chez Tof : échec vers 75 %, malgré les relances rapides)."""
+
+    def setUp(self):
+        super().setUp()
+        self.server.close()
+        self.server = Server(self.root, limit=1, window=3)     # une requête par fenêtre : le 429 tombe à coup sûr
+
+    def test_429_download_completes(self):
+        """Bout en bout : malgré les 429, le fichier arrive entier (aria2 seul ou relances d'Ithaca)."""
+        src = self.make("ovh.dat", 12_000_000)
+        settings.data["segments"] = 5
+        m = self.manager()
+        old = dl.RATE_LIMIT_DELAYS
+        dl.RATE_LIMIT_DELAYS = (1500, 3500, 3500)
+        try:
+            d = m.add(self.server.url("ovh.dat"), self.out)
+            self.assertTrue(wait(lambda: d.state in ("complete", "error"), 40), d.state)
+            self.assertEqual(d.state, "complete", d.error)
+            self.assertEqual(sha(d.path), sha(src))
+        finally:
+            dl.RATE_LIMIT_DELAYS = old
+
+    def test_429_single_connection_backoff(self):
+        """Erreur 22 avec status=429 (message réel d'aria2) : une connexion, attente, serveur retenu."""
+        src = self.make("rationne.dat", 2_000_000)
+        settings.data["segments"] = 5
+        m = self.manager()
+        old = dl.RATE_LIMIT_DELAYS
+        dl.RATE_LIMIT_DELAYS = (3500, 3500, 3500)          # fenêtre de 3 s passée : la requête passe
+        try:
+            d = dl.Download(self.server.url("rationne.dat"), self.out)
+            d.gid, d.state = "faux", "active"
+            m.downloads.append(d)
+            m._by_gid["faux"] = d
+            m._apply_one(d, {"status": "error", "errorCode": "22",
+                             "errorMessage": "The response status is not successful. status=429"})
+            self.assertEqual((d.state, d.max_connections, d.auto_retries), ("waiting", 1, 1))
+            self.assertIn("127.0.0.1", m.rationed_hosts)
+            self.assertEqual(dl.download_options(d, single=True)["split"], "1")
+            other = dl.Download(self.server.url("x"), self.out)
+            self.assertEqual(dl.download_options(other, single=True)["max-connection-per-server"], "1")
+            self.assertTrue(wait(lambda: d.state == "complete", 20), d.state + " " + d.error)
+            self.assertEqual(sha(d.path), sha(src))
+        finally:
+            dl.RATE_LIMIT_DELAYS = old
+
+    def test_http_status(self):
+        self.assertEqual(dl.http_status("The response status is not successful. status=429"), 429)
+        self.assertEqual(dl.http_status("La réponse a échoué. Status=429"), 429)
+        self.assertEqual(dl.http_status("Resource not found"), 0)
+
+
 class AuthTest(Base):
     auth = "tof:sésame"
 

@@ -8,7 +8,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gio, GLib, Gtk, Pango  # noqa: E402
 
 from .. import format as fmt  # noqa: E402
-from ..backend.downloads import AUTO_RETRIES, Download  # noqa: E402
+from ..backend.downloads import AUTO_RETRIES, Download, http_status  # noqa: E402
 from ..i18n import decimal, tr  # noqa: E402
 from .common import popup_menu, shown  # noqa: E402
 
@@ -27,6 +27,8 @@ ERRORS = {"2": tr("délai dépassé"), "3": tr("fichier introuvable sur le serve
 
 
 def error_text(d: Download) -> str:
+    if http_status(d.error) == 429:
+        return tr("le serveur refuse trop de requêtes, réessayez dans quelques minutes")
     return ERRORS.get(d.error_code, d.error)
 
 

@@ -71,6 +71,12 @@ org.freedesktop.FileManager1 (Odysseus s'il a l'option, sinon Nautilus).
   (`TRANSIENT` : 2, 6, 22, 29) : jusqu'à 3 relances automatiques après 3 s, en reprenant le partiel,
   avec deux fois moins de connexions à chaque fois (`Download.max_connections`) ; « Réessayer »
   remet le compteur à zéro. Journal d'aria2 : `~/.cache/ithaca/aria2.log` (niveau warn).
+- La vraie cause chez Tof : HTTP 429 Too Many Requests (proof.ovh.net rationne les requêtes par IP ;
+  à 64 Mio/s, aria2 en enchaîne beaucoup en 2 s). aria2 en fait une erreur 22 ; le code HTTP se lit
+  dans errorMessage (`http_status`, aria2 lancé en `LC_ALL=C` pour que ses messages restent en
+  anglais). 429 / 503 → relance avec UNE connexion après 5 s, 15 s, 45 s, et le serveur garde une
+  connexion pour la session (`Manager.rationed_hosts`). `RationedTest` reproduit avec
+  `Server(limit=…, window=…)`. Un proxy (bac à sable) masque ce comportement : demander le journal.
 
 ## Fichiers : ne jamais écraser, ne supprimer que le nôtre
 

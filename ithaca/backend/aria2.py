@@ -78,8 +78,11 @@ class Aria2:
             if log_file:
                 args += [f"--log={log_file}", "--log-level=warn"]
             args += [f"--{k}={v}" for k, v in options.items()]
+            # messages en anglais quelle que soit la langue : Ithaca les lit (« status=429 ») et
+            # traduit lui-même (aria2 répondait en français chez Tof)
+            env = dict(os.environ, LC_ALL="C", LANGUAGE="")
             self.process = subprocess.Popen(args, stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                                            stderr=subprocess.DEVNULL, preexec_fn=_die_with_parent)
+                                            stderr=subprocess.DEVNULL, env=env, preexec_fn=_die_with_parent)
             deadline = time.monotonic() + timeout
             while time.monotonic() < deadline:
                 if self.process.poll() is not None:

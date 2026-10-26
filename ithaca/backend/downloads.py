@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import os
 import queue
+import re
 import threading
 import time
 import urllib.parse
@@ -40,6 +41,24 @@ UNFINISHED = ("waiting", "active", "paused")
 TRANSIENT = ("2", "6", "22", "29")
 AUTO_RETRIES = 3
 AUTO_RETRY_DELAY = 3000         # ms
+# Serveur qui rationne (HTTP 429 Too Many Requests, 503) : proof.ovh.net refusait les requêtes
+# suivantes au-delà de quelques-unes par adresse IP. Relance avec UNE connexion (une seule requête)
+# après une attente croissante, et ce serveur garde une connexion pour la suite de la session.
+RATE_LIMITED = (429, 503)
+RATE_LIMIT_DELAYS = (5000, 15000, 45000)      # ms
+
+
+def http_status(message: str) -> int:
+    """Code HTTP d'un message d'erreur d'aria2 (« The response status is not successful. status=429 »)."""
+    m = re.search(r"status=(\d{3})", message or "", re.IGNORECASE)
+    return int(m.group(1)) if m else 0
+
+
+def host_of(url: str) -> str:
+    try:
+        return (urllib.parse.urlsplit(url).hostname or "").lower()
+    except ValueError:
+        return ""
 DOUBLE_EXTS = (".tar.gz", ".tar.bz2", ".tar.xz", ".tar.zst", ".tar.lz4", ".tar.br")
 SUPPORTED_SCHEMES = ("http", "https", "ftp", "sftp")
 
@@ -195,9 +214,10 @@ def start_options() -> dict:
     return opts
 
 
-def download_options(d: Download) -> dict:
-    """Options d'aria2 propres à un téléchargement, d'après les préférences du moment."""
-    seg = max(1, int(settings["segments"]))
+def download_options(d: Download, single: bool = False) -> dict:
+    """Options d'aria2 propres à un téléchargement, d'après les préférences du moment.
+    single : une seule connexion (serveur qui rationne les requêtes)."""
+    seg = 1 if single else max(1, int(settings["segments"]))
     if d.max_connections:
         seg = min(seg, d.max_connections)
     opts = {"dir": d.dir, "split": str(seg), "max-connection-per-server": str(min(seg, 16))}
@@ -298,6 +318,7 @@ class Manager:
         self.state_file = state_file
         self.downloads: list[Download] = []
         self._by_gid: dict[str, Download] = {}
+        self.rationed_hosts: set[str] = set()   # serveurs qui ont répondu 429 / 503 (cette session)
         self._listeners: list[Callable] = []
         self.engine: Optional[Engine] = None
         self.engine_error = ""
@@ -407,7 +428,7 @@ class Manager:
     def _submit_add(self, d: Download, paused: bool = False):
         if self.engine is None:
             return
-        opts = download_options(d)
+        opts = download_options(d, single=host_of(d.url) in self.rationed_hosts)
         if paused:
             opts["pause"] = "true"
         url = d.url
@@ -584,6 +605,15 @@ class Manager:
                 d.name_fixed = True
                 d.gid, d.state = "", "waiting"
                 self._submit_add(d)
+                self._emit("changed", d)
+                return True
+            if http_status(s.get("errorMessage", "")) in RATE_LIMITED and d.auto_retries < AUTO_RETRIES:
+                self.rationed_hosts.add(host_of(d.url))
+                delay = RATE_LIMIT_DELAYS[min(d.auto_retries, len(RATE_LIMIT_DELAYS) - 1)]
+                d.auto_retries += 1
+                d.max_connections = 1
+                d.gid, d.state, d.speed = "", "waiting", 0
+                GLib.timeout_add(delay, self._auto_retry, d)
                 self._emit("changed", d)
                 return True
             if s.get("errorCode") in TRANSIENT and d.auto_retries < AUTO_RETRIES:

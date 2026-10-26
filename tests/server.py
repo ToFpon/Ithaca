@@ -17,6 +17,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
     rate = 0                 # octets / s par connexion (0 = sans limite)
     auth = ""                # « user:pass » exigé si non vide
     requests: list = []
+    limit = 0                # au plus « limit » requêtes GET par « window » secondes, puis 429 (comme OVH)
+    window = 2.0
+    stamps: list = []
+    lock = threading.Lock()
 
     def log_message(self, *args):
         pass
@@ -29,6 +33,19 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
     def _serve(self, head: bool):
         type(self).requests.append(self.path)
+        if self.limit and not head:
+            now = time.monotonic()
+            with self.lock:
+                recent = [t for t in type(self).stamps if now - t < self.window]
+                refused = len(recent) >= self.limit
+                if not refused:
+                    recent.append(now)
+                type(self).stamps = recent
+            if refused:
+                self.send_response(429)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return
         if self.auth:
             expected = "Basic " + base64.b64encode(self.auth.encode()).decode()
             if self.headers.get("Authorization") != expected:
@@ -84,8 +101,10 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
 
 class Server:
-    def __init__(self, root: str, rate: int = 0, auth: str = ""):
-        handler = type("H", (Handler,), {"root": root, "rate": rate, "auth": auth, "requests": []})
+    def __init__(self, root: str, rate: int = 0, auth: str = "", limit: int = 0, window: float = 2.0):
+        handler = type("H", (Handler,), {"root": root, "rate": rate, "auth": auth, "requests": [],
+                                         "limit": limit, "window": window, "stamps": [],
+                                         "lock": threading.Lock()})
         self.handler = handler
         self.httpd = http.server.ThreadingHTTPServer(("127.0.0.1", 0), handler)
         self.httpd.daemon_threads = True

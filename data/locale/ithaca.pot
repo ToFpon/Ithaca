@@ -1,0 +1,602 @@
+# Ithaca — modèle de traduction (langue source : français).
+msgid ""
+msgstr ""
+"Project-Id-Version: Ithaca\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ithaca/app.py:28
+msgid "Afficher la version"
+msgstr ""
+
+#: ithaca/app.py:121
+msgid "Basé sur"
+msgstr ""
+
+#: ithaca/app.py:122
+msgid "Moteurs"
+msgstr ""
+
+#: ithaca/app.py:116
+msgid "Gestionnaire de téléchargements pour GNOME : fichiers, vidéos et torrents."
+msgstr ""
+
+#: ithaca/app.py:121
+msgid "Varia, de Giant Pink Robots https://github.com/giantpinkrobots/varia"
+msgstr ""
+
+#: ithaca/app.py:134
+msgid "Téléchargement terminé"
+msgstr ""
+
+#: ithaca/app.py:136 ithaca/ui/row.py:159
+msgid "Afficher dans le dossier"
+msgstr ""
+
+#: ithaca/app.py:140
+msgid "Échec du téléchargement"
+msgstr ""
+
+#: ithaca/features.py:30
+msgid "Notifications"
+msgstr ""
+
+#: ithaca/features.py:31
+msgid "Prévenir quand un téléchargement est terminé ou a échoué, fenêtre fermée ou non"
+msgstr ""
+
+#: ithaca/format.py:7
+msgid "o"
+msgstr ""
+
+#: ithaca/format.py:7
+msgid "Ko"
+msgstr ""
+
+#: ithaca/format.py:7
+msgid "Mo"
+msgstr ""
+
+#: ithaca/format.py:7
+msgid "Go"
+msgstr ""
+
+#: ithaca/format.py:7
+msgid "To"
+msgstr ""
+
+#: ithaca/format.py:22
+msgid "{0}/s"
+msgstr ""
+
+#: ithaca/format.py:37
+msgid "{0} j {1} h"
+msgstr ""
+
+#: ithaca/format.py:29
+msgid "{0} s"
+msgstr ""
+
+#: ithaca/format.py:35
+msgid "{0} h {1} min"
+msgstr ""
+
+#: ithaca/format.py:32
+msgid "{0} min {1} s"
+msgstr ""
+
+#: ithaca/format.py:32
+msgid "{0} min"
+msgstr ""
+
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:45
+msgid "En attente"
+msgstr ""
+
+#: ithaca/ui/details.py:19 ithaca/ui/window.py:21
+msgid "En cours"
+msgstr ""
+
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:43
+msgid "En pause"
+msgstr ""
+
+#: ithaca/ui/details.py:20
+msgid "Terminé"
+msgstr ""
+
+#: ithaca/ui/details.py:20 ithaca/ui/row.py:39
+msgid "Échec"
+msgstr ""
+
+#: ithaca/ui/details.py:37
+msgid "Nom"
+msgstr ""
+
+#: ithaca/ui/details.py:38
+msgid "Dossier"
+msgstr ""
+
+#: ithaca/ui/details.py:43
+msgid "Adresse"
+msgstr ""
+
+#: ithaca/ui/details.py:51
+msgid "État"
+msgstr ""
+
+#: ithaca/ui/details.py:52
+msgid "Taille"
+msgstr ""
+
+#: ithaca/ui/details.py:53
+msgid "Téléchargé"
+msgstr ""
+
+#: ithaca/ui/details.py:54 ithaca/ui/preferences.py:94
+msgid "Vitesse"
+msgstr ""
+
+#: ithaca/ui/details.py:55
+msgid "Temps restant"
+msgstr ""
+
+#: ithaca/ui/details.py:56
+msgid "Connexions"
+msgstr ""
+
+#: ithaca/ui/details.py:60
+msgid "Ajouté le"
+msgstr ""
+
+#: ithaca/ui/details.py:61
+msgid "Terminé le"
+msgstr ""
+
+#: ithaca/ui/details.py:76 ithaca/ui/window.py:220
+msgid "Adresse copiée"
+msgstr ""
+
+#: ithaca/ui/details.py:25 ithaca/ui/row.py:78
+msgid "Détails du téléchargement"
+msgstr ""
+
+#: ithaca/ui/details.py:36
+msgid "Fichier"
+msgstr ""
+
+#: ithaca/ui/details.py:39
+msgid "Ouvrir le dossier"
+msgstr ""
+
+#: ithaca/ui/details.py:44 ithaca/ui/row.py:168
+msgid "Copier l'adresse"
+msgstr ""
+
+#: ithaca/ui/details.py:50
+msgid "Progression"
+msgstr ""
+
+#: ithaca/ui/details.py:59
+msgid "Dates"
+msgstr ""
+
+#: ithaca/ui/details.py:90
+msgid "Inconnue"
+msgstr ""
+
+#: ithaca/ui/details.py:95
+msgid "Inconnu"
+msgstr ""
+
+#: ithaca/ui/preferences.py:67
+msgid "Style"
+msgstr ""
+
+#: ithaca/ui/preferences.py:99
+msgid "Limiter la vitesse"
+msgstr ""
+
+#: ithaca/ui/preferences.py:100
+msgid "Vitesse maximale (Ko/s)"
+msgstr ""
+
+#: ithaca/ui/preferences.py:101
+msgid "Pour tous les téléchargements ensemble"
+msgstr ""
+
+#: ithaca/ui/preferences.py:112 ithaca/ui/preferences.py:83
+msgid "Dossier de téléchargement"
+msgstr ""
+
+#: ithaca/ui/preferences.py:119
+msgid "Utiliser l'authentification"
+msgstr ""
+
+#: ithaca/ui/preferences.py:120
+msgid "Nom d'utilisateur"
+msgstr ""
+
+#: ithaca/ui/preferences.py:121
+msgid "Mot de passe"
+msgstr ""
+
+#: ithaca/ui/preferences.py:152 ithaca/ui/preferences.py:132
+msgid "Fichier de cookies"
+msgstr ""
+
+#: ithaca/ui/preferences.py:57 ithaca/ui/window.py:94 ithaca/ui/window.py:80
+msgid "Préférences"
+msgstr ""
+
+#: ithaca/ui/preferences.py:65
+msgid "Général"
+msgstr ""
+
+#: ithaca/ui/preferences.py:66
+msgid "Apparence"
+msgstr ""
+
+#: ithaca/ui/preferences.py:67 ithaca/ui/preferences.py:73
+msgid "Comme le système"
+msgstr ""
+
+#: ithaca/ui/preferences.py:67
+msgid "Clair"
+msgstr ""
+
+#: ithaca/ui/preferences.py:67
+msgid "Sombre"
+msgstr ""
+
+#: ithaca/ui/preferences.py:72
+msgid "Langue"
+msgstr ""
+
+#: ithaca/ui/preferences.py:74
+msgid "Appliquée au prochain démarrage"
+msgstr ""
+
+#: ithaca/ui/preferences.py:80
+msgid "Téléchargements"
+msgstr ""
+
+#: ithaca/ui/preferences.py:82
+msgid "Emplacement"
+msgstr ""
+
+#: ithaca/ui/preferences.py:85
+msgid "Choisir le dossier"
+msgstr ""
+
+#: ithaca/ui/preferences.py:91
+msgid "Toujours demander où enregistrer"
+msgstr ""
+
+#: ithaca/ui/preferences.py:95
+msgid "Téléchargements simultanés"
+msgstr ""
+
+#: ithaca/ui/preferences.py:97
+msgid "Connexions par fichier"
+msgstr ""
+
+#: ithaca/ui/preferences.py:116
+msgid "Connexion"
+msgstr ""
+
+#: ithaca/ui/preferences.py:117
+msgid "Authentification"
+msgstr ""
+
+#: ithaca/ui/preferences.py:118
+msgid "Identifiants envoyés aux serveurs HTTP et FTP qui en demandent"
+msgstr ""
+
+#: ithaca/ui/preferences.py:129
+msgid "Cookies"
+msgstr ""
+
+#: ithaca/ui/preferences.py:130
+msgid "Fichier cookies.txt (format Netscape) exporté du navigateur, pour les sites où il faut être connecté"
+msgstr ""
+
+#: ithaca/ui/preferences.py:133
+msgid "Choisir le fichier"
+msgstr ""
+
+#: ithaca/ui/preferences.py:136
+msgid "Ne plus utiliser"
+msgstr ""
+
+#: ithaca/ui/preferences.py:148
+msgid "Aucun"
+msgstr ""
+
+#: ithaca/ui/preferences.py:157
+msgid "Fonctionnalités"
+msgstr ""
+
+#: ithaca/ui/preferences.py:159
+msgid "Chaque fonctionnalité s'active ou se coupe tout de suite, sans redémarrer Ithaca"
+msgstr ""
+
+#: ithaca/ui/preferences.py:96
+msgid "Les suivants attendent leur tour"
+msgstr ""
+
+#: ithaca/ui/preferences.py:98
+msgid "Plus de connexions accélèrent les serveurs lents (16 au plus par serveur)"
+msgstr ""
+
+#: ithaca/ui/preferences.py:153
+msgid "Fichiers texte"
+msgstr ""
+
+#: ithaca/ui/preferences.py:153
+msgid "Tous les fichiers"
+msgstr ""
+
+#: ithaca/ui/preferences.py:166
+msgid "Manquant : {0}"
+msgstr ""
+
+#: ithaca/ui/row.py:20
+msgid "délai dépassé"
+msgstr ""
+
+#: ithaca/ui/row.py:20
+msgid "fichier introuvable sur le serveur"
+msgstr ""
+
+#: ithaca/ui/row.py:20
+msgid "problème de réseau"
+msgstr ""
+
+#: ithaca/ui/row.py:21
+msgid "le serveur ne permet pas de reprendre"
+msgstr ""
+
+#: ithaca/ui/row.py:21
+msgid "plus assez d'espace sur le disque"
+msgstr ""
+
+#: ithaca/ui/row.py:22
+msgid "impossible de créer le fichier"
+msgstr ""
+
+#: ithaca/ui/row.py:22
+msgid "erreur d'écriture du fichier"
+msgstr ""
+
+#: ithaca/ui/row.py:23
+msgid "impossible de créer le dossier"
+msgstr ""
+
+#: ithaca/ui/row.py:23
+msgid "serveur introuvable (nom de domaine)"
+msgstr ""
+
+#: ithaca/ui/row.py:24
+msgid "réponse du serveur inattendue"
+msgstr ""
+
+#: ithaca/ui/row.py:24
+msgid "trop de redirections"
+msgstr ""
+
+#: ithaca/ui/row.py:25
+msgid "identifiants refusés par le serveur"
+msgstr ""
+
+#: ithaca/ui/row.py:25
+msgid "serveur surchargé, réessayez plus tard"
+msgstr ""
+
+#: ithaca/ui/row.py:26
+msgid "somme de contrôle incorrecte"
+msgstr ""
+
+#: ithaca/ui/row.py:36
+msgid "{0} — Terminé"
+msgstr ""
+
+#: ithaca/ui/row.py:40
+msgid "{0} sur {1}"
+msgstr ""
+
+#: ithaca/ui/row.py:53
+msgid "{0} %"
+msgstr ""
+
+#: ithaca/ui/row.py:115 ithaca/ui/row.py:157
+msgid "Ouvrir"
+msgstr ""
+
+#: ithaca/ui/row.py:116 ithaca/ui/row.py:119 ithaca/ui/row.py:173
+msgid "Retirer de la liste"
+msgstr ""
+
+#: ithaca/ui/row.py:169
+msgid "Détails"
+msgstr ""
+
+#: ithaca/ui/row.py:39
+msgid "Échec : {0}"
+msgstr ""
+
+#: ithaca/ui/row.py:43
+msgid "En pause — {0}"
+msgstr ""
+
+#: ithaca/ui/row.py:45
+msgid "En attente — {0}"
+msgstr ""
+
+#: ithaca/ui/row.py:48
+msgid "{0} restantes"
+msgstr ""
+
+#: ithaca/ui/row.py:118 ithaca/ui/row.py:165
+msgid "Réessayer"
+msgstr ""
+
+#: ithaca/ui/row.py:161 ithaca/ui/row.py:124
+msgid "Mettre en pause"
+msgstr ""
+
+#: ithaca/ui/row.py:174
+msgid "Mettre à la corbeille"
+msgstr ""
+
+#: ithaca/ui/row.py:176 ithaca/ui/row.py:122 ithaca/ui/row.py:125
+msgid "Annuler le téléchargement"
+msgstr ""
+
+#: ithaca/ui/row.py:121 ithaca/ui/row.py:163
+msgid "Reprendre"
+msgstr ""
+
+#: ithaca/ui/window.py:20
+msgid "Tous"
+msgstr ""
+
+#: ithaca/ui/window.py:22
+msgid "Terminés"
+msgstr ""
+
+#: ithaca/ui/window.py:23
+msgid "Échecs"
+msgstr ""
+
+#: ithaca/ui/window.py:85
+msgid "Ouvrir le dossier des téléchargements"
+msgstr ""
+
+#: ithaca/ui/window.py:86 ithaca/ui/window.py:155 ithaca/ui/window.py:376
+msgid "Tout mettre en pause"
+msgstr ""
+
+#: ithaca/ui/window.py:87 ithaca/ui/window.py:379
+msgid "Tout reprendre"
+msgstr ""
+
+#: ithaca/ui/window.py:90
+msgid "Effacer les terminés de la liste"
+msgstr ""
+
+#: ithaca/ui/window.py:91 ithaca/ui/window.py:246
+msgid "Tout annuler"
+msgstr ""
+
+#: ithaca/ui/window.py:95
+msgid "À propos d'Ithaca"
+msgstr ""
+
+#: ithaca/ui/window.py:96 ithaca/ui/window.py:421
+msgid "Quitter"
+msgstr ""
+
+#: ithaca/ui/window.py:243
+msgid "Annuler tous les téléchargements ?"
+msgstr ""
+
+#: ithaca/ui/window.py:418
+msgid "Quitter Ithaca ?"
+msgstr ""
+
+#: ithaca/ui/window.py:104
+msgid "Adresse (URL)"
+msgstr ""
+
+#: ithaca/ui/window.py:106
+msgid "Coller"
+msgstr ""
+
+#: ithaca/ui/window.py:138
+msgid "Vitesse limitée"
+msgstr ""
+
+#: ithaca/ui/window.py:149
+msgid "Afficher la barre latérale"
+msgstr ""
+
+#: ithaca/ui/window.py:165
+msgid "Aucun téléchargement"
+msgstr ""
+
+#: ithaca/ui/window.py:166
+msgid "Collez une adresse dans le champ de gauche, ou glissez un lien dans la fenêtre."
+msgstr ""
+
+#: ithaca/ui/window.py:169 ithaca/ui/window.py:361
+msgid "Rien ici"
+msgstr ""
+
+#: ithaca/ui/window.py:292
+msgid "Enregistrer dans"
+msgstr ""
+
+#: ithaca/ui/window.py:99
+msgid "Menu principal"
+msgstr ""
+
+#: ithaca/ui/window.py:113
+msgid "Télécharger"
+msgstr ""
+
+#: ithaca/ui/window.py:244
+msgid "{0} téléchargement en cours sera arrêté et son fichier partiel supprimé."
+msgid_plural "{0} téléchargements en cours seront arrêtés et leurs fichiers partiels supprimés."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ithaca/ui/window.py:385
+msgid "aria2 est introuvable : sudo apt install aria2"
+msgstr ""
+
+#: ithaca/ui/window.py:419
+msgid "{0} téléchargement est en cours. Il reprendra au prochain lancement d'Ithaca."
+msgid_plural "{0} téléchargements sont en cours. Ils reprendront au prochain lancement d'Ithaca."
+msgstr[0] ""
+msgstr[1] ""
+
+#: ithaca/ui/window.py:233
+msgid "Impossible de mettre le fichier à la corbeille"
+msgstr ""
+
+#: ithaca/ui/window.py:236
+msgid "« {0} » a été mis à la corbeille"
+msgstr ""
+
+#: ithaca/ui/window.py:246 ithaca/ui/window.py:421
+msgid "Annuler"
+msgstr ""
+
+#: ithaca/ui/window.py:287
+msgid "Adresse non prise en charge : {0}"
+msgid_plural "Adresses non prises en charge : {0}"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ithaca/ui/window.py:411
+msgid "Vitesse limitée à {0}"
+msgstr ""
+
+#: ithaca/ui/window.py:387
+msgid "aria2 n'a pas démarré : {0}"
+msgstr ""
+
+#: ithaca/ui/window.py:359
+msgid "Aucun téléchargement en cours"
+msgstr ""
+
+#: ithaca/ui/window.py:360
+msgid "Aucun téléchargement terminé"
+msgstr ""
+
+#: ithaca/ui/window.py:361
+msgid "Aucun échec"
+msgstr ""

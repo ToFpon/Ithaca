@@ -1,0 +1,606 @@
+# Ithaca — Deutsch
+msgid ""
+msgstr ""
+"Project-Id-Version: Ithaca\n"
+"PO-Revision-Date: 2026-10-26 12:00+0100\n"
+"Last-Translator: Tof\n"
+"Language-Team: none\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: ithaca/app.py:28
+msgid "Afficher la version"
+msgstr "Version anzeigen"
+
+#: ithaca/app.py:121
+msgid "Basé sur"
+msgstr "Basiert auf"
+
+#: ithaca/app.py:122
+msgid "Moteurs"
+msgstr "Engines"
+
+#: ithaca/app.py:116
+msgid "Gestionnaire de téléchargements pour GNOME : fichiers, vidéos et torrents."
+msgstr "Download-Manager für GNOME: Dateien, Videos und Torrents."
+
+#: ithaca/app.py:121
+msgid "Varia, de Giant Pink Robots https://github.com/giantpinkrobots/varia"
+msgstr "Varia von Giant Pink Robots https://github.com/giantpinkrobots/varia"
+
+#: ithaca/app.py:134
+msgid "Téléchargement terminé"
+msgstr "Download abgeschlossen"
+
+#: ithaca/app.py:136 ithaca/ui/row.py:159
+msgid "Afficher dans le dossier"
+msgstr "Im Ordner anzeigen"
+
+#: ithaca/app.py:140
+msgid "Échec du téléchargement"
+msgstr "Download fehlgeschlagen"
+
+#: ithaca/features.py:30
+msgid "Notifications"
+msgstr "Benachrichtigungen"
+
+#: ithaca/features.py:31
+msgid "Prévenir quand un téléchargement est terminé ou a échoué, fenêtre fermée ou non"
+msgstr "Benachrichtigen, wenn ein Download abgeschlossen oder fehlgeschlagen ist, ob das Fenster offen ist oder nicht"
+
+#: ithaca/format.py:7
+msgid "o"
+msgstr "B"
+
+#: ithaca/format.py:7
+msgid "Ko"
+msgstr "kB"
+
+#: ithaca/format.py:7
+msgid "Mo"
+msgstr "MB"
+
+#: ithaca/format.py:7
+msgid "Go"
+msgstr "GB"
+
+#: ithaca/format.py:7
+msgid "To"
+msgstr "TB"
+
+#: ithaca/format.py:22
+msgid "{0}/s"
+msgstr "{0}/s"
+
+#: ithaca/format.py:37
+msgid "{0} j {1} h"
+msgstr "{0} T {1} Std."
+
+#: ithaca/format.py:29
+msgid "{0} s"
+msgstr "{0} s"
+
+#: ithaca/format.py:35
+msgid "{0} h {1} min"
+msgstr "{0} Std. {1} Min."
+
+#: ithaca/format.py:32
+msgid "{0} min {1} s"
+msgstr "{0} Min. {1} s"
+
+#: ithaca/format.py:32
+msgid "{0} min"
+msgstr "{0} Min."
+
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:45
+msgid "En attente"
+msgstr "Wartend"
+
+#: ithaca/ui/details.py:19 ithaca/ui/window.py:21
+msgid "En cours"
+msgstr "Läuft"
+
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:43
+msgid "En pause"
+msgstr "Pausiert"
+
+#: ithaca/ui/details.py:20
+msgid "Terminé"
+msgstr "Abgeschlossen"
+
+#: ithaca/ui/details.py:20 ithaca/ui/row.py:39
+msgid "Échec"
+msgstr "Fehlgeschlagen"
+
+#: ithaca/ui/details.py:37
+msgid "Nom"
+msgstr "Name"
+
+#: ithaca/ui/details.py:38
+msgid "Dossier"
+msgstr "Ordner"
+
+#: ithaca/ui/details.py:43
+msgid "Adresse"
+msgstr "Adresse"
+
+#: ithaca/ui/details.py:51
+msgid "État"
+msgstr "Status"
+
+#: ithaca/ui/details.py:52
+msgid "Taille"
+msgstr "Größe"
+
+#: ithaca/ui/details.py:53
+msgid "Téléchargé"
+msgstr "Heruntergeladen"
+
+#: ithaca/ui/details.py:54 ithaca/ui/preferences.py:94
+msgid "Vitesse"
+msgstr "Geschwindigkeit"
+
+#: ithaca/ui/details.py:55
+msgid "Temps restant"
+msgstr "Verbleibende Zeit"
+
+#: ithaca/ui/details.py:56
+msgid "Connexions"
+msgstr "Verbindungen"
+
+#: ithaca/ui/details.py:60
+msgid "Ajouté le"
+msgstr "Hinzugefügt am"
+
+#: ithaca/ui/details.py:61
+msgid "Terminé le"
+msgstr "Abgeschlossen am"
+
+#: ithaca/ui/details.py:76 ithaca/ui/window.py:220
+msgid "Adresse copiée"
+msgstr "Adresse kopiert"
+
+#: ithaca/ui/details.py:25 ithaca/ui/row.py:78
+msgid "Détails du téléchargement"
+msgstr "Download-Details"
+
+#: ithaca/ui/details.py:36
+msgid "Fichier"
+msgstr "Datei"
+
+#: ithaca/ui/details.py:39
+msgid "Ouvrir le dossier"
+msgstr "Ordner öffnen"
+
+#: ithaca/ui/details.py:44 ithaca/ui/row.py:168
+msgid "Copier l'adresse"
+msgstr "Adresse kopieren"
+
+#: ithaca/ui/details.py:50
+msgid "Progression"
+msgstr "Fortschritt"
+
+#: ithaca/ui/details.py:59
+msgid "Dates"
+msgstr "Daten"
+
+#: ithaca/ui/details.py:90
+msgid "Inconnue"
+msgstr "Unbekannt"
+
+#: ithaca/ui/details.py:95
+msgid "Inconnu"
+msgstr "Unbekannt"
+
+#: ithaca/ui/preferences.py:67
+msgid "Style"
+msgstr "Stil"
+
+#: ithaca/ui/preferences.py:99
+msgid "Limiter la vitesse"
+msgstr "Geschwindigkeit begrenzen"
+
+#: ithaca/ui/preferences.py:100
+msgid "Vitesse maximale (Ko/s)"
+msgstr "Höchstgeschwindigkeit (kB/s)"
+
+#: ithaca/ui/preferences.py:101
+msgid "Pour tous les téléchargements ensemble"
+msgstr "Für alle Downloads zusammen"
+
+#: ithaca/ui/preferences.py:112 ithaca/ui/preferences.py:83
+msgid "Dossier de téléchargement"
+msgstr "Download-Ordner"
+
+#: ithaca/ui/preferences.py:119
+msgid "Utiliser l'authentification"
+msgstr "Authentifizierung verwenden"
+
+#: ithaca/ui/preferences.py:120
+msgid "Nom d'utilisateur"
+msgstr "Benutzername"
+
+#: ithaca/ui/preferences.py:121
+msgid "Mot de passe"
+msgstr "Passwort"
+
+#: ithaca/ui/preferences.py:152 ithaca/ui/preferences.py:132
+msgid "Fichier de cookies"
+msgstr "Cookie-Datei"
+
+#: ithaca/ui/preferences.py:57 ithaca/ui/window.py:94 ithaca/ui/window.py:80
+msgid "Préférences"
+msgstr "Einstellungen"
+
+#: ithaca/ui/preferences.py:65
+msgid "Général"
+msgstr "Allgemein"
+
+#: ithaca/ui/preferences.py:66
+msgid "Apparence"
+msgstr "Erscheinungsbild"
+
+#: ithaca/ui/preferences.py:67 ithaca/ui/preferences.py:73
+msgid "Comme le système"
+msgstr "Wie das System"
+
+#: ithaca/ui/preferences.py:67
+msgid "Clair"
+msgstr "Hell"
+
+#: ithaca/ui/preferences.py:67
+msgid "Sombre"
+msgstr "Dunkel"
+
+#: ithaca/ui/preferences.py:72
+msgid "Langue"
+msgstr "Sprache"
+
+#: ithaca/ui/preferences.py:74
+msgid "Appliquée au prochain démarrage"
+msgstr "Wird beim nächsten Start übernommen"
+
+#: ithaca/ui/preferences.py:80
+msgid "Téléchargements"
+msgstr "Downloads"
+
+#: ithaca/ui/preferences.py:82
+msgid "Emplacement"
+msgstr "Speicherort"
+
+#: ithaca/ui/preferences.py:85
+msgid "Choisir le dossier"
+msgstr "Ordner wählen"
+
+#: ithaca/ui/preferences.py:91
+msgid "Toujours demander où enregistrer"
+msgstr "Immer fragen, wo gespeichert werden soll"
+
+#: ithaca/ui/preferences.py:95
+msgid "Téléchargements simultanés"
+msgstr "Gleichzeitige Downloads"
+
+#: ithaca/ui/preferences.py:97
+msgid "Connexions par fichier"
+msgstr "Verbindungen pro Datei"
+
+#: ithaca/ui/preferences.py:116
+msgid "Connexion"
+msgstr "Verbindung"
+
+#: ithaca/ui/preferences.py:117
+msgid "Authentification"
+msgstr "Authentifizierung"
+
+#: ithaca/ui/preferences.py:118
+msgid "Identifiants envoyés aux serveurs HTTP et FTP qui en demandent"
+msgstr "Zugangsdaten, die an HTTP- und FTP-Server gesendet werden, die danach fragen"
+
+#: ithaca/ui/preferences.py:129
+msgid "Cookies"
+msgstr "Cookies"
+
+#: ithaca/ui/preferences.py:130
+msgid "Fichier cookies.txt (format Netscape) exporté du navigateur, pour les sites où il faut être connecté"
+msgstr "Eine aus dem Browser exportierte cookies.txt-Datei (Netscape-Format) für Seiten, die eine Anmeldung erfordern"
+
+#: ithaca/ui/preferences.py:133
+msgid "Choisir le fichier"
+msgstr "Datei wählen"
+
+#: ithaca/ui/preferences.py:136
+msgid "Ne plus utiliser"
+msgstr "Nicht mehr verwenden"
+
+#: ithaca/ui/preferences.py:148
+msgid "Aucun"
+msgstr "Keine"
+
+#: ithaca/ui/preferences.py:157
+msgid "Fonctionnalités"
+msgstr "Funktionen"
+
+#: ithaca/ui/preferences.py:159
+msgid "Chaque fonctionnalité s'active ou se coupe tout de suite, sans redémarrer Ithaca"
+msgstr "Jede Funktion wird sofort ein- oder ausgeschaltet, ohne Ithaca neu zu starten"
+
+#: ithaca/ui/preferences.py:96
+msgid "Les suivants attendent leur tour"
+msgstr "Die übrigen warten, bis sie an der Reihe sind"
+
+#: ithaca/ui/preferences.py:98
+msgid "Plus de connexions accélèrent les serveurs lents (16 au plus par serveur)"
+msgstr "Mehr Verbindungen beschleunigen langsame Server (höchstens 16 pro Server)"
+
+#: ithaca/ui/preferences.py:153
+msgid "Fichiers texte"
+msgstr "Textdateien"
+
+#: ithaca/ui/preferences.py:153
+msgid "Tous les fichiers"
+msgstr "Alle Dateien"
+
+#: ithaca/ui/preferences.py:166
+msgid "Manquant : {0}"
+msgstr "Fehlt: {0}"
+
+#: ithaca/ui/row.py:20
+msgid "délai dépassé"
+msgstr "Zeitüberschreitung"
+
+#: ithaca/ui/row.py:20
+msgid "fichier introuvable sur le serveur"
+msgstr "Datei auf dem Server nicht gefunden"
+
+#: ithaca/ui/row.py:20
+msgid "problème de réseau"
+msgstr "Netzwerkproblem"
+
+#: ithaca/ui/row.py:21
+msgid "le serveur ne permet pas de reprendre"
+msgstr "der Server unterstützt kein Fortsetzen"
+
+#: ithaca/ui/row.py:21
+msgid "plus assez d'espace sur le disque"
+msgstr "nicht genügend Speicherplatz"
+
+#: ithaca/ui/row.py:22
+msgid "impossible de créer le fichier"
+msgstr "Datei konnte nicht erstellt werden"
+
+#: ithaca/ui/row.py:22
+msgid "erreur d'écriture du fichier"
+msgstr "Fehler beim Schreiben der Datei"
+
+#: ithaca/ui/row.py:23
+msgid "impossible de créer le dossier"
+msgstr "Ordner konnte nicht erstellt werden"
+
+#: ithaca/ui/row.py:23
+msgid "serveur introuvable (nom de domaine)"
+msgstr "Server nicht gefunden (Domainname)"
+
+#: ithaca/ui/row.py:24
+msgid "réponse du serveur inattendue"
+msgstr "unerwartete Serverantwort"
+
+#: ithaca/ui/row.py:24
+msgid "trop de redirections"
+msgstr "zu viele Weiterleitungen"
+
+#: ithaca/ui/row.py:25
+msgid "identifiants refusés par le serveur"
+msgstr "Zugangsdaten vom Server abgelehnt"
+
+#: ithaca/ui/row.py:25
+msgid "serveur surchargé, réessayez plus tard"
+msgstr "Server überlastet, später erneut versuchen"
+
+#: ithaca/ui/row.py:26
+msgid "somme de contrôle incorrecte"
+msgstr "Prüfsumme stimmt nicht"
+
+#: ithaca/ui/row.py:36
+msgid "{0} — Terminé"
+msgstr "{0} — Abgeschlossen"
+
+#: ithaca/ui/row.py:40
+msgid "{0} sur {1}"
+msgstr "{0} von {1}"
+
+#: ithaca/ui/row.py:53
+msgid "{0} %"
+msgstr "{0} %"
+
+#: ithaca/ui/row.py:115 ithaca/ui/row.py:157
+msgid "Ouvrir"
+msgstr "Öffnen"
+
+#: ithaca/ui/row.py:116 ithaca/ui/row.py:119 ithaca/ui/row.py:173
+msgid "Retirer de la liste"
+msgstr "Aus der Liste entfernen"
+
+#: ithaca/ui/row.py:169
+msgid "Détails"
+msgstr "Details"
+
+#: ithaca/ui/row.py:39
+msgid "Échec : {0}"
+msgstr "Fehlgeschlagen: {0}"
+
+#: ithaca/ui/row.py:43
+msgid "En pause — {0}"
+msgstr "Pausiert — {0}"
+
+#: ithaca/ui/row.py:45
+msgid "En attente — {0}"
+msgstr "Wartend — {0}"
+
+#: ithaca/ui/row.py:48
+msgid "{0} restantes"
+msgstr "noch {0}"
+
+#: ithaca/ui/row.py:118 ithaca/ui/row.py:165
+msgid "Réessayer"
+msgstr "Erneut versuchen"
+
+#: ithaca/ui/row.py:161 ithaca/ui/row.py:124
+msgid "Mettre en pause"
+msgstr "Pausieren"
+
+#: ithaca/ui/row.py:174
+msgid "Mettre à la corbeille"
+msgstr "In den Papierkorb verschieben"
+
+#: ithaca/ui/row.py:176 ithaca/ui/row.py:122 ithaca/ui/row.py:125
+msgid "Annuler le téléchargement"
+msgstr "Download abbrechen"
+
+#: ithaca/ui/row.py:121 ithaca/ui/row.py:163
+msgid "Reprendre"
+msgstr "Fortsetzen"
+
+#: ithaca/ui/window.py:20
+msgid "Tous"
+msgstr "Alle"
+
+#: ithaca/ui/window.py:22
+msgid "Terminés"
+msgstr "Abgeschlossen"
+
+#: ithaca/ui/window.py:23
+msgid "Échecs"
+msgstr "Fehlgeschlagen"
+
+#: ithaca/ui/window.py:85
+msgid "Ouvrir le dossier des téléchargements"
+msgstr "Download-Ordner öffnen"
+
+#: ithaca/ui/window.py:86 ithaca/ui/window.py:155 ithaca/ui/window.py:376
+msgid "Tout mettre en pause"
+msgstr "Alle pausieren"
+
+#: ithaca/ui/window.py:87 ithaca/ui/window.py:379
+msgid "Tout reprendre"
+msgstr "Alle fortsetzen"
+
+#: ithaca/ui/window.py:90
+msgid "Effacer les terminés de la liste"
+msgstr "Abgeschlossene aus der Liste entfernen"
+
+#: ithaca/ui/window.py:91 ithaca/ui/window.py:246
+msgid "Tout annuler"
+msgstr "Alle abbrechen"
+
+#: ithaca/ui/window.py:95
+msgid "À propos d'Ithaca"
+msgstr "Info zu Ithaca"
+
+#: ithaca/ui/window.py:96 ithaca/ui/window.py:421
+msgid "Quitter"
+msgstr "Beenden"
+
+#: ithaca/ui/window.py:243
+msgid "Annuler tous les téléchargements ?"
+msgstr "Alle Downloads abbrechen?"
+
+#: ithaca/ui/window.py:418
+msgid "Quitter Ithaca ?"
+msgstr "Ithaca beenden?"
+
+#: ithaca/ui/window.py:104
+msgid "Adresse (URL)"
+msgstr "Adresse (URL)"
+
+#: ithaca/ui/window.py:106
+msgid "Coller"
+msgstr "Einfügen"
+
+#: ithaca/ui/window.py:138
+msgid "Vitesse limitée"
+msgstr "Geschwindigkeit begrenzt"
+
+#: ithaca/ui/window.py:149
+msgid "Afficher la barre latérale"
+msgstr "Seitenleiste anzeigen"
+
+#: ithaca/ui/window.py:165
+msgid "Aucun téléchargement"
+msgstr "Keine Downloads"
+
+#: ithaca/ui/window.py:166
+msgid "Collez une adresse dans le champ de gauche, ou glissez un lien dans la fenêtre."
+msgstr "Fügen Sie eine Adresse in das Feld links ein oder ziehen Sie einen Link in das Fenster."
+
+#: ithaca/ui/window.py:169 ithaca/ui/window.py:361
+msgid "Rien ici"
+msgstr "Nichts hier"
+
+#: ithaca/ui/window.py:292
+msgid "Enregistrer dans"
+msgstr "Speichern in"
+
+#: ithaca/ui/window.py:99
+msgid "Menu principal"
+msgstr "Hauptmenü"
+
+#: ithaca/ui/window.py:113
+msgid "Télécharger"
+msgstr "Herunterladen"
+
+#: ithaca/ui/window.py:244
+msgid "{0} téléchargement en cours sera arrêté et son fichier partiel supprimé."
+msgid_plural "{0} téléchargements en cours seront arrêtés et leurs fichiers partiels supprimés."
+msgstr[0] "{0} laufender Download wird gestoppt und seine unvollständige Datei gelöscht."
+msgstr[1] "{0} laufende Downloads werden gestoppt und ihre unvollständigen Dateien gelöscht."
+
+#: ithaca/ui/window.py:385
+msgid "aria2 est introuvable : sudo apt install aria2"
+msgstr "aria2 wurde nicht gefunden: sudo apt install aria2"
+
+#: ithaca/ui/window.py:419
+msgid "{0} téléchargement est en cours. Il reprendra au prochain lancement d'Ithaca."
+msgid_plural "{0} téléchargements sont en cours. Ils reprendront au prochain lancement d'Ithaca."
+msgstr[0] "{0} Download läuft noch. Er wird beim nächsten Start von Ithaca fortgesetzt."
+msgstr[1] "{0} Downloads laufen noch. Sie werden beim nächsten Start von Ithaca fortgesetzt."
+
+#: ithaca/ui/window.py:233
+msgid "Impossible de mettre le fichier à la corbeille"
+msgstr "Die Datei kann nicht in den Papierkorb verschoben werden"
+
+#: ithaca/ui/window.py:236
+msgid "« {0} » a été mis à la corbeille"
+msgstr "„{0}“ wurde in den Papierkorb verschoben"
+
+#: ithaca/ui/window.py:246 ithaca/ui/window.py:421
+msgid "Annuler"
+msgstr "Abbrechen"
+
+#: ithaca/ui/window.py:287
+msgid "Adresse non prise en charge : {0}"
+msgid_plural "Adresses non prises en charge : {0}"
+msgstr[0] "Nicht unterstützte Adresse: {0}"
+msgstr[1] "Nicht unterstützte Adressen: {0}"
+
+#: ithaca/ui/window.py:411
+msgid "Vitesse limitée à {0}"
+msgstr "Geschwindigkeit begrenzt auf {0}"
+
+#: ithaca/ui/window.py:387
+msgid "aria2 n'a pas démarré : {0}"
+msgstr "aria2 ist nicht gestartet: {0}"
+
+#: ithaca/ui/window.py:359
+msgid "Aucun téléchargement en cours"
+msgstr "Keine laufenden Downloads"
+
+#: ithaca/ui/window.py:360
+msgid "Aucun téléchargement terminé"
+msgstr "Keine abgeschlossenen Downloads"
+
+#: ithaca/ui/window.py:361
+msgid "Aucun échec"
+msgstr "Keine fehlgeschlagenen Downloads"

@@ -1,0 +1,21 @@
+/* Ithaca — mise en page. Aucune couleur fixe : tout vient du thème GTK actif
+   (Adwaita, couleur d'accentuation du système, ou thème installé dans ~/.config/gtk-4.0). */
+
+/* --- Barre latérale ------------------------------------------------ */
+.add-box { padding: 8px; }
+.navigation-sidebar { background: transparent; }
+.navigation-sidebar > row { border-radius: 8px; margin: 1px 8px; min-height: 34px; }
+.filter-count { font-size: 0.9em; }
+
+/* --- Liste des téléchargements ------------------------------------ */
+/* Fond « fenêtre » du thème (pas « vue ») ; les cartes prennent la couleur de carte du thème. */
+.download-list { background: transparent; padding: 6px 12px 12px 12px; }
+.download-list > row { padding: 0; margin-bottom: 8px; background: none; box-shadow: none; }
+.download-list > row:hover, .download-list > row:focus { background: none; }
+.download-card { padding: 10px 12px 12px 14px; }
+.download-name { font-weight: 700; }
+.download-card.error .download-name { color: @error_color; }
+.download-card.complete .state-icon { color: @success_color; opacity: 1; }
+.download-card.error .state-icon { color: @error_color; opacity: 1; }
+.download-progress trough, .download-progress progress { min-height: 6px; border-radius: 999px; }
+.numeric { font-feature-settings: "tnum"; }

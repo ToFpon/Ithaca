@@ -1,0 +1,19 @@
+[Desktop Entry]
+Type=Application
+Name=Ithaca
+GenericName=Download Manager
+GenericName[fr]=Gestionnaire de téléchargements
+GenericName[de]=Download-Manager
+Comment=Download files, videos and torrents
+Comment[fr]=Télécharger des fichiers, des vidéos et des torrents
+Comment[de]=Dateien, Videos und Torrents herunterladen
+Exec=ithaca %U
+Icon=io.github.ithaca.Ithaca
+Terminal=false
+Categories=GTK;GNOME;Network;FileTransfer;
+Keywords=download;aria2;http;ftp;torrent;video;
+Keywords[fr]=téléchargement;télécharger;aria2;http;ftp;torrent;vidéo;
+Keywords[de]=Download;herunterladen;aria2;http;ftp;Torrent;Video;
+StartupNotify=true
+DBusActivatable=true
+StartupWMClass=io.github.ithaca.Ithaca

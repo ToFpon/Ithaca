@@ -128,6 +128,34 @@ class EngineTest(Base):
         m.retry(d)
         self.assertTrue(wait(lambda: d.state == "complete"), d.state + " " + d.error)
 
+    def test_transient_error_auto_retry(self):
+        """Erreur passagère (22 : en-tête inattendu, vu sur proof.ovh.net) : relance automatique,
+        deux fois moins de connexions ; au-delà de AUTO_RETRIES, l'échec est affiché."""
+        src = self.make("passager.bin", 300_000)
+        m = self.manager()
+        old_delay = dl.AUTO_RETRY_DELAY
+        dl.AUTO_RETRY_DELAY = 100
+        try:
+            d = dl.Download(self.server.url("passager.bin"), self.out)
+            d.gid, d.state = "faux", "active"
+            m.downloads.append(d)
+            m._by_gid["faux"] = d
+            m._apply_one(d, {"status": "error", "errorCode": "22", "errorMessage": "bad header"})
+            self.assertEqual(d.state, "waiting")
+            self.assertEqual(d.max_connections, 2, "4 connexions → 2")
+            self.assertNotIn(("failed", d), self.events)
+            self.assertTrue(wait(lambda: d.state == "complete"), d.state + " " + d.error)
+            self.assertEqual(sha(d.path), sha(src))
+            d.auto_retries = dl.AUTO_RETRIES
+            d.state = "active"
+            m._apply_one(d, {"status": "error", "errorCode": "22", "errorMessage": "bad header"})
+            self.assertEqual(d.state, "error")
+            self.assertIn(("failed", d), self.events)
+            m.retry(d)
+            self.assertEqual(d.auto_retries, 0, "Réessayer remet le compteur à zéro")
+        finally:
+            dl.AUTO_RETRY_DELAY = old_delay
+
     def test_cancel_removes_partial_only(self):
         self.server.set_rate(100_000)
         self.make("lent.bin", 3_000_000)

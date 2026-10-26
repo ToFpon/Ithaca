@@ -34,6 +34,12 @@ STATUS_KEYS = ["gid", "status", "totalLength", "completedLength", "downloadSpeed
 
 # États : waiting (en file), active, paused, complete, error
 UNFINISHED = ("waiting", "active", "paused")
+# Erreurs passagères d'aria2 (délai, réseau, en-tête inattendu, serveur surchargé) : relance
+# automatique en reprenant le partiel, avec deux fois moins de connexions à chaque fois — beaucoup
+# de serveurs coupent ou répondent de travers au-delà de quelques connexions par adresse IP.
+TRANSIENT = ("2", "6", "22", "29")
+AUTO_RETRIES = 3
+AUTO_RETRY_DELAY = 3000         # ms
 DOUBLE_EXTS = (".tar.gz", ".tar.bz2", ".tar.xz", ".tar.zst", ".tar.lz4", ".tar.br")
 SUPPORTED_SCHEMES = ("http", "https", "ftp", "sftp")
 
@@ -115,6 +121,8 @@ class Download:
         self.finished = 0.0
         self.cancelled = False
         self.intent_until = 0.0             # pause / reprise demandée : aria2 n'en tient pas encore compte
+        self.auto_retries = 0               # relances automatiques après une erreur passagère
+        self.max_connections = 0            # 0 = préférences ; réduit par les relances automatiques
 
     @property
     def path(self) -> str:
@@ -190,6 +198,8 @@ def start_options() -> dict:
 def download_options(d: Download) -> dict:
     """Options d'aria2 propres à un téléchargement, d'après les préférences du moment."""
     seg = max(1, int(settings["segments"]))
+    if d.max_connections:
+        seg = min(seg, d.max_connections)
     opts = {"dir": d.dir, "split": str(seg), "max-connection-per-server": str(min(seg, 16))}
     if d.name_fixed and d.name:
         opts["out"] = d.name
@@ -467,10 +477,16 @@ class Manager:
         if d.gid:
             self._by_gid.pop(d.gid, None)
         d.gid, d.state, d.error, d.error_code, d.speed = "", "waiting", "", "", 0
+        d.auto_retries = 0
         if self.engine_ready:
             self._submit_add(d)
         self._emit("changed", d)
         self.save_soon()
+
+    def _auto_retry(self, d: Download):
+        if d in self.downloads and d.state == "waiting" and not d.gid and self.engine_ready:
+            self._submit_add(d)
+        return False
 
     def remove(self, d: Download):
         """Retire de la liste. Inachevé : téléchargement annulé et fichier partiel supprimé.
@@ -568,6 +584,14 @@ class Manager:
                 d.name_fixed = True
                 d.gid, d.state = "", "waiting"
                 self._submit_add(d)
+                self._emit("changed", d)
+                return True
+            if s.get("errorCode") in TRANSIENT and d.auto_retries < AUTO_RETRIES:
+                d.auto_retries += 1
+                used = d.max_connections or max(1, int(settings["segments"]))
+                d.max_connections = max(1, used // 2)
+                d.gid, d.state, d.speed = "", "waiting", 0
+                GLib.timeout_add(AUTO_RETRY_DELAY, self._auto_retry, d)
                 self._emit("changed", d)
                 return True
             d.state = "error"

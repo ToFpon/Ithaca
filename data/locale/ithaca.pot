@@ -31,7 +31,7 @@ msgstr ""
 msgid "Téléchargement terminé"
 msgstr ""
 
-#: ithaca/app.py:136 ithaca/ui/row.py:159
+#: ithaca/app.py:136 ithaca/ui/row.py:161
 msgid "Afficher dans le dossier"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 msgid "{0} min"
 msgstr ""
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:45
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:47
 msgid "En attente"
 msgstr ""
 
@@ -159,7 +159,7 @@ msgstr ""
 msgid "Adresse copiée"
 msgstr ""
 
-#: ithaca/ui/details.py:25 ithaca/ui/row.py:78
+#: ithaca/ui/details.py:25 ithaca/ui/row.py:80
 msgid "Détails du téléchargement"
 msgstr ""
 
@@ -171,7 +171,7 @@ msgstr ""
 msgid "Ouvrir le dossier"
 msgstr ""
 
-#: ithaca/ui/details.py:44 ithaca/ui/row.py:168
+#: ithaca/ui/details.py:44 ithaca/ui/row.py:170
 msgid "Copier l'adresse"
 msgstr ""
 
@@ -407,19 +407,23 @@ msgstr ""
 msgid "{0} sur {1}"
 msgstr ""
 
-#: ithaca/ui/row.py:53
+#: ithaca/ui/row.py:45
+msgid "Nouvelle tentative ({0}/{1})…"
+msgstr ""
+
+#: ithaca/ui/row.py:55
 msgid "{0} %"
 msgstr ""
 
-#: ithaca/ui/row.py:115 ithaca/ui/row.py:157
+#: ithaca/ui/row.py:117 ithaca/ui/row.py:159
 msgid "Ouvrir"
 msgstr ""
 
-#: ithaca/ui/row.py:116 ithaca/ui/row.py:119 ithaca/ui/row.py:173
+#: ithaca/ui/row.py:118 ithaca/ui/row.py:121 ithaca/ui/row.py:175
 msgid "Retirer de la liste"
 msgstr ""
 
-#: ithaca/ui/row.py:169
+#: ithaca/ui/row.py:171
 msgid "Détails"
 msgstr ""
 
@@ -431,31 +435,31 @@ msgstr ""
 msgid "En pause — {0}"
 msgstr ""
 
-#: ithaca/ui/row.py:45
+#: ithaca/ui/row.py:47
 msgid "En attente — {0}"
 msgstr ""
 
-#: ithaca/ui/row.py:48
+#: ithaca/ui/row.py:50
 msgid "{0} restantes"
 msgstr ""
 
-#: ithaca/ui/row.py:118 ithaca/ui/row.py:165
+#: ithaca/ui/row.py:120 ithaca/ui/row.py:167
 msgid "Réessayer"
 msgstr ""
 
-#: ithaca/ui/row.py:161 ithaca/ui/row.py:124
+#: ithaca/ui/row.py:163 ithaca/ui/row.py:126
 msgid "Mettre en pause"
 msgstr ""
 
-#: ithaca/ui/row.py:174
+#: ithaca/ui/row.py:176
 msgid "Mettre à la corbeille"
 msgstr ""
 
-#: ithaca/ui/row.py:176 ithaca/ui/row.py:122 ithaca/ui/row.py:125
+#: ithaca/ui/row.py:178 ithaca/ui/row.py:124 ithaca/ui/row.py:127
 msgid "Annuler le téléchargement"
 msgstr ""
 
-#: ithaca/ui/row.py:121 ithaca/ui/row.py:163
+#: ithaca/ui/row.py:123 ithaca/ui/row.py:165
 msgid "Reprendre"
 msgstr ""
 

@@ -8,7 +8,7 @@ gi.require_version("Gtk", "4.0")
 from gi.repository import Gio, GLib, Gtk, Pango  # noqa: E402
 
 from .. import format as fmt  # noqa: E402
-from ..backend.downloads import Download  # noqa: E402
+from ..backend.downloads import AUTO_RETRIES, Download  # noqa: E402
 from ..i18n import decimal, tr  # noqa: E402
 from .common import popup_menu, shown  # noqa: E402
 
@@ -41,6 +41,8 @@ def status_text(d: Download) -> str:
                 else fmt.size(d.done))
     if d.state == "paused":
         return tr("En pause — {0}").format(progress) if d.done else tr("En pause")
+    if d.state == "waiting" and d.auto_retries:
+        return tr("Nouvelle tentative ({0}/{1})…").format(d.auto_retries, AUTO_RETRIES)
     if d.state == "waiting":
         return tr("En attente — {0}").format(progress) if d.done else tr("En attente")
     parts = [progress, fmt.speed(d.speed)]

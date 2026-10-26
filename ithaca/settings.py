@@ -18,7 +18,7 @@ DEFAULTS: dict[str, Any] = {
     "download_dir": "",             # vide = dossier Téléchargements de l'utilisateur (XDG)
     "ask_dir": False,               # demander le dossier à chaque téléchargement
     "simultaneous": 5,              # téléchargements actifs en même temps (les autres attendent)
-    "segments": 16,                 # connexions par fichier (aria2 : split / max-connection-per-server)
+    "segments": 5,                  # connexions par fichier, 5 comme Varia (aria2 : split / max-connection-per-server)
     "speed_limit_enabled": False,
     "speed_limit": 1000,            # Ko/s (1 Ko = 1000 octets, comme GNOME), toutes les connexions confondues
     # Connexion
@@ -33,10 +33,19 @@ DEFAULTS: dict[str, Any] = {
 }
 
 
+# Anciennes valeurs par défaut (0.1.0 écrivait toutes les valeurs dans settings.json) : retirées du
+# fichier pour que les nouvelles valeurs par défaut s'appliquent à qui ne les a jamais changées.
+OLD_DEFAULTS = {"segments": 16, "speed_limit": 1024}
+VERSION = 2
+
+
 class Settings:
+    """Seules les valeurs choisies par l'utilisateur sont enregistrées : une valeur par défaut
+    corrigée dans une version suivante s'applique à tous ceux qui n'y ont pas touché."""
+
     def __init__(self, path: str = CONFIG_FILE):
         self.path = path
-        self.data = dict(DEFAULTS)
+        self.data: dict[str, Any] = {}
         try:
             with open(path, encoding="utf-8") as fh:
                 loaded = json.load(fh)
@@ -44,6 +53,11 @@ class Settings:
                 self.data.update(loaded)
         except (OSError, ValueError):
             pass
+        if self.data and self.data.get("version") != VERSION:
+            self.data = {k: v for k, v in self.data.items()
+                         if k in DEFAULTS and v != DEFAULTS[k] and OLD_DEFAULTS.get(k, object()) != v}
+            self.data["version"] = VERSION
+            self.save()
         self._listeners = []
 
     def __getitem__(self, key):
@@ -53,6 +67,7 @@ class Settings:
         if self.data.get(key, DEFAULTS.get(key)) == value:
             return
         self.data[key] = value
+        self.data["version"] = VERSION
         self.save()
         for cb in list(self._listeners):
             cb(key, value)

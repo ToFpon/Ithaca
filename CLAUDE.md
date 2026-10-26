@@ -63,6 +63,14 @@ org.freedesktop.FileManager1 (Odysseus s'il a l'option, sinon Nautilus).
 - Préférences globales (vitesse, simultanés) appliquées en direct par `aria2.changeGlobalOption` ;
   segments, authentification et cookies pris au moment d'ajouter / relancer un téléchargement.
   Mot de passe d'authentification : dans settings.json, écrit en 0600.
+- settings.json ne garde que les valeurs choisies par l'utilisateur (0.1.0 écrivait tout : ses
+  valeurs par défaut figées sont retirées au chargement, `OLD_DEFAULTS`, clé `version`). Ainsi une
+  valeur par défaut corrigée s'applique à tous ceux qui n'y ont pas touché.
+- 5 connexions par fichier par défaut, comme Varia. Avec 16, proof.ovh.net coupait en plein
+  téléchargement chez Tof (erreur 22 d'aria2, « réponse du serveur inattendue »). Erreurs passagères
+  (`TRANSIENT` : 2, 6, 22, 29) : jusqu'à 3 relances automatiques après 3 s, en reprenant le partiel,
+  avec deux fois moins de connexions à chaque fois (`Download.max_connections`) ; « Réessayer »
+  remet le compteur à zéro. Journal d'aria2 : `~/.cache/ithaca/aria2.log` (niveau warn).
 
 ## Fichiers : ne jamais écraser, ne supprimer que le nôtre
 

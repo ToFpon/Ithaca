@@ -47,6 +47,7 @@ class IthacaApp(Adw.Application):
         self.manager = Manager(self._state_file) if self._state_file else Manager()
         self.manager.connect(self._on_download_event)
         self.manager.start()
+        GLib.timeout_add_seconds(20, self._auto_update_tools)
 
         for name, cb, accels in (("show-window", self.activate, []),
                                  ("preferences", self._prefs, ["<Ctrl>comma"]),
@@ -63,6 +64,21 @@ class IthacaApp(Adw.Application):
             a = Gio.SimpleAction.new(name, GLib.VariantType.new("s"))
             a.connect("activate", self._on_notification_action, name)
             self.add_action(a)
+
+    def _auto_update_tools(self):
+        """yt-dlp et Deno : une vérification par jour au plus, mise à jour silencieuse."""
+        import time
+
+        from .backend import tools
+        from .settings import settings
+        if (not settings["tools_auto_update"] or not features.enabled("videos")
+                or not any(tools.installed(t) for t in tools.TOOLS)
+                or time.time() - settings["tools_last_check"] < 86400):
+            return False
+        settings["tools_last_check"] = int(time.time())
+        from .ui.tools_dialog import check_updates_async, update_silently
+        check_updates_async(lambda ids: ids and update_silently(ids))
+        return False
 
     def do_shutdown(self):
         if self.manager is not None:
@@ -119,13 +135,15 @@ class IthacaApp(Adw.Application):
                                 issue_url="https://github.com/ToFpon/Ithaca/issues",
                                 license_type=Gtk.License.GPL_3_0)
         about.add_credit_section(tr("Basé sur"), [tr("Varia, de Giant Pink Robots https://github.com/giantpinkrobots/varia")])
-        about.add_acknowledgement_section(tr("Moteurs"), ["aria2"])
+        about.add_acknowledgement_section(tr("Moteurs"), ["aria2", "yt-dlp", "Deno", "FFmpeg"])
         about.present()
 
     # -- notifications -----------------------------------------------------------------
     def _on_download_event(self, event, d):
         if event not in ("completed", "failed") or not features.enabled("notifications"):
             return
+        if self.get_dbus_connection() is None:
+            return                       # pas de bus de session (xvfb) : notifications impossibles
         win = self.window
         if win is not None and win.is_active():
             return                       # la fenêtre est sous les yeux : la carte suffit

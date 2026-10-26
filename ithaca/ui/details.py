@@ -14,7 +14,7 @@ from .. import format as fmt  # noqa: E402
 from ..backend.downloads import Download  # noqa: E402
 from ..i18n import tr  # noqa: E402
 from .common import DialogWindow, copy_to_clipboard, full_date, open_folder, shown, toast  # noqa: E402
-from .row import status_text  # noqa: E402
+from .row import status_text, video_summary  # noqa: E402
 
 STATE_LABELS = {"waiting": tr("En attente"), "active": tr("En cours"), "paused": tr("En pause"),
                 "complete": tr("Terminé"), "error": tr("Échec")}
@@ -49,6 +49,7 @@ class DetailsWindow(DialogWindow):
 
         progress = Adw.PreferencesGroup(title=tr("Progression"))
         self.state = self._row(progress, tr("État"))
+        self.choice = self._row(progress, tr("Choix"))
         self.size = self._row(progress, tr("Taille"))
         self.done = self._row(progress, tr("Téléchargé"))
         self.speed = self._row(progress, tr("Vitesse"))
@@ -95,7 +96,10 @@ class DetailsWindow(DialogWindow):
         self.eta.set_subtitle(fmt.duration(d.eta) if d.eta >= 0 else tr("Inconnu"))
         self.eta.set_visible(active)
         self.connections.set_subtitle(str(d.connections))
-        self.connections.set_visible(active)
+        self.connections.set_visible(active and d.kind == "http")
+        self.choice.set_visible(d.kind == "video")
+        if d.kind == "video":
+            self.choice.set_subtitle(video_summary(d))
         self.added.set_subtitle(full_date(d.added))
         self.finished.set_subtitle(full_date(d.finished))
         self.finished.set_visible(bool(d.finished))

@@ -26,6 +26,14 @@ DEFAULTS: dict[str, Any] = {
     "auth_user": "",
     "auth_password": "",
     "cookies_file": "",             # cookies.txt (format Netscape), envoyé aux serveurs
+    # Vidéos (yt-dlp)
+    "video_mode": "video",          # video ou audio (choix proposé par défaut dans la fenêtre)
+    "video_height": 0,              # 0 = meilleure qualité, sinon hauteur maximale (1080, 720…)
+    "video_container": "mp4",       # mp4 (lecture partout) ou mkv
+    "audio_format": "mp3",          # mp3, m4a, opus, flac, wav
+    "browser_cookies": "",          # navigateur dont yt-dlp lit les cookies (YouTube « pas un robot »)
+    "tools_auto_update": True,      # yt-dlp et Deno tenus à jour (vérification une fois par jour)
+    "tools_last_check": 0,
     # Fenêtre
     "window_width": 900,
     "window_height": 620,

@@ -34,6 +34,9 @@ if [ -n "$missing" ]; then
     exit 1
 fi
 
+# Facultatif : ffmpeg pour les vidéos (yt-dlp et Deno sont installés par Ithaca à la première vidéo)
+command -v ffmpeg >/dev/null 2>&1 || echo "Pour les vidéos : sudo apt install ffmpeg"
+
 mkdir -p "$APPDIR" "$PREFIX/bin" "$SHARE/applications" "$SHARE/icons/hicolor/scalable/apps" \
     "$SHARE/icons/hicolor/symbolic/apps" "$SHARE/dbus-1/services"
 rm -rf "$APPDIR/ithaca" "$APPDIR/data"

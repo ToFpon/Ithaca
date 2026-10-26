@@ -34,6 +34,7 @@ def toast(widget: Gtk.Widget, text: str, button: str = "", callback: Optional[Ca
     if overlay is None:
         return
     t = Adw.Toast.new(text)
+    t.set_use_markup(False)          # noms de fichiers et adresses : « & » ou « < » cassaient le balisage
     t.set_timeout(timeout)
     if button and callback:
         t.set_button_label(button)

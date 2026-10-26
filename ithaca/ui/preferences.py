@@ -57,6 +57,7 @@ class PreferencesWindow(Adw.PreferencesWindow):
         super().__init__(title=tr("Préférences"), search_enabled=True, default_width=780, default_height=680)
         self.add(self._general())
         self.add(self._downloads())
+        self.add(self._videos())
         self.add(self._connection())
         self.add(self._features())
 
@@ -110,6 +111,92 @@ class PreferencesWindow(Adw.PreferencesWindow):
             settings["download_dir"] = path
             self.folder_row.set_subtitle(download_dir())
         choose_folder(button, tr("Dossier de téléchargement"), download_dir(), done)
+
+    # -- Vidéos ------------------------------------------------------------------------
+    def _videos(self) -> Adw.PreferencesPage:
+        from ..backend import videos
+        page = Adw.PreferencesPage(title=tr("Vidéos"), icon_name="camera-video-symbolic", name="videos")
+        defaults = Adw.PreferencesGroup(title=tr("Choix proposés"),
+                                        description=tr("Préselectionnés dans la fenêtre de choix, qui retient "
+                                                       "aussi vos derniers choix"))
+        defaults.add(_choice(tr("Type"), "video_mode", [tr("Vidéo"), tr("Audio seul")], ["video", "audio"]))
+        heights = [0, 2160, 1440, 1080, 720, 480, 360]
+        defaults.add(_choice(tr("Qualité maximale"), "video_height",
+                             [tr("Meilleure")] + [f"{h}p" for h in heights[1:]], heights))
+        defaults.add(_choice(tr("Format vidéo"), "video_container", ["MP4", "MKV"], list(videos.CONTAINERS),
+                             tr("MP4 se lit partout ; MKV garde les pistes d'origine")))
+        defaults.add(_choice(tr("Format audio"), "audio_format", ["MP3", "M4A", "Opus", "FLAC", "WAV"],
+                             list(videos.AUDIO_FORMATS)))
+        page.add(defaults)
+
+        yt = Adw.PreferencesGroup(title=tr("YouTube"))
+        names = ["Firefox", "Chrome", "Chromium", "Brave", "Edge", "Opera", "Vivaldi"]
+        yt.add(_choice(tr("Cookies du navigateur"), "browser_cookies", [tr("Aucun")] + names,
+                       [""] + list(videos.BROWSERS),
+                       tr("Si YouTube demande de confirmer que vous n'êtes pas un robot : le navigateur où "
+                          "vous êtes connecté à YouTube")))
+        page.add(yt)
+
+        comps = Adw.PreferencesGroup(title=tr("Composants"),
+                                     description=tr("Installés dans votre dossier personnel depuis leurs pages "
+                                                    "GitHub officielles, somme de contrôle vérifiée"))
+        self.tool_rows = {}
+        from ..backend import tools
+        for tid, tool in tools.TOOLS.items():
+            row = Adw.ActionRow(title=tool.name)
+            self.tool_rows[tid] = row
+            comps.add(row)
+        self.update_btn = Gtk.Button(valign=Gtk.Align.CENTER)
+        self.update_btn.connect("clicked", self._update_tools)
+        actions = Adw.ActionRow(title=tr("Mises à jour"))
+        actions.add_suffix(self.update_btn)
+        comps.add(actions)
+        comps.add(_switch(tr("Mettre à jour automatiquement"), "tools_auto_update",
+                          tr("Une vérification par jour ; YouTube change souvent et yt-dlp doit suivre")))
+        page.add(comps)
+        self._sync_tools()
+        return page
+
+    def _sync_tools(self):
+        """Versions lues dans un fil (yt-dlp met environ une seconde à démarrer)."""
+        import threading
+
+        from gi.repository import GLib
+
+        from ..backend import tools
+
+        def work():
+            found = {tid: tools.version(tid) for tid in self.tool_rows}
+            GLib.idle_add(lambda: (show(found), False)[1])
+
+        def show(found):
+            for tid, row in self.tool_rows.items():
+                v = found.get(tid, "")
+                row.set_subtitle(tr("Version {0}").format(v) if v else tr("Non installé"))
+        for row in self.tool_rows.values():
+            row.set_subtitle("…")
+        threading.Thread(target=work, daemon=True).start()
+        missing = tools.missing()
+        self.update_btn.set_label(tr("Installer") if missing else tr("Rechercher"))
+        self.update_btn.set_sensitive(True)
+
+    def _update_tools(self, button):
+        from ..backend import tools
+        from .tools_dialog import check_updates_async, run_install
+        missing = tools.missing()
+        if missing:
+            run_install(self, missing, self._sync_tools)
+            return
+        button.set_sensitive(False)
+        button.set_label(tr("Recherche…"))
+
+        def done(ids):
+            if ids:
+                run_install(self, ids, self._sync_tools)
+            else:
+                self.add_toast(Adw.Toast.new(tr("yt-dlp et Deno sont à jour")))
+            self._sync_tools()
+        check_updates_async(done)
 
     # -- Connexion -------------------------------------------------------------------
     def _connection(self) -> Adw.PreferencesPage:

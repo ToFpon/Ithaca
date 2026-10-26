@@ -34,8 +34,9 @@ est une réécriture, pas un portage.
 ## Feuille de route (choix de Tof)
 
 1. ✅ Fenêtre comme Varia, téléchargements HTTP / FTP par aria2, préférences, fr / en / de.
-2. Vidéos et audio : yt-dlp en binaire officiel téléchargé et mis à jour par Ithaca
-   (~/.local/share/ithaca/bin), ffmpeg d'apt.
+2. ✅ Vidéos et audio : yt-dlp et Deno en binaires officiels téléchargés et mis à jour par Ithaca
+   (~/.local/share/ithaca/bin), ffmpeg d'apt ; fenêtre de choix comme Varia ; playlists dans un
+   sous-dossier.
 3. Torrents : python3-libtorrent (choix des fichiers, partage / ratio), .torrent et magnet
    (Ithaca déclaré pour application/x-bittorrent et x-scheme-handler/magnet). Filtre « En partage ».
 4. Icône de la barre système (AppIndicator), planificateur, actions de fin (éteindre / veille,
@@ -78,6 +79,31 @@ org.freedesktop.FileManager1 (Odysseus s'il a l'option, sinon Nautilus).
   connexion pour la session (`Manager.rationed_hosts`). `RationedTest` reproduit avec
   `Server(limit=…, window=…)`. Un proxy (bac à sable) masque ce comportement : demander le journal.
 
+## Vidéos (yt-dlp)
+
+- `backend/tools.py` : yt-dlp (`yt-dlp_linux`) et Deno (moteur JavaScript que yt-dlp exige pour
+  YouTube ; Varia embarque QuickJS) depuis `releases/latest/download` de GitHub. Somme SHA-256
+  publiée vérifiée AVANT d'installer (SHA2-256SUMS, .sha256sum) ; échec → l'ancienne version reste.
+  Mise à jour = somme publiée ≠ `nom.sha256` installé (pas d'API GitHub : limitée, refusée dans le
+  bac à sable). Vérification quotidienne silencieuse (`app._auto_update_tools`, réglage
+  `tools_auto_update`). `ITHACA_BIN_DIR` remplace le dossier (tests).
+- `backend/videos.py` : `probe` (`-J --flat-playlist`) → `summarize` (qualités, sous-titres, playlist,
+  miniature JPEG de préférence : GTK 4.14 ne lit pas toujours le WebP). yt-dlp toujours lancé avec
+  `--ignore-config` (la config de l'utilisateur ne change rien), `--js-runtimes deno:…`, cookies
+  (fichier, ou `--cookies-from-browser` : réglage `browser_cookies`, pour « confirmez que vous n'êtes
+  pas un robot »), `--ffmpeg-location`. Progression par `--progress-template` / `--print` (lignes
+  `ITHACA-P`, `ITHACA-V`, `ITHACA-F`), sortie lue dans un fil par téléchargement (`Job`), au plus
+  `simultaneous` yt-dlp (`VideoRunner`).
+- Fichiers : yt-dlp travaille dans `.ithaca-<id>` caché DANS le dossier de destination (même disque),
+  puis `_collect` range le résultat par `fileops.place_new` (renameat2 NOREPLACE, « titre (2).mp4 »,
+  jamais d'écrasement ; autre disque : copie sous nom caché puis renommage). Annuler =
+  `remove_workdir` (seulement ce dossier, nom vérifié, pas un lien). Pause / quitter : SIGINT au
+  groupe de processus (yt-dlp + ffmpeg), les `.part` restent, relancer la même commande reprend.
+- Tests : `--embed-metadata` réécrit le conteneur, comparer les pistes (`ffmpeg -f streamhash`),
+  pas les octets. YouTube refuse le bac à sable (adresse de datacenter : « not a bot ») : les tests
+  utilisent l'extracteur générique sur des vidéos générées par ffmpeg (une page HTML à deux
+  `<video>` = une playlist).
+
 ## Fichiers : ne jamais écraser, ne supprimer que le nôtre
 
 - aria2 tourne avec `--allow-overwrite=false --auto-file-renaming=false` : un nom déjà pris donne
@@ -95,12 +121,15 @@ org.freedesktop.FileManager1 (Odysseus s'il a l'option, sinon Nautilus).
 Le `python3` du bac à sable n'a pas `gi` : utiliser `python3.12`.
 
 ```sh
-python3.12 -m unittest discover -s tests            # moteur (vrai aria2 + serveur HTTP local, sans GTK)
+python3.12 -m unittest discover -s tests            # moteur (vrai aria2 / yt-dlp + serveur local, sans GTK)
 xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par « Aucune erreur. »
 LANGUAGE=en xvfb-run -a python3.12 tests/ui_smoke.py
 LANGUAGE=de xvfb-run -a python3.12 tests/ui_smoke.py
 python3 -m pyflakes ithaca tests tools
 ```
+
+yt-dlp et Deno des tests : `ITHACA_TEST_TOOLS`, sinon `~/.cache/ithaca-test-tools` (installés par
+`tools.install` au premier passage ; sans réseau, les tests de téléchargement vidéo sont sautés).
 
 `tests/server.py` : serveur HTTP local (Range pour les segments et la reprise, débit bridé, 404,
 Content-Disposition UTF-8, authentification Basic). Les tests ne fixent jamais de délai pour
@@ -125,5 +154,10 @@ SORTIE.png [--demo] [--filter=…] [--details] [--prefs=PAGE] [--dark] [--delay=
   l'état change.
 - Menus contextuels (`common.popup_menu`) : un seul Gtk.PopoverMenu par widget, gardé et réutilisé,
   jamais détruit à la fermeture (plantage de GTK 4.14 sinon, vu dans Odysseus).
+- Textes venus de l'extérieur (messages de yt-dlp, noms de fichiers, adresses) : la description
+  d'`Adw.StatusPage` et le titre d'`Adw.Toast` sont du balisage Pango → `GLib.markup_escape_text` /
+  `toast.set_use_markup(False)` (« <HTTPError 404> » cassait l'affichage).
+- Notifications : seulement s'il y a un bus de session (`get_dbus_connection()`), sinon GIO crie
+  des CRITICAL (xvfb).
 - Nom du processus : `app._process_name` (prctl PR_SET_NAME) → « ithaca » dans ps / killall.
   WM_CLASS : `GLib.set_prgname(APP_ID)`.

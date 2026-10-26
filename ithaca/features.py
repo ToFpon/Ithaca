@@ -27,6 +27,10 @@ class Feature:
 
 
 FEATURES = [
+    Feature("videos", tr("Vidéos et audio"),
+            tr("Télécharger des vidéos, de la musique et des playlists (YouTube et plus de mille sites) "
+               "avec yt-dlp, installé et tenu à jour par Ithaca"),
+            "camera-video-symbolic", tools=(("ffmpeg",),), packages="ffmpeg"),
     Feature("notifications", tr("Notifications"),
             tr("Prévenir quand un téléchargement est terminé ou a échoué, fenêtre fermée ou non"),
             "preferences-system-notifications-symbolic"),

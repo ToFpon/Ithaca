@@ -10,7 +10,9 @@ from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk  # noqa: E402
 
 from .. import APP_ID, format as fmt  # noqa: E402
 from ..backend import aria2  # noqa: E402
+from .. import features  # noqa: E402
 from ..backend.downloads import Download, is_supported_url, matches  # noqa: E402
+from ..backend.videos import looks_like_video  # noqa: E402
 from ..i18n import ntr, tr  # noqa: E402
 from ..settings import download_dir, settings  # noqa: E402
 from .common import (alert, choose_folder, copy_to_clipboard, launch_default, open_folder,  # noqa: E402
@@ -113,6 +115,11 @@ class MainWindow(Adw.ApplicationWindow):
                                                       label=tr("Télécharger"), can_shrink=True))
         self.download_btn.connect("clicked", lambda *_: self._download_clicked())
         add.append(self.download_btn)
+        self.video_btn = Gtk.Button(css_classes=["suggested-action"])
+        self.video_btn.set_child(Adw.ButtonContent(icon_name="camera-video-symbolic", label=tr("Vidéo / audio"),
+                                                   can_shrink=True))
+        self.video_btn.connect("clicked", lambda *_: self._video_clicked())
+        add.append(self.video_btn)
         frame = Gtk.Frame(child=add, margin_start=8, margin_end=8, margin_top=4)
         box.append(frame)
 
@@ -258,7 +265,10 @@ class MainWindow(Adw.ApplicationWindow):
         self.url_entry.grab_focus()
 
     def _sync_add_buttons(self):
-        self.download_btn.set_sensitive(bool(self.url_entry.get_text().strip()))
+        has_text = bool(self.url_entry.get_text().strip())
+        self.download_btn.set_sensitive(has_text)
+        self.video_btn.set_sensitive(has_text)
+        self.video_btn.set_visible(features.enabled("videos"))
 
     def _paste_into_entry(self):
         def done(clip, res):
@@ -279,10 +289,36 @@ class MainWindow(Adw.ApplicationWindow):
         if self.add_urls(urls):
             self.url_entry.set_text("")
 
-    def add_urls(self, urls: list[str], folder: str = "") -> bool:
-        """Ajoute des liens ; False (et un message) si aucun n'est utilisable."""
+    def _video_clicked(self):
+        urls = split_urls(self.url_entry.get_text())
+        if urls and self.add_urls(urls, video=True):
+            self.url_entry.set_text("")
+
+    def open_video(self, url: str):
+        """Fenêtre de choix vidéo / audio, après installation de yt-dlp si besoin."""
+        if not features.enabled("videos"):
+            return
+        missing = features.missing("videos")
+        if missing:
+            alert(self, tr("FFmpeg est nécessaire pour les vidéos"),
+                  tr("Installez-le avec : {0}").format(features.install_command("videos")))
+            return
+        from .tools_dialog import ensure_tools
+        from .video_dialog import VideoDialog
+        ensure_tools(self, lambda: VideoDialog(self.manager, url).present(self))
+
+    def add_urls(self, urls: list[str], folder: str = "", video: bool = False) -> bool:
+        """Ajoute des liens ; False (et un message) si aucun n'est utilisable. Liens de sites vidéo
+        (YouTube…) ou video=True : fenêtre de choix vidéo / audio."""
         good = [u for u in urls if is_supported_url(u)]
         bad = [u for u in urls if u not in good]
+        if features.enabled("videos"):
+            vids = [u for u in good if video or looks_like_video(u)]
+            for u in vids:
+                self.open_video(u)
+            good = [u for u in good if u not in vids]
+            if vids and not good:
+                return True
         if bad:
             toast(self, ntr("Adresse non prise en charge : {0}", "Adresses non prises en charge : {0}",
                             len(bad)).format(shown(", ".join(bad))))
@@ -386,7 +422,7 @@ class MainWindow(Adw.ApplicationWindow):
             else:
                 self.banner.set_title(tr("aria2 n'a pas démarré : {0}").format(err))
         self.banner.set_revealed(bool(err))
-        self.download_btn.set_sensitive(bool(self.url_entry.get_text().strip()))
+        self._sync_add_buttons()
 
     def _on_filter_selected(self, _box, row):
         if row is None:
@@ -401,6 +437,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.sidebar_btn.set_visible(self.split.get_collapsed() or not self.split.get_show_sidebar())
 
     def _on_setting(self, key, _value):
+        if key == "features":
+            self._sync_add_buttons()
         if key in ("speed_limit_enabled", "speed_limit"):
             self._sync_status_labels()
 

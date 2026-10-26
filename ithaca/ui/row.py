@@ -27,6 +27,9 @@ ERRORS = {"2": tr("délai dépassé"), "3": tr("fichier introuvable sur le serve
 
 
 def error_text(d: Download) -> str:
+    if d.kind == "video":
+        from .video_dialog import friendly_error
+        return friendly_error(d.error)
     if http_status(d.error) == 429:
         return tr("le serveur refuse trop de requêtes, réessayez dans quelques minutes")
     return ERRORS.get(d.error_code, d.error)
@@ -47,10 +50,35 @@ def status_text(d: Download) -> str:
         return tr("Nouvelle tentative ({0}/{1})…").format(d.auto_retries, AUTO_RETRIES)
     if d.state == "waiting":
         return tr("En attente — {0}").format(progress) if d.done else tr("En attente")
+    item = ""
+    if d.kind == "video" and d.item_count > 1 and d.item_index:
+        item = tr("Élément {0} sur {1}").format(d.item_index, d.item_count) + " — "
+    if d.kind == "video" and d.phase == "start":
+        return item + tr("Préparation…")
+    if d.kind == "video" and d.phase == "process":
+        return item + (tr("Conversion…") if d.options.get("mode") == "audio" else tr("Assemblage…"))
     parts = [progress, fmt.speed(d.speed)]
     if d.eta >= 0:
         parts.append(tr("{0} restantes").format(fmt.duration(d.eta)))
-    return " — ".join(parts)
+    return item + " — ".join(parts)
+
+
+def kind_icon(d: Download) -> str:
+    if d.kind != "video":
+        return ""
+    if d.options.get("playlist"):
+        return "view-list-symbolic"
+    return "audio-x-generic-symbolic" if d.options.get("mode") == "audio" else "camera-video-symbolic"
+
+
+def video_summary(d: Download) -> str:
+    """« Vidéo 1080p · MP4 », « Audio · MP3 » (détails)."""
+    o = d.options
+    if o.get("mode") == "audio":
+        return tr("Audio · {0}").format((o.get("audio_format") or "").upper())
+    h = int(o.get("height") or 0)
+    quality = f"{h}p" if h else tr("meilleure qualité")
+    return tr("Vidéo {0} · {1}").format(quality, (o.get("container") or "").upper())
 
 
 def percent_text(d: Download) -> str:
@@ -71,7 +99,8 @@ class DownloadRow(Gtk.ListBoxRow):
         self.percent = Gtk.Label(css_classes=["dim-label", "numeric"])
         self.name = Gtk.Label(xalign=0, hexpand=True, ellipsize=Pango.EllipsizeMode.MIDDLE,
                               css_classes=["download-name"])
-        for w in (self.spinner, self.icon, self.percent, self.name):
+        self.kind = Gtk.Image(css_classes=["dim-label"], visible=False)
+        for w in (self.spinner, self.icon, self.percent, self.kind, self.name):
             line.append(w)
         self.status = Gtk.Label(xalign=0, ellipsize=Pango.EllipsizeMode.END, css_classes=["dim-label", "numeric"])
         text.append(line)
@@ -110,6 +139,8 @@ class DownloadRow(Gtk.ListBoxRow):
         self.spinner.set_spinning(running)
         self.icon.set_visible(not running)
         self.icon.set_from_icon_name(STATE_ICONS.get(d.state, "content-loading-symbolic"))
+        self.kind.set_from_icon_name(kind_icon(d) or None)
+        self.kind.set_visible(bool(kind_icon(d)))
         self.bar.set_fraction(d.fraction)
         self.bar.set_visible(d.state not in ("complete", "error"))
         for cls, on in (("error", d.state == "error"), ("complete", d.state == "complete")):

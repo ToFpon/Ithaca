@@ -3,7 +3,7 @@
 
     xvfb-run -a python3.12 tools/screenshot.py SORTIE.png [options]
 
-Options : --demo (serveur local et téléchargements d'exemple : terminés, en cours, en pause, échec)
+Options : --video (fenêtre de choix sur une vidéo locale ; yt-dlp : ITHACA_BIN_DIR) --demo (serveur local et téléchargements d'exemple : terminés, en cours, en pause, échec)
           --filter=all|progress|complete|failed --details --prefs=page --dark --delay=ms --size=LxH
 Configuration et état dans un dossier jetable : les vrais téléchargements ne sont jamais touchés.
 """
@@ -100,6 +100,16 @@ def on_ready(win):
     win.set_default_size(int(w), int(h))
     if "demo" in opts:
         GLib.timeout_add(600, lambda: (demo(win), False)[1])
+    if "video" in opts:
+        import subprocess
+        from server import Server
+        vdir = os.path.join(TMP, "vsrv")
+        os.makedirs(vdir)
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=1280x720:rate=25",
+                        "-f", "lavfi", "-i", "sine", "-t", "3", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                        "-c:a", "aac", os.path.join(vdir, "Voyage à Ithaque.mp4")], check=True)
+        win._vserver = Server(vdir)
+        GLib.timeout_add(600, lambda: (win.open_video(win._vserver.url("Voyage à Ithaque.mp4")), False)[1])
 
     def later():
         if "filter" in opts:

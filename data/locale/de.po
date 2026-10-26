@@ -15,39 +15,47 @@ msgstr ""
 msgid "Afficher la version"
 msgstr "Version anzeigen"
 
-#: ithaca/app.py:121
+#: ithaca/app.py:137
 msgid "Basé sur"
 msgstr "Basiert auf"
 
-#: ithaca/app.py:122
+#: ithaca/app.py:138
 msgid "Moteurs"
 msgstr "Engines"
 
-#: ithaca/app.py:116
+#: ithaca/app.py:132
 msgid "Gestionnaire de téléchargements pour GNOME : fichiers, vidéos et torrents."
 msgstr "Download-Manager für GNOME: Dateien, Videos und Torrents."
 
-#: ithaca/app.py:121
+#: ithaca/app.py:137
 msgid "Varia, de Giant Pink Robots https://github.com/giantpinkrobots/varia"
 msgstr "Varia von Giant Pink Robots https://github.com/giantpinkrobots/varia"
 
-#: ithaca/app.py:134
+#: ithaca/app.py:152
 msgid "Téléchargement terminé"
 msgstr "Download abgeschlossen"
 
-#: ithaca/app.py:136 ithaca/ui/row.py:163
+#: ithaca/app.py:154 ithaca/ui/row.py:194
 msgid "Afficher dans le dossier"
 msgstr "Im Ordner anzeigen"
 
-#: ithaca/app.py:140
+#: ithaca/app.py:158
 msgid "Échec du téléchargement"
 msgstr "Download fehlgeschlagen"
 
 #: ithaca/features.py:30
+msgid "Vidéos et audio"
+msgstr "Videos und Audio"
+
+#: ithaca/features.py:31
+msgid "Télécharger des vidéos, de la musique et des playlists (YouTube et plus de mille sites) avec yt-dlp, installé et tenu à jour par Ithaca"
+msgstr "Videos, Musik und Playlists (YouTube und über tausend Seiten) mit yt-dlp herunterladen, von Ithaca installiert und aktuell gehalten"
+
+#: ithaca/features.py:34
 msgid "Notifications"
 msgstr "Benachrichtigungen"
 
-#: ithaca/features.py:31
+#: ithaca/features.py:35
 msgid "Prévenir quand un téléchargement est terminé ou a échoué, fenêtre fermée ou non"
 msgstr "Benachrichtigen, wenn ein Download abgeschlossen oder fehlgeschlagen ist, ob das Fenster offen ist oder nicht"
 
@@ -95,15 +103,15 @@ msgstr "{0} Min. {1} s"
 msgid "{0} min"
 msgstr "{0} Min."
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:49
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:52
 msgid "En attente"
 msgstr "Wartend"
 
-#: ithaca/ui/details.py:19 ithaca/ui/window.py:21
+#: ithaca/ui/details.py:19 ithaca/ui/window.py:23
 msgid "En cours"
 msgstr "Läuft"
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:45
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:48
 msgid "En pause"
 msgstr "Pausiert"
 
@@ -111,7 +119,7 @@ msgstr "Pausiert"
 msgid "Terminé"
 msgstr "Abgeschlossen"
 
-#: ithaca/ui/details.py:20 ithaca/ui/row.py:41
+#: ithaca/ui/details.py:20 ithaca/ui/row.py:44
 msgid "Échec"
 msgstr "Fehlgeschlagen"
 
@@ -132,38 +140,42 @@ msgid "État"
 msgstr "Status"
 
 #: ithaca/ui/details.py:52
+msgid "Choix"
+msgstr "Auswahl"
+
+#: ithaca/ui/details.py:53
 msgid "Taille"
 msgstr "Größe"
 
-#: ithaca/ui/details.py:53
+#: ithaca/ui/details.py:54
 msgid "Téléchargé"
 msgstr "Heruntergeladen"
 
-#: ithaca/ui/details.py:54 ithaca/ui/preferences.py:94
+#: ithaca/ui/details.py:55 ithaca/ui/preferences.py:95
 msgid "Vitesse"
 msgstr "Geschwindigkeit"
 
-#: ithaca/ui/details.py:55
+#: ithaca/ui/details.py:56
 msgid "Temps restant"
 msgstr "Verbleibende Zeit"
 
-#: ithaca/ui/details.py:56
+#: ithaca/ui/details.py:57
 msgid "Connexions"
 msgstr "Verbindungen"
 
-#: ithaca/ui/details.py:60
+#: ithaca/ui/details.py:61
 msgid "Ajouté le"
 msgstr "Hinzugefügt am"
 
-#: ithaca/ui/details.py:61
+#: ithaca/ui/details.py:62
 msgid "Terminé le"
 msgstr "Abgeschlossen am"
 
-#: ithaca/ui/details.py:76 ithaca/ui/window.py:220
+#: ithaca/ui/details.py:77 ithaca/ui/window.py:227
 msgid "Adresse copiée"
 msgstr "Adresse kopiert"
 
-#: ithaca/ui/details.py:25 ithaca/ui/row.py:82
+#: ithaca/ui/details.py:25 ithaca/ui/row.py:111
 msgid "Détails du téléchargement"
 msgstr "Download-Details"
 
@@ -175,7 +187,7 @@ msgstr "Datei"
 msgid "Ouvrir le dossier"
 msgstr "Ordner öffnen"
 
-#: ithaca/ui/details.py:44 ithaca/ui/row.py:172
+#: ithaca/ui/details.py:44 ithaca/ui/row.py:203
 msgid "Copier l'adresse"
 msgstr "Adresse kopieren"
 
@@ -183,167 +195,267 @@ msgstr "Adresse kopieren"
 msgid "Progression"
 msgstr "Fortschritt"
 
-#: ithaca/ui/details.py:59
+#: ithaca/ui/details.py:60
 msgid "Dates"
 msgstr "Daten"
 
-#: ithaca/ui/details.py:90
+#: ithaca/ui/details.py:91
 msgid "Inconnue"
 msgstr "Unbekannt"
 
-#: ithaca/ui/details.py:95
+#: ithaca/ui/details.py:96
 msgid "Inconnu"
 msgstr "Unbekannt"
 
-#: ithaca/ui/preferences.py:67
+#: ithaca/ui/preferences.py:68
 msgid "Style"
 msgstr "Stil"
 
-#: ithaca/ui/preferences.py:99
+#: ithaca/ui/preferences.py:100
 msgid "Limiter la vitesse"
 msgstr "Geschwindigkeit begrenzen"
 
-#: ithaca/ui/preferences.py:100
+#: ithaca/ui/preferences.py:101
 msgid "Vitesse maximale (Ko/s)"
 msgstr "Höchstgeschwindigkeit (kB/s)"
 
-#: ithaca/ui/preferences.py:101
+#: ithaca/ui/preferences.py:102
 msgid "Pour tous les téléchargements ensemble"
 msgstr "Für alle Downloads zusammen"
 
-#: ithaca/ui/preferences.py:112 ithaca/ui/preferences.py:83
+#: ithaca/ui/preferences.py:113 ithaca/ui/preferences.py:84
 msgid "Dossier de téléchargement"
 msgstr "Download-Ordner"
 
-#: ithaca/ui/preferences.py:119
+#: ithaca/ui/preferences.py:191
+msgid "Recherche…"
+msgstr "Suche…"
+
+#: ithaca/ui/preferences.py:206
 msgid "Utiliser l'authentification"
 msgstr "Authentifizierung verwenden"
 
-#: ithaca/ui/preferences.py:120
+#: ithaca/ui/preferences.py:207
 msgid "Nom d'utilisateur"
 msgstr "Benutzername"
 
-#: ithaca/ui/preferences.py:121
+#: ithaca/ui/preferences.py:208
 msgid "Mot de passe"
 msgstr "Passwort"
 
-#: ithaca/ui/preferences.py:152 ithaca/ui/preferences.py:132
+#: ithaca/ui/preferences.py:239 ithaca/ui/preferences.py:219
 msgid "Fichier de cookies"
 msgstr "Cookie-Datei"
 
-#: ithaca/ui/preferences.py:57 ithaca/ui/window.py:94 ithaca/ui/window.py:80
+#: ithaca/ui/preferences.py:57 ithaca/ui/window.py:96 ithaca/ui/window.py:82
 msgid "Préférences"
 msgstr "Einstellungen"
 
-#: ithaca/ui/preferences.py:65
+#: ithaca/ui/preferences.py:66
 msgid "Général"
 msgstr "Allgemein"
 
-#: ithaca/ui/preferences.py:66
+#: ithaca/ui/preferences.py:67
 msgid "Apparence"
 msgstr "Erscheinungsbild"
 
-#: ithaca/ui/preferences.py:67 ithaca/ui/preferences.py:73
+#: ithaca/ui/preferences.py:68 ithaca/ui/preferences.py:74
 msgid "Comme le système"
 msgstr "Wie das System"
 
-#: ithaca/ui/preferences.py:67
+#: ithaca/ui/preferences.py:68
 msgid "Clair"
 msgstr "Hell"
 
-#: ithaca/ui/preferences.py:67
+#: ithaca/ui/preferences.py:68
 msgid "Sombre"
 msgstr "Dunkel"
 
-#: ithaca/ui/preferences.py:72
+#: ithaca/ui/preferences.py:73
 msgid "Langue"
 msgstr "Sprache"
 
-#: ithaca/ui/preferences.py:74
+#: ithaca/ui/preferences.py:75
 msgid "Appliquée au prochain démarrage"
 msgstr "Wird beim nächsten Start übernommen"
 
-#: ithaca/ui/preferences.py:80
+#: ithaca/ui/preferences.py:81
 msgid "Téléchargements"
 msgstr "Downloads"
 
-#: ithaca/ui/preferences.py:82
+#: ithaca/ui/preferences.py:83
 msgid "Emplacement"
 msgstr "Speicherort"
 
-#: ithaca/ui/preferences.py:85
+#: ithaca/ui/preferences.py:86 ithaca/ui/video_dialog.py:179
 msgid "Choisir le dossier"
 msgstr "Ordner wählen"
 
-#: ithaca/ui/preferences.py:91
+#: ithaca/ui/preferences.py:92
 msgid "Toujours demander où enregistrer"
 msgstr "Immer fragen, wo gespeichert werden soll"
 
-#: ithaca/ui/preferences.py:95
+#: ithaca/ui/preferences.py:96
 msgid "Téléchargements simultanés"
 msgstr "Gleichzeitige Downloads"
 
-#: ithaca/ui/preferences.py:97
+#: ithaca/ui/preferences.py:98
 msgid "Connexions par fichier"
 msgstr "Verbindungen pro Datei"
 
-#: ithaca/ui/preferences.py:116
+#: ithaca/ui/preferences.py:118
+msgid "Vidéos"
+msgstr "Videos"
+
+#: ithaca/ui/preferences.py:119
+msgid "Choix proposés"
+msgstr "Vorgeschlagene Auswahl"
+
+#: ithaca/ui/preferences.py:120
+msgid "Préselectionnés dans la fenêtre de choix, qui retient aussi vos derniers choix"
+msgstr "Im Auswahlfenster vorausgewählt, das sich auch Ihre letzte Auswahl merkt"
+
+#: ithaca/ui/preferences.py:122 ithaca/ui/video_dialog.py:148
+msgid "Type"
+msgstr "Typ"
+
+#: ithaca/ui/preferences.py:124
+msgid "Qualité maximale"
+msgstr "Höchste Qualität"
+
+#: ithaca/ui/preferences.py:126
+msgid "Format vidéo"
+msgstr "Videoformat"
+
+#: ithaca/ui/preferences.py:127
+msgid "MP4 se lit partout ; MKV garde les pistes d'origine"
+msgstr "MP4 läuft überall; MKV behält die Originalspuren"
+
+#: ithaca/ui/preferences.py:128 ithaca/ui/video_dialog.py:164
+msgid "Format audio"
+msgstr "Audioformat"
+
+#: ithaca/ui/preferences.py:132
+msgid "YouTube"
+msgstr "YouTube"
+
+#: ithaca/ui/preferences.py:134
+msgid "Cookies du navigateur"
+msgstr "Browser-Cookies"
+
+#: ithaca/ui/preferences.py:136
+msgid "Si YouTube demande de confirmer que vous n'êtes pas un robot : le navigateur où vous êtes connecté à YouTube"
+msgstr "Wenn YouTube fragt, ob Sie kein Bot sind: der Browser, in dem Sie bei YouTube angemeldet sind"
+
+#: ithaca/ui/preferences.py:140
+msgid "Composants"
+msgstr "Komponenten"
+
+#: ithaca/ui/preferences.py:141
+msgid "Installés dans votre dossier personnel depuis leurs pages GitHub officielles, somme de contrôle vérifiée"
+msgstr "Aus ihren offiziellen GitHub-Seiten in Ihren persönlichen Ordner installiert, Prüfsumme geprüft"
+
+#: ithaca/ui/preferences.py:151
+msgid "Mises à jour"
+msgstr "Aktualisierungen"
+
+#: ithaca/ui/preferences.py:154
+msgid "Mettre à jour automatiquement"
+msgstr "Automatisch aktualisieren"
+
+#: ithaca/ui/preferences.py:155
+msgid "Une vérification par jour ; YouTube change souvent et yt-dlp doit suivre"
+msgstr "Einmal täglich geprüft; YouTube ändert sich oft und yt-dlp muss mithalten"
+
+#: ithaca/ui/preferences.py:180 ithaca/ui/tools_dialog.py:32
+msgid "Installer"
+msgstr "Installieren"
+
+#: ithaca/ui/preferences.py:180
+msgid "Rechercher"
+msgstr "Suchen"
+
+#: ithaca/ui/preferences.py:203
 msgid "Connexion"
 msgstr "Verbindung"
 
-#: ithaca/ui/preferences.py:117
+#: ithaca/ui/preferences.py:204
 msgid "Authentification"
 msgstr "Authentifizierung"
 
-#: ithaca/ui/preferences.py:118
+#: ithaca/ui/preferences.py:205
 msgid "Identifiants envoyés aux serveurs HTTP et FTP qui en demandent"
 msgstr "Zugangsdaten, die an HTTP- und FTP-Server gesendet werden, die danach fragen"
 
-#: ithaca/ui/preferences.py:129
+#: ithaca/ui/preferences.py:216
 msgid "Cookies"
 msgstr "Cookies"
 
-#: ithaca/ui/preferences.py:130
+#: ithaca/ui/preferences.py:217
 msgid "Fichier cookies.txt (format Netscape) exporté du navigateur, pour les sites où il faut être connecté"
 msgstr "Eine aus dem Browser exportierte cookies.txt-Datei (Netscape-Format) für Seiten, die eine Anmeldung erfordern"
 
-#: ithaca/ui/preferences.py:133
+#: ithaca/ui/preferences.py:220
 msgid "Choisir le fichier"
 msgstr "Datei wählen"
 
-#: ithaca/ui/preferences.py:136
+#: ithaca/ui/preferences.py:223
 msgid "Ne plus utiliser"
 msgstr "Nicht mehr verwenden"
 
-#: ithaca/ui/preferences.py:148
+#: ithaca/ui/preferences.py:235 ithaca/ui/preferences.py:134 ithaca/ui/video_dialog.py:169
 msgid "Aucun"
 msgstr "Keine"
 
-#: ithaca/ui/preferences.py:157
+#: ithaca/ui/preferences.py:244
 msgid "Fonctionnalités"
 msgstr "Funktionen"
 
-#: ithaca/ui/preferences.py:159
+#: ithaca/ui/preferences.py:246
 msgid "Chaque fonctionnalité s'active ou se coupe tout de suite, sans redémarrer Ithaca"
 msgstr "Jede Funktion wird sofort ein- oder ausgeschaltet, ohne Ithaca neu zu starten"
 
-#: ithaca/ui/preferences.py:96
+#: ithaca/ui/preferences.py:97
 msgid "Les suivants attendent leur tour"
 msgstr "Die übrigen warten, bis sie an der Reihe sind"
 
-#: ithaca/ui/preferences.py:98
+#: ithaca/ui/preferences.py:99
 msgid "Plus de connexions accélèrent les serveurs lents (16 au plus par serveur)"
 msgstr "Mehr Verbindungen beschleunigen langsame Server (höchstens 16 pro Server)"
 
-#: ithaca/ui/preferences.py:153
+#: ithaca/ui/preferences.py:122 ithaca/ui/video_dialog.py:145
+msgid "Vidéo"
+msgstr "Video"
+
+#: ithaca/ui/preferences.py:122 ithaca/ui/video_dialog.py:145 ithaca/ui/video_dialog.py:145
+msgid "Audio seul"
+msgstr "Nur Audio"
+
+#: ithaca/ui/preferences.py:125 ithaca/ui/video_dialog.py:152
+msgid "Meilleure"
+msgstr "Beste"
+
+#: ithaca/ui/preferences.py:175
+msgid "Non installé"
+msgstr "Nicht installiert"
+
+#: ithaca/ui/preferences.py:197
+msgid "yt-dlp et Deno sont à jour"
+msgstr "yt-dlp und Deno sind aktuell"
+
+#: ithaca/ui/preferences.py:240
 msgid "Fichiers texte"
 msgstr "Textdateien"
 
-#: ithaca/ui/preferences.py:153
+#: ithaca/ui/preferences.py:240
 msgid "Tous les fichiers"
 msgstr "Alle Dateien"
 
-#: ithaca/ui/preferences.py:166
+#: ithaca/ui/preferences.py:175
+msgid "Version {0}"
+msgstr "Version {0}"
+
+#: ithaca/ui/preferences.py:253
 msgid "Manquant : {0}"
 msgstr "Fehlt: {0}"
 
@@ -403,212 +515,322 @@ msgstr "Server überlastet, später erneut versuchen"
 msgid "somme de contrôle incorrecte"
 msgstr "Prüfsumme stimmt nicht"
 
-#: ithaca/ui/row.py:31
+#: ithaca/ui/row.py:34
 msgid "le serveur refuse trop de requêtes, réessayez dans quelques minutes"
 msgstr "der Server lehnt zu viele Anfragen ab, in ein paar Minuten erneut versuchen"
 
-#: ithaca/ui/row.py:38
+#: ithaca/ui/row.py:80
+msgid "meilleure qualité"
+msgstr "beste Qualität"
+
+#: ithaca/ui/row.py:57
+msgid "Préparation…"
+msgstr "Vorbereitung…"
+
+#: ithaca/ui/row.py:81
+msgid "Vidéo {0} · {1}"
+msgstr "Video {0} · {1}"
+
+#: ithaca/ui/row.py:41
 msgid "{0} — Terminé"
 msgstr "{0} — Abgeschlossen"
 
-#: ithaca/ui/row.py:42
+#: ithaca/ui/row.py:45 ithaca/ui/tools_dialog.py:83
 msgid "{0} sur {1}"
 msgstr "{0} von {1}"
 
-#: ithaca/ui/row.py:47
+#: ithaca/ui/row.py:50
 msgid "Nouvelle tentative ({0}/{1})…"
 msgstr "Neuer Versuch ({0}/{1})…"
 
-#: ithaca/ui/row.py:57
+#: ithaca/ui/row.py:59
+msgid "Conversion…"
+msgstr "Konvertierung…"
+
+#: ithaca/ui/row.py:59
+msgid "Assemblage…"
+msgstr "Zusammenfügen…"
+
+#: ithaca/ui/row.py:78
+msgid "Audio · {0}"
+msgstr "Audio · {0}"
+
+#: ithaca/ui/row.py:85
 msgid "{0} %"
 msgstr "{0} %"
 
-#: ithaca/ui/row.py:119 ithaca/ui/row.py:161
+#: ithaca/ui/row.py:150 ithaca/ui/row.py:192
 msgid "Ouvrir"
 msgstr "Öffnen"
 
-#: ithaca/ui/row.py:120 ithaca/ui/row.py:123 ithaca/ui/row.py:177
+#: ithaca/ui/row.py:151 ithaca/ui/row.py:154 ithaca/ui/row.py:208
 msgid "Retirer de la liste"
 msgstr "Aus der Liste entfernen"
 
-#: ithaca/ui/row.py:173
+#: ithaca/ui/row.py:204
 msgid "Détails"
 msgstr "Details"
 
-#: ithaca/ui/row.py:41
+#: ithaca/ui/row.py:44
 msgid "Échec : {0}"
 msgstr "Fehlgeschlagen: {0}"
 
-#: ithaca/ui/row.py:45
+#: ithaca/ui/row.py:48
 msgid "En pause — {0}"
 msgstr "Pausiert — {0}"
 
-#: ithaca/ui/row.py:49
+#: ithaca/ui/row.py:52
 msgid "En attente — {0}"
 msgstr "Wartend — {0}"
 
-#: ithaca/ui/row.py:52
+#: ithaca/ui/row.py:55
+msgid "Élément {0} sur {1}"
+msgstr "Element {0} von {1}"
+
+#: ithaca/ui/row.py:62
 msgid "{0} restantes"
 msgstr "noch {0}"
 
-#: ithaca/ui/row.py:122 ithaca/ui/row.py:169
+#: ithaca/ui/row.py:153 ithaca/ui/row.py:200
 msgid "Réessayer"
 msgstr "Erneut versuchen"
 
-#: ithaca/ui/row.py:165 ithaca/ui/row.py:128
+#: ithaca/ui/row.py:196 ithaca/ui/row.py:159
 msgid "Mettre en pause"
 msgstr "Pausieren"
 
-#: ithaca/ui/row.py:178
+#: ithaca/ui/row.py:209
 msgid "Mettre à la corbeille"
 msgstr "In den Papierkorb verschieben"
 
-#: ithaca/ui/row.py:180 ithaca/ui/row.py:126 ithaca/ui/row.py:129
+#: ithaca/ui/row.py:211 ithaca/ui/row.py:157 ithaca/ui/row.py:160
 msgid "Annuler le téléchargement"
 msgstr "Download abbrechen"
 
-#: ithaca/ui/row.py:125 ithaca/ui/row.py:167
+#: ithaca/ui/row.py:156 ithaca/ui/row.py:198
 msgid "Reprendre"
 msgstr "Fortsetzen"
 
-#: ithaca/ui/window.py:20
-msgid "Tous"
-msgstr "Alle"
+#: ithaca/ui/tools_dialog.py:28
+msgid "Installer les composants vidéo ?"
+msgstr "Videokomponenten installieren?"
 
-#: ithaca/ui/window.py:22
-msgid "Terminés"
-msgstr "Abgeschlossen"
+#: ithaca/ui/tools_dialog.py:31 ithaca/ui/tools_dialog.py:58 ithaca/ui/video_dialog.py:48 ithaca/ui/window.py:253
+msgid "Annuler"
+msgstr "Abbrechen"
 
-#: ithaca/ui/window.py:23
-msgid "Échecs"
-msgstr "Fehlgeschlagen"
+#: ithaca/ui/tools_dialog.py:29
+msgid "Ithaca a besoin de {0} (environ {1}, depuis GitHub). Ils sont installés dans votre dossier personnel et tenus à jour automatiquement."
+msgstr "Ithaca benötigt {0} (etwa {1}, von GitHub). Sie werden in Ihrem persönlichen Ordner installiert und automatisch aktuell gehalten."
 
-#: ithaca/ui/window.py:85
-msgid "Ouvrir le dossier des téléchargements"
-msgstr "Download-Ordner öffnen"
+#: ithaca/ui/tools_dialog.py:48
+msgid "Composants vidéo"
+msgstr "Videokomponenten"
 
-#: ithaca/ui/window.py:86 ithaca/ui/window.py:155 ithaca/ui/window.py:376
-msgid "Tout mettre en pause"
-msgstr "Alle pausieren"
+#: ithaca/ui/tools_dialog.py:95
+msgid "Impossible d'installer {0}"
+msgstr "{0} kann nicht installiert werden"
 
-#: ithaca/ui/window.py:87 ithaca/ui/window.py:379
-msgid "Tout reprendre"
-msgstr "Alle fortsetzen"
+#: ithaca/ui/tools_dialog.py:106
+msgid "Composants vidéo à jour"
+msgstr "Videokomponenten aktuell"
 
-#: ithaca/ui/window.py:90
-msgid "Effacer les terminés de la liste"
-msgstr "Abgeschlossene aus der Liste entfernen"
+#: ithaca/ui/tools_dialog.py:78 ithaca/ui/tools_dialog.py:82
+msgid "Téléchargement de {0}…"
+msgstr "{0} wird heruntergeladen…"
 
-#: ithaca/ui/window.py:91 ithaca/ui/window.py:246
-msgid "Tout annuler"
-msgstr "Alle abbrechen"
+#: ithaca/ui/video_dialog.py:28
+msgid "YouTube demande de confirmer que vous n'êtes pas un robot. Choisissez votre navigateur dans Préférences → Vidéos → Cookies du navigateur (il faut y être connecté à YouTube)."
+msgstr "YouTube fragt, ob Sie kein Bot sind. Wählen Sie Ihren Browser unter Einstellungen → Videos → Browser-Cookies (Sie müssen dort bei YouTube angemeldet sein)."
 
-#: ithaca/ui/window.py:95
-msgid "À propos d'Ithaca"
-msgstr "Info zu Ithaca"
+#: ithaca/ui/video_dialog.py:31
+msgid "Ce site n'est pas pris en charge par yt-dlp."
+msgstr "Diese Seite wird von yt-dlp nicht unterstützt."
 
-#: ithaca/ui/window.py:96 ithaca/ui/window.py:421
-msgid "Quitter"
-msgstr "Beenden"
+#: ithaca/ui/video_dialog.py:33
+msgid "Cette vidéo est privée."
+msgstr "Dieses Video ist privat."
 
-#: ithaca/ui/window.py:243
-msgid "Annuler tous les téléchargements ?"
-msgstr "Alle Downloads abbrechen?"
+#: ithaca/ui/video_dialog.py:158
+msgid "Qualité"
+msgstr "Qualität"
 
-#: ithaca/ui/window.py:418
-msgid "Quitter Ithaca ?"
-msgstr "Ithaca beenden?"
+#: ithaca/ui/video_dialog.py:160
+msgid "Format"
+msgstr "Format"
 
-#: ithaca/ui/window.py:104
-msgid "Adresse (URL)"
-msgstr "Adresse (URL)"
+#: ithaca/ui/video_dialog.py:169
+msgid "Sous-titres"
+msgstr "Untertitel"
 
-#: ithaca/ui/window.py:106
-msgid "Coller"
-msgstr "Einfügen"
+#: ithaca/ui/video_dialog.py:170
+msgid "Intégrés à la vidéo"
+msgstr "In das Video eingebettet"
 
-#: ithaca/ui/window.py:138
-msgid "Vitesse limitée"
-msgstr "Geschwindigkeit begrenzt"
-
-#: ithaca/ui/window.py:149
-msgid "Afficher la barre latérale"
-msgstr "Seitenleiste anzeigen"
-
-#: ithaca/ui/window.py:165
-msgid "Aucun téléchargement"
-msgstr "Keine Downloads"
-
-#: ithaca/ui/window.py:166
-msgid "Collez une adresse dans le champ de gauche, ou glissez un lien dans la fenêtre."
-msgstr "Fügen Sie eine Adresse in das Feld links ein oder ziehen Sie einen Link in das Fenster."
-
-#: ithaca/ui/window.py:169 ithaca/ui/window.py:361
-msgid "Rien ici"
-msgstr "Nichts hier"
-
-#: ithaca/ui/window.py:292
+#: ithaca/ui/video_dialog.py:201 ithaca/ui/video_dialog.py:175 ithaca/ui/window.py:328
 msgid "Enregistrer dans"
 msgstr "Speichern in"
 
-#: ithaca/ui/window.py:99
-msgid "Menu principal"
-msgstr "Hauptmenü"
+#: ithaca/ui/video_dialog.py:39 ithaca/ui/window.py:119
+msgid "Vidéo / audio"
+msgstr "Video / Audio"
 
-#: ithaca/ui/window.py:113
+#: ithaca/ui/video_dialog.py:51 ithaca/ui/video_dialog.py:144 ithaca/ui/window.py:115
 msgid "Télécharger"
 msgstr "Herunterladen"
 
-#: ithaca/ui/window.py:244
+#: ithaca/ui/video_dialog.py:67
+msgid "Impossible de lire cette adresse"
+msgstr "Diese Adresse kann nicht gelesen werden"
+
+#: ithaca/ui/video_dialog.py:62
+msgid "Lecture des informations…"
+msgstr "Informationen werden gelesen…"
+
+#: ithaca/ui/video_dialog.py:134
+msgid "Playlist : {0} élément"
+msgid_plural "Playlist : {0} éléments"
+msgstr[0] "Playlist: {0} Element"
+msgstr[1] "Playlist: {0} Elemente"
+
+#: ithaca/ui/video_dialog.py:178
+msgid "Dans un sous-dossier « {0} »"
+msgstr "In einem Unterordner „{0}“"
+
+#: ithaca/ui/window.py:22
+msgid "Tous"
+msgstr "Alle"
+
+#: ithaca/ui/window.py:24
+msgid "Terminés"
+msgstr "Abgeschlossen"
+
+#: ithaca/ui/window.py:25
+msgid "Échecs"
+msgstr "Fehlgeschlagen"
+
+#: ithaca/ui/window.py:87
+msgid "Ouvrir le dossier des téléchargements"
+msgstr "Download-Ordner öffnen"
+
+#: ithaca/ui/window.py:88 ithaca/ui/window.py:162 ithaca/ui/window.py:412
+msgid "Tout mettre en pause"
+msgstr "Alle pausieren"
+
+#: ithaca/ui/window.py:89 ithaca/ui/window.py:415
+msgid "Tout reprendre"
+msgstr "Alle fortsetzen"
+
+#: ithaca/ui/window.py:92
+msgid "Effacer les terminés de la liste"
+msgstr "Abgeschlossene aus der Liste entfernen"
+
+#: ithaca/ui/window.py:93 ithaca/ui/window.py:253
+msgid "Tout annuler"
+msgstr "Alle abbrechen"
+
+#: ithaca/ui/window.py:97
+msgid "À propos d'Ithaca"
+msgstr "Info zu Ithaca"
+
+#: ithaca/ui/window.py:98 ithaca/ui/window.py:459
+msgid "Quitter"
+msgstr "Beenden"
+
+#: ithaca/ui/window.py:250
+msgid "Annuler tous les téléchargements ?"
+msgstr "Alle Downloads abbrechen?"
+
+#: ithaca/ui/window.py:456
+msgid "Quitter Ithaca ?"
+msgstr "Ithaca beenden?"
+
+#: ithaca/ui/window.py:106
+msgid "Adresse (URL)"
+msgstr "Adresse (URL)"
+
+#: ithaca/ui/window.py:108
+msgid "Coller"
+msgstr "Einfügen"
+
+#: ithaca/ui/window.py:145
+msgid "Vitesse limitée"
+msgstr "Geschwindigkeit begrenzt"
+
+#: ithaca/ui/window.py:156
+msgid "Afficher la barre latérale"
+msgstr "Seitenleiste anzeigen"
+
+#: ithaca/ui/window.py:172
+msgid "Aucun téléchargement"
+msgstr "Keine Downloads"
+
+#: ithaca/ui/window.py:173
+msgid "Collez une adresse dans le champ de gauche, ou glissez un lien dans la fenêtre."
+msgstr "Fügen Sie eine Adresse in das Feld links ein oder ziehen Sie einen Link in das Fenster."
+
+#: ithaca/ui/window.py:176 ithaca/ui/window.py:397
+msgid "Rien ici"
+msgstr "Nichts hier"
+
+#: ithaca/ui/window.py:303
+msgid "FFmpeg est nécessaire pour les vidéos"
+msgstr "FFmpeg wird für Videos benötigt"
+
+#: ithaca/ui/window.py:101
+msgid "Menu principal"
+msgstr "Hauptmenü"
+
+#: ithaca/ui/window.py:251
 msgid "{0} téléchargement en cours sera arrêté et son fichier partiel supprimé."
 msgid_plural "{0} téléchargements en cours seront arrêtés et leurs fichiers partiels supprimés."
 msgstr[0] "{0} laufender Download wird gestoppt und seine unvollständige Datei gelöscht."
 msgstr[1] "{0} laufende Downloads werden gestoppt und ihre unvollständigen Dateien gelöscht."
 
-#: ithaca/ui/window.py:385
+#: ithaca/ui/window.py:421
 msgid "aria2 est introuvable : sudo apt install aria2"
 msgstr "aria2 wurde nicht gefunden: sudo apt install aria2"
 
-#: ithaca/ui/window.py:419
+#: ithaca/ui/window.py:457
 msgid "{0} téléchargement est en cours. Il reprendra au prochain lancement d'Ithaca."
 msgid_plural "{0} téléchargements sont en cours. Ils reprendront au prochain lancement d'Ithaca."
 msgstr[0] "{0} Download läuft noch. Er wird beim nächsten Start von Ithaca fortgesetzt."
 msgstr[1] "{0} Downloads laufen noch. Sie werden beim nächsten Start von Ithaca fortgesetzt."
 
-#: ithaca/ui/window.py:233
+#: ithaca/ui/window.py:240
 msgid "Impossible de mettre le fichier à la corbeille"
 msgstr "Die Datei kann nicht in den Papierkorb verschoben werden"
 
-#: ithaca/ui/window.py:236
+#: ithaca/ui/window.py:243
 msgid "« {0} » a été mis à la corbeille"
 msgstr "„{0}“ wurde in den Papierkorb verschoben"
 
-#: ithaca/ui/window.py:246 ithaca/ui/window.py:421
-msgid "Annuler"
-msgstr "Abbrechen"
+#: ithaca/ui/window.py:304
+msgid "Installez-le avec : {0}"
+msgstr "Installieren Sie es mit: {0}"
 
-#: ithaca/ui/window.py:287
+#: ithaca/ui/window.py:323
 msgid "Adresse non prise en charge : {0}"
 msgid_plural "Adresses non prises en charge : {0}"
 msgstr[0] "Nicht unterstützte Adresse: {0}"
 msgstr[1] "Nicht unterstützte Adressen: {0}"
 
-#: ithaca/ui/window.py:411
+#: ithaca/ui/window.py:449
 msgid "Vitesse limitée à {0}"
 msgstr "Geschwindigkeit begrenzt auf {0}"
 
-#: ithaca/ui/window.py:387
+#: ithaca/ui/window.py:423
 msgid "aria2 n'a pas démarré : {0}"
 msgstr "aria2 ist nicht gestartet: {0}"
 
-#: ithaca/ui/window.py:359
+#: ithaca/ui/window.py:395
 msgid "Aucun téléchargement en cours"
 msgstr "Keine laufenden Downloads"
 
-#: ithaca/ui/window.py:360
+#: ithaca/ui/window.py:396
 msgid "Aucun téléchargement terminé"
 msgstr "Keine abgeschlossenen Downloads"
 
-#: ithaca/ui/window.py:361
+#: ithaca/ui/window.py:397
 msgid "Aucun échec"
 msgstr "Keine fehlgeschlagenen Downloads"

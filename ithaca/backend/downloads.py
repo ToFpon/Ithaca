@@ -142,6 +142,12 @@ class Download:
         self.intent_until = 0.0             # pause / reprise demandée : aria2 n'en tient pas encore compte
         self.auto_retries = 0               # relances automatiques après une erreur passagère
         self.max_connections = 0            # 0 = préférences ; réduit par les relances automatiques
+        # vidéos (yt-dlp) : choix de la fenêtre (mode, qualité, format…), playlist en cours
+        self.options: dict = {}
+        self.phase = ""                     # start, download, process (assemblage / conversion)
+        self.item_index = 0
+        self.item_count = 0
+        self.item_title = ""
 
     @property
     def path(self) -> str:
@@ -149,13 +155,18 @@ class Download:
 
     @property
     def display_name(self) -> str:
+        if self.kind == "video" and not (self.state == "complete" and self.name):
+            return self.options.get("title") or self.name or self.url
         return self.name or name_from_url(self.url)
 
     @property
     def fraction(self) -> float:
         if self.state == "complete":
             return 1.0
-        return min(1.0, self.done / self.total) if self.total > 0 else 0.0
+        part = min(1.0, self.done / self.total) if self.total > 0 else 0.0
+        if self.kind == "video" and self.item_count > 1 and self.item_index > 0:
+            return min(1.0, (self.item_index - 1 + part) / self.item_count)
+        return part
 
     @property
     def eta(self) -> float:
@@ -168,7 +179,7 @@ class Download:
         return {"id": self.id, "kind": self.kind, "url": self.url, "dir": self.dir, "name": self.name,
                 "name_fixed": self.name_fixed, "state": self.state, "total": self.total, "done": self.done,
                 "error": self.error, "error_code": self.error_code, "added": self.added,
-                "finished": self.finished}
+                "finished": self.finished, "options": self.options}
 
     @classmethod
     def from_json(cls, data: dict) -> "Download":
@@ -182,6 +193,7 @@ class Download:
         d.error_code = data.get("error_code", "")
         d.added = float(data.get("added", time.time()))
         d.finished = float(data.get("finished", 0))
+        d.options = dict(data.get("options") or {})
         return d
 
 
@@ -319,6 +331,8 @@ class Manager:
         self.downloads: list[Download] = []
         self._by_gid: dict[str, Download] = {}
         self.rationed_hosts: set[str] = set()   # serveurs qui ont répondu 429 / 503 (cette session)
+        from .videos import VideoRunner
+        self.videos = VideoRunner(self)
         self._listeners: list[Callable] = []
         self.engine: Optional[Engine] = None
         self.engine_error = ""
@@ -345,24 +359,28 @@ class Manager:
         self._load()
         self.engine = Engine(self)
         self.engine.start()
+        for d in self.downloads:
+            if d.kind == "video" and d.state in ("waiting", "active"):
+                self.videos.start(d)
 
     def _engine_ready(self):
         self.engine_ready = True
         for d in self.downloads:
-            if d.state in UNFINISHED:
+            if d.kind == "http" and d.state in UNFINISHED:
                 self._submit_add(d, paused=d.state == "paused")
         self._emit("engine")
 
     def _engine_failed(self, message: str):
         self.engine_error = message
         for d in self.downloads:
-            if d.state in ("waiting", "active"):
+            if d.kind == "http" and d.state in ("waiting", "active"):
                 d.state = "paused"
         self._emit("engine")
 
     def shutdown(self):
         """Quitter : l'état est enregistré tel quel, les téléchargements reprendront au lancement."""
         self.save()
+        self.videos.shutdown()
         if self.engine is not None:
             self.engine.stop()
             self.engine.join(6)
@@ -425,6 +443,18 @@ class Manager:
         self.save_soon()
         return d
 
+    def add_video(self, url: str, options: dict, folder: str = "") -> Download:
+        """Vidéo / audio / playlist avec yt-dlp (options : voir videos.format_args)."""
+        from ..settings import download_dir
+        d = Download(url.strip(), folder or download_dir())
+        d.kind = "video"
+        d.options = dict(options)
+        self.downloads.append(d)
+        self._emit("added", d)
+        self.videos.start(d)
+        self.save_soon()
+        return d
+
     def _submit_add(self, d: Download, paused: bool = False):
         if self.engine is None:
             return
@@ -464,7 +494,9 @@ class Manager:
             return
         d.state, d.speed = "paused", 0
         d.intent_until = time.monotonic() + 1.5
-        if d.gid and self.engine:
+        if d.kind == "video":
+            self.videos.pause(d)
+        elif d.gid and self.engine:
             gid = d.gid
             self.engine.submit(lambda rpc: rpc.call("aria2.forcePause", gid))
         self._emit("changed", d)
@@ -475,7 +507,9 @@ class Manager:
             return
         d.state = "waiting"
         d.intent_until = time.monotonic() + 1.5
-        if d.gid and self.engine:
+        if d.kind == "video":
+            self.videos.start(d)
+        elif d.gid and self.engine:
             gid = d.gid
             self.engine.submit(lambda rpc: rpc.call("aria2.unpause", gid))
         elif self.engine_ready:
@@ -499,7 +533,9 @@ class Manager:
             self._by_gid.pop(d.gid, None)
         d.gid, d.state, d.error, d.error_code, d.speed = "", "waiting", "", "", 0
         d.auto_retries = 0
-        if self.engine_ready:
+        if d.kind == "video":
+            self.videos.start(d)
+        elif self.engine_ready:
             self._submit_add(d)
         self._emit("changed", d)
         self.save_soon()
@@ -520,7 +556,10 @@ class Manager:
         if gid:
             self._by_gid.pop(gid, None)
         if d.state != "complete":
-            self._submit_remove(gid, d.path)
+            if d.kind == "video":
+                self.videos.cancel(d)
+            else:
+                self._submit_remove(gid, d.path)
         self._emit("removed", d)
         self.save_soon()
 

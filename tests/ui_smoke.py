@@ -15,6 +15,9 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "tests"))
 TMP = tempfile.mkdtemp(prefix="ithaca-ui-")
+# yt-dlp et Deno réels (voir tests/test_videos.py), pris dans le vrai dossier personnel
+os.environ.setdefault("ITHACA_BIN_DIR", os.environ.get("ITHACA_TEST_TOOLS")
+                      or os.path.expanduser("~/.cache/ithaca-test-tools"))
 os.environ["HOME"] = os.path.join(TMP, "home")
 os.environ["XDG_CONFIG_HOME"] = os.path.join(TMP, "home", ".config")
 os.environ["XDG_CACHE_HOME"] = os.path.join(TMP, "home", ".cache")
@@ -51,6 +54,11 @@ for name, size in (("petit.bin", 50_000), ("autre.bin", 80_000), ("lent.bin", 3_
                    ("à la corbeille.txt", 1000)):
     with open(os.path.join(SRV, name), "wb") as fh:
         fh.write(os.urandom(size))
+import subprocess  # noqa: E402
+
+subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", "testsrc=size=640x360:rate=25",
+                "-f", "lavfi", "-i", "sine=frequency=440", "-t", "3", "-c:v", "libx264", "-pix_fmt", "yuv420p",
+                "-c:a", "aac", os.path.join(SRV, "clip.mp4")], check=True)
 fast = Server(SRV)
 slow = Server(SRV, rate=50_000)
 settings.data["download_dir"] = OUT
@@ -366,6 +374,69 @@ def annuler_en_cours(win):
     win.activate_action("win.dl-remove", GLib.Variant.new_string(d.id))
     yield Wait(5, until=lambda: not os.path.exists(path))
     check(not os.path.exists(path) and not os.path.exists(path + ".aria2"), "annulé : fichier partiel supprimé")
+
+
+@step
+def video(win):
+    from ithaca.backend import tools
+    from ithaca.ui.video_dialog import VideoDialog
+    check(win.video_btn.get_visible(), "bouton « Vidéo / audio »")
+    if not tools.installed("yt-dlp"):
+        print("- yt-dlp absent : étapes vidéo sautées")
+        return
+    win.open_video(fast.url("clip.mp4"))
+    yield Wait(30, until=lambda: any(isinstance(w, VideoDialog) and w.stack.get_visible_child_name() != "loading"
+                                     for w in dialogs(win)))
+    ds = [w for w in dialogs(win) if isinstance(w, VideoDialog)]
+    check(len(ds) == 1 and ds[0].stack.get_visible_child_name() == "options", "fenêtre de choix vidéo")
+    if not ds:
+        return
+    dlg = ds[0]
+    check(dlg.container.get_visible() and not dlg.audio.get_visible(), "mode vidéo : format vidéo proposé")
+    dlg.mode.set_selected(1)
+    yield pump(0.2)
+    check(dlg.audio.get_visible() and not dlg.container.get_visible(), "audio seul : format audio proposé")
+    dlg.mode.set_selected(0)
+    dlg.go.emit("clicked")
+    yield Wait(60, until=lambda: find(win, "clip.mp4") and find(win, "clip.mp4").state in ("complete", "error"))
+    d = find(win, "clip.mp4")
+    check(d is not None and d.state == "complete", "vidéo téléchargée")
+    if d:
+        row = win.rows[d.id]
+        check(row.kind.get_visible(), "icône vidéo sur la carte")
+        check(os.path.isfile(os.path.join(OUT, "clip.mp4")), "vidéo dans le dossier de téléchargement")
+        check(not [f for f in os.listdir(OUT) if f.startswith(".ithaca-")], "dossier caché retiré")
+
+
+@step
+def video_erreur(win):
+    from ithaca.backend import tools
+    from ithaca.ui.video_dialog import VideoDialog
+    if not tools.installed("yt-dlp"):
+        return
+    win.open_video(fast.url("absent.mp4"))
+    yield Wait(30, until=lambda: any(isinstance(w, VideoDialog) and w.stack.get_visible_child_name() != "loading"
+                                     for w in dialogs(win)))
+    ds = [w for w in dialogs(win) if isinstance(w, VideoDialog)]
+    check(ds and ds[0].stack.get_visible_child_name() == "error", "adresse illisible : page d'erreur")
+    for w in ds:
+        w.close()
+
+
+@step
+def preferences_videos(win):
+    app.activate_action("preferences", None)
+    yield pump(0.8)
+    ds = [w for w in dialogs(win) if isinstance(w, Adw.PreferencesWindow)]
+    if ds:
+        ds[0].set_visible_page_name("videos")
+        yield Wait(10, until=lambda: all(r.get_subtitle() != "…" for r in ds[0].tool_rows.values()))
+        check(all(r.get_subtitle() != "…" for r in ds[0].tool_rows.values()), "versions des composants lues")
+        ds[0].close()
+    features.set_enabled("videos", False)
+    yield pump(0.2)
+    check(not win.video_btn.get_visible(), "vidéos désactivées : bouton masqué")
+    features.set_enabled("videos", True)
 
 
 @step

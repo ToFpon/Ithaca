@@ -42,6 +42,9 @@ def setUpModule():
     with open(os.path.join(MEDIA, "page.html"), "w") as fh:
         fh.write('<html><head><title>Ma page vidéo</title></head><body>'
                  '<video src="clip1.mp4"></video><video src="clip2.mp4"></video></body></html>')
+    with open(os.path.join(MEDIA, "longue.html"), "w") as fh:
+        fh.write('<html><head><title>Ma page longue</title></head><body>'
+                 '<video src="clip1.mp4"></video><video src="long.mp4"></video></body></html>')
     if not tools.installed("yt-dlp"):
         try:
             tools.install("yt-dlp")
@@ -225,6 +228,21 @@ class VideoTest(unittest.TestCase):
         self.assertEqual(len(files), 2, files)
         self.assertTrue(files[0].startswith("001 - ") and files[1].startswith("002 - "), files)
         self.assertEqual(d.item_count, 2)
+
+    def test_cancel_playlist_keeps_finished(self):
+        """Playlist annulée pendant le 2e élément : le 1er (terminé) est gardé, le partiel supprimé."""
+        self.server.set_rate(150_000)
+        m = self.manager()
+        d = m.add_video(self.server.url("longue.html"), self.opts(playlist=True, title="Ma page longue"), self.out)
+        self.assertTrue(wait(lambda: d.item_index == 2 and d.done > 50_000, 60), d.state + " " + d.error)
+        self.assertEqual(len(d.options.get("done_files", [])), 1)
+        m.remove(d)
+        self.assertTrue(wait(lambda: not os.path.exists(videos.workdir(d)), 10))
+        self.assertIn(("kept", d), self.events)
+        self.assertEqual(os.listdir(self.out), ["Ma page longue"])
+        files = os.listdir(os.path.join(self.out, "Ma page longue"))
+        self.assertEqual(len(files), 1, files)
+        self.assertTrue(files[0].startswith("001 - ") and files[0].endswith(".mp4"), files)
 
     def test_cancel_removes_workdir_only(self):
         self.server.set_rate(100_000)

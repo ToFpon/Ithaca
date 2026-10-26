@@ -264,6 +264,7 @@ class Job(threading.Thread):
             _post(self.runner._item, self.d, int(_num(idx)), int(_num(count)), title)
         elif line.startswith("ITHACA-F "):
             self.files.append(line[9:])
+            _post(self.runner._file, self.d, line[9:])
         elif line.strip():
             self.tail = (self.tail + [line])[-40:]
 
@@ -326,7 +327,7 @@ class VideoRunner:
             job.signal("cancel")
             GLib.timeout_add(4000, lambda: (job.kill(), False)[1])
         else:
-            remove_workdir(d)
+            self._cancel_cleanup(d)
 
     def shutdown(self, timeout: float = 5.0):
         for job in list(self.jobs.values()):
@@ -347,6 +348,42 @@ class VideoRunner:
             d.done, d.total, d.speed = done, max(total, done), speed
         self.manager._emit("changed", d)
 
+    def _file(self, d, path: str):
+        """Élément terminé (après déplacement par yt-dlp) : noté dans l'état, pour le garder si la
+        playlist est annulée, même après un redémarrage d'Ithaca."""
+        rel = os.path.relpath(path, workdir(d))
+        if not rel.startswith(".."):
+            done = d.options.setdefault("done_files", [])
+            if rel not in done:
+                done.append(rel)
+                self.manager.save_soon()
+
+    def _cancel_cleanup(self, d):
+        """Annulation : les éléments terminés d'une playlist sont rangés (sous-dossier), le reste supprimé."""
+        keep = set(d.options.get("done_files") or [])
+        w = workdir(d)
+        if not keep or not os.path.isdir(w) or os.path.islink(w):
+            remove_workdir(d)
+            return
+        for root, dirs, files in os.walk(w, topdown=False):
+            for f in files:
+                p = os.path.join(root, f)
+                if os.path.relpath(p, w) not in keep:
+                    os.remove(p)
+            for sub in dirs:
+                try:
+                    os.rmdir(os.path.join(root, sub))           # vide seulement
+                except OSError:
+                    pass
+        if not os.listdir(w):
+            remove_workdir(d)
+            return
+        try:
+            self._collect(d)
+        except OSError:
+            return
+        self.manager._emit("kept", d)
+
     def _item(self, d, index, count, title):
         d.item_index, d.item_count, d.item_title = index, count, title
         if title and not d.options.get("playlist") and not d.options.get("title"):
@@ -358,7 +395,7 @@ class VideoRunner:
         self.jobs.pop(d.id, None)
         d.speed = 0
         if job.stopping == "cancel":
-            remove_workdir(d)
+            self._cancel_cleanup(d)
         elif job.stopping in ("pause", "quit"):
             pass                                    # .part gardés : reprise plus tard
         elif code == 0 or (d.options.get("playlist") and self._has_results(d)):

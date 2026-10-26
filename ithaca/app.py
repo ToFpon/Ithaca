@@ -135,7 +135,7 @@ class IthacaApp(Adw.Application):
                                 issue_url="https://github.com/ToFpon/Ithaca/issues",
                                 license_type=Gtk.License.GPL_3_0)
         about.add_credit_section(tr("Basé sur"), [tr("Varia, de Giant Pink Robots https://github.com/giantpinkrobots/varia")])
-        about.add_acknowledgement_section(tr("Moteurs"), ["aria2", "yt-dlp", "Deno", "FFmpeg"])
+        about.add_acknowledgement_section(tr("Moteurs"), ["aria2", "yt-dlp", "Deno", "FFmpeg", "libtorrent"])
         about.present()
 
     # -- notifications -----------------------------------------------------------------

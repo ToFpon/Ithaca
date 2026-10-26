@@ -9,10 +9,10 @@ from gi.repository import Gio, GLib, Gtk, Pango  # noqa: E402
 
 from .. import format as fmt  # noqa: E402
 from ..backend.downloads import AUTO_RETRIES, Download, http_status  # noqa: E402
-from ..i18n import decimal, tr  # noqa: E402
+from ..i18n import decimal, ntr, tr  # noqa: E402
 from .common import popup_menu, shown  # noqa: E402
 
-STATE_ICONS = {"complete": "object-select-symbolic", "error": "dialog-error-symbolic",
+STATE_ICONS = {"complete": "object-select-symbolic", "seeding": "go-up-symbolic", "error": "dialog-error-symbolic",
                "paused": "media-playback-pause-symbolic", "waiting": "content-loading-symbolic"}
 
 
@@ -39,6 +39,11 @@ def status_text(d: Download) -> str:
     """Seconde ligne de la carte : où en est le téléchargement."""
     if d.state == "complete":
         return tr("{0} — Terminé").format(fmt.size(d.total or d.done))
+    if d.state == "seeding":
+        from ..backend.torrents import ratio
+        return tr("En partage — ratio {0} — ↑ {1} — {2}").format(
+            decimal(ratio(d), 2), fmt.speed(d.upload_speed),
+            ntr("{0} pair", "{0} pairs", d.peers).format(d.peers))
     if d.state == "error":
         reason = error_text(d)
         return tr("Échec : {0}").format(reason) if reason else tr("Échec")
@@ -53,6 +58,16 @@ def status_text(d: Download) -> str:
     item = ""
     if d.kind == "video" and d.item_count > 1 and d.item_index:
         item = tr("Élément {0} sur {1}").format(d.item_index, d.item_count) + " — "
+    if d.kind == "torrent" and d.phase == "metadata":
+        return tr("Recherche des informations du torrent…")
+    if d.kind == "torrent" and d.phase == "checking":
+        return tr("Vérification des fichiers…")
+    if d.kind == "torrent":
+        parts = [progress, "↓ " + fmt.speed(d.speed), "↑ " + fmt.speed(d.upload_speed),
+                 ntr("{0} pair", "{0} pairs", d.peers).format(d.peers)]
+        if d.eta >= 0:
+            parts.append(tr("{0} restantes").format(fmt.duration(d.eta)))
+        return " — ".join(parts)
     if d.kind == "video" and d.phase == "start":
         return item + tr("Préparation…")
     if d.kind == "video" and d.phase == "process":
@@ -64,6 +79,8 @@ def status_text(d: Download) -> str:
 
 
 def kind_icon(d: Download) -> str:
+    if d.kind == "torrent":
+        return "network-workgroup-symbolic"
     if d.kind != "video":
         return ""
     if d.options.get("playlist"):
@@ -133,7 +150,7 @@ class DownloadRow(Gtk.ListBoxRow):
         self.set_tooltip_text(shown(d.path or d.url))
         self.status.set_label(shown(status_text(d)))
         self.percent.set_label(percent_text(d))
-        self.percent.set_visible(bool(self.percent.get_label()) and d.state != "complete")
+        self.percent.set_visible(bool(self.percent.get_label()) and d.state not in ("complete", "seeding"))
         running = d.state == "active"
         self.spinner.set_visible(running)
         self.spinner.set_spinning(running)
@@ -142,13 +159,16 @@ class DownloadRow(Gtk.ListBoxRow):
         self.kind.set_from_icon_name(kind_icon(d) or None)
         self.kind.set_visible(bool(kind_icon(d)))
         self.bar.set_fraction(d.fraction)
-        self.bar.set_visible(d.state not in ("complete", "error"))
+        self.bar.set_visible(d.state not in ("complete", "error", "seeding"))
         for cls, on in (("error", d.state == "error"), ("complete", d.state == "complete")):
             (self.card.add_css_class if on else self.card.remove_css_class)(cls)
 
         if d.state == "complete":
             main = ("document-open-symbolic", tr("Ouvrir"), "win.dl-open")
             close = ("window-close-symbolic", tr("Retirer de la liste"), "win.dl-remove", False)
+        elif d.state == "seeding":
+            main = ("document-open-symbolic", tr("Ouvrir"), "win.dl-open")
+            close = ("media-playback-stop-symbolic", tr("Arrêter le partage"), "win.dl-stop-seed", False)
         elif d.state == "error":
             main = ("view-refresh-symbolic", tr("Réessayer"), "win.dl-retry")
             close = ("window-close-symbolic", tr("Retirer de la liste"), "win.dl-remove", False)
@@ -188,7 +208,7 @@ class DownloadRow(Gtk.ListBoxRow):
             return it
         menu = Gio.Menu()
         first = Gio.Menu()
-        if d.state == "complete":
+        if d.state in ("complete", "seeding"):
             first.append_item(item(tr("Ouvrir"), "win.dl-open"))
         if d.name:
             first.append_item(item(tr("Afficher dans le dossier"), "win.dl-show"))
@@ -198,13 +218,15 @@ class DownloadRow(Gtk.ListBoxRow):
             first.append_item(item(tr("Reprendre"), "win.dl-resume"))
         elif d.state == "error":
             first.append_item(item(tr("Réessayer"), "win.dl-retry"))
+        elif d.state == "seeding":
+            first.append_item(item(tr("Arrêter le partage"), "win.dl-stop-seed"))
         menu.append_section(None, first)
         second = Gio.Menu()
         second.append_item(item(tr("Copier l'adresse"), "win.dl-copy-url"))
         second.append_item(item(tr("Détails"), "win.dl-details"))
         menu.append_section(None, second)
         third = Gio.Menu()
-        if d.state == "complete":
+        if d.state in ("complete", "seeding"):
             third.append_item(item(tr("Retirer de la liste"), "win.dl-remove"))
             third.append_item(item(tr("Mettre à la corbeille"), "win.dl-trash"))
         else:

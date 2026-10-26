@@ -31,7 +31,7 @@ msgstr ""
 msgid "Téléchargement terminé"
 msgstr ""
 
-#: ithaca/app.py:154 ithaca/ui/row.py:194
+#: ithaca/app.py:154 ithaca/ui/row.py:214
 msgid "Afficher dans le dossier"
 msgstr ""
 
@@ -47,11 +47,19 @@ msgstr ""
 msgid "Télécharger des vidéos, de la musique et des playlists (YouTube et plus de mille sites) avec yt-dlp, installé et tenu à jour par Ithaca"
 msgstr ""
 
-#: ithaca/features.py:34
-msgid "Notifications"
+#: ithaca/features.py:34 ithaca/ui/preferences.py:204
+msgid "Torrents"
 msgstr ""
 
 #: ithaca/features.py:35
+msgid "Fichiers .torrent et liens magnet avec libtorrent : choix des fichiers, partage jusqu'au ratio choisi, chiffrement"
+msgstr ""
+
+#: ithaca/features.py:38
+msgid "Notifications"
+msgstr ""
+
+#: ithaca/features.py:39
 msgid "Prévenir quand un téléchargement est terminé ou a échoué, fenêtre fermée ou non"
 msgstr ""
 
@@ -99,7 +107,7 @@ msgstr ""
 msgid "{0} min"
 msgstr ""
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:52
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:57
 msgid "En attente"
 msgstr ""
 
@@ -107,351 +115,475 @@ msgstr ""
 msgid "En cours"
 msgstr ""
 
-#: ithaca/ui/details.py:19 ithaca/ui/row.py:48
+#: ithaca/ui/details.py:19 ithaca/ui/row.py:53
 msgid "En pause"
 msgstr ""
 
-#: ithaca/ui/details.py:20
+#: ithaca/ui/details.py:20 ithaca/ui/window.py:25
+msgid "En partage"
+msgstr ""
+
+#: ithaca/ui/details.py:21
 msgid "Terminé"
 msgstr ""
 
-#: ithaca/ui/details.py:20 ithaca/ui/row.py:44
+#: ithaca/ui/details.py:21 ithaca/ui/row.py:49
 msgid "Échec"
 msgstr ""
 
-#: ithaca/ui/details.py:37
+#: ithaca/ui/details.py:38
 msgid "Nom"
 msgstr ""
 
-#: ithaca/ui/details.py:38
+#: ithaca/ui/details.py:39
 msgid "Dossier"
 msgstr ""
 
-#: ithaca/ui/details.py:43
+#: ithaca/ui/details.py:44
 msgid "Adresse"
 msgstr ""
 
-#: ithaca/ui/details.py:51
+#: ithaca/ui/details.py:52
 msgid "État"
 msgstr ""
 
-#: ithaca/ui/details.py:52
+#: ithaca/ui/details.py:53
 msgid "Choix"
 msgstr ""
 
-#: ithaca/ui/details.py:53
+#: ithaca/ui/details.py:54
 msgid "Taille"
 msgstr ""
 
-#: ithaca/ui/details.py:54
+#: ithaca/ui/details.py:55
 msgid "Téléchargé"
 msgstr ""
 
-#: ithaca/ui/details.py:55 ithaca/ui/preferences.py:95
+#: ithaca/ui/details.py:56 ithaca/ui/preferences.py:96
 msgid "Vitesse"
 msgstr ""
 
-#: ithaca/ui/details.py:56
+#: ithaca/ui/details.py:57
 msgid "Temps restant"
 msgstr ""
 
-#: ithaca/ui/details.py:57
+#: ithaca/ui/details.py:58
 msgid "Connexions"
 msgstr ""
 
+#: ithaca/ui/details.py:59
+msgid "Envoyé"
+msgstr ""
+
+#: ithaca/ui/details.py:60 ithaca/ui/preferences.py:214
+msgid "Ratio"
+msgstr ""
+
 #: ithaca/ui/details.py:61
+msgid "Pairs"
+msgstr ""
+
+#: ithaca/ui/details.py:65
 msgid "Ajouté le"
 msgstr ""
 
-#: ithaca/ui/details.py:62
+#: ithaca/ui/details.py:66
 msgid "Terminé le"
 msgstr ""
 
-#: ithaca/ui/details.py:77 ithaca/ui/window.py:227
+#: ithaca/ui/details.py:81 ithaca/ui/window.py:253
 msgid "Adresse copiée"
 msgstr ""
 
-#: ithaca/ui/details.py:25 ithaca/ui/row.py:111
+#: ithaca/ui/details.py:26 ithaca/ui/row.py:128
 msgid "Détails du téléchargement"
 msgstr ""
 
-#: ithaca/ui/details.py:36
+#: ithaca/ui/details.py:37 ithaca/ui/torrent_dialog.py:171
 msgid "Fichier"
 msgstr ""
 
-#: ithaca/ui/details.py:39
+#: ithaca/ui/details.py:40
 msgid "Ouvrir le dossier"
 msgstr ""
 
-#: ithaca/ui/details.py:44 ithaca/ui/row.py:203
+#: ithaca/ui/details.py:45 ithaca/ui/row.py:225
 msgid "Copier l'adresse"
 msgstr ""
 
-#: ithaca/ui/details.py:50
+#: ithaca/ui/details.py:51
 msgid "Progression"
 msgstr ""
 
-#: ithaca/ui/details.py:60
+#: ithaca/ui/details.py:64
 msgid "Dates"
 msgstr ""
 
-#: ithaca/ui/details.py:91
+#: ithaca/ui/details.py:95
 msgid "Inconnue"
 msgstr ""
 
-#: ithaca/ui/details.py:96
+#: ithaca/ui/details.py:100
 msgid "Inconnu"
 msgstr ""
 
-#: ithaca/ui/preferences.py:68
+#: ithaca/ui/details.py:113
+msgid "Source"
+msgstr ""
+
+#: ithaca/ui/preferences.py:69
 msgid "Style"
 msgstr ""
 
-#: ithaca/ui/preferences.py:100
+#: ithaca/ui/preferences.py:101
 msgid "Limiter la vitesse"
 msgstr ""
 
-#: ithaca/ui/preferences.py:101
+#: ithaca/ui/preferences.py:102
 msgid "Vitesse maximale (Ko/s)"
 msgstr ""
 
-#: ithaca/ui/preferences.py:102
+#: ithaca/ui/preferences.py:103
 msgid "Pour tous les téléchargements ensemble"
 msgstr ""
 
-#: ithaca/ui/preferences.py:113 ithaca/ui/preferences.py:84
+#: ithaca/ui/preferences.py:114 ithaca/ui/preferences.py:85
 msgid "Dossier de téléchargement"
 msgstr ""
 
-#: ithaca/ui/preferences.py:191
+#: ithaca/ui/preferences.py:192
 msgid "Recherche…"
 msgstr ""
 
-#: ithaca/ui/preferences.py:206
+#: ithaca/ui/preferences.py:208
+msgid "Partager"
+msgstr ""
+
+#: ithaca/ui/preferences.py:288
 msgid "Utiliser l'authentification"
 msgstr ""
 
-#: ithaca/ui/preferences.py:207
+#: ithaca/ui/preferences.py:289
 msgid "Nom d'utilisateur"
 msgstr ""
 
-#: ithaca/ui/preferences.py:208
+#: ithaca/ui/preferences.py:290
 msgid "Mot de passe"
 msgstr ""
 
-#: ithaca/ui/preferences.py:239 ithaca/ui/preferences.py:219
+#: ithaca/ui/preferences.py:321 ithaca/ui/preferences.py:301
 msgid "Fichier de cookies"
 msgstr ""
 
-#: ithaca/ui/preferences.py:57 ithaca/ui/window.py:96 ithaca/ui/window.py:82
+#: ithaca/ui/preferences.py:57 ithaca/ui/window.py:112 ithaca/ui/window.py:98
 msgid "Préférences"
 msgstr ""
 
-#: ithaca/ui/preferences.py:66
+#: ithaca/ui/preferences.py:67
 msgid "Général"
 msgstr ""
 
-#: ithaca/ui/preferences.py:67
+#: ithaca/ui/preferences.py:68
 msgid "Apparence"
 msgstr ""
 
-#: ithaca/ui/preferences.py:68 ithaca/ui/preferences.py:74
+#: ithaca/ui/preferences.py:69 ithaca/ui/preferences.py:75
 msgid "Comme le système"
 msgstr ""
 
-#: ithaca/ui/preferences.py:68
+#: ithaca/ui/preferences.py:69
 msgid "Clair"
 msgstr ""
 
-#: ithaca/ui/preferences.py:68
+#: ithaca/ui/preferences.py:69
 msgid "Sombre"
 msgstr ""
 
-#: ithaca/ui/preferences.py:73
+#: ithaca/ui/preferences.py:74
 msgid "Langue"
 msgstr ""
 
-#: ithaca/ui/preferences.py:75
+#: ithaca/ui/preferences.py:76
 msgid "Appliquée au prochain démarrage"
 msgstr ""
 
-#: ithaca/ui/preferences.py:81
+#: ithaca/ui/preferences.py:82
 msgid "Téléchargements"
 msgstr ""
 
-#: ithaca/ui/preferences.py:83
+#: ithaca/ui/preferences.py:84
 msgid "Emplacement"
 msgstr ""
 
-#: ithaca/ui/preferences.py:86 ithaca/ui/video_dialog.py:179
+#: ithaca/ui/preferences.py:87 ithaca/ui/torrent_dialog.py:147 ithaca/ui/video_dialog.py:179
 msgid "Choisir le dossier"
 msgstr ""
 
-#: ithaca/ui/preferences.py:92
+#: ithaca/ui/preferences.py:93
 msgid "Toujours demander où enregistrer"
 msgstr ""
 
-#: ithaca/ui/preferences.py:96
+#: ithaca/ui/preferences.py:97
 msgid "Téléchargements simultanés"
 msgstr ""
 
-#: ithaca/ui/preferences.py:98
+#: ithaca/ui/preferences.py:99
 msgid "Connexions par fichier"
 msgstr ""
 
-#: ithaca/ui/preferences.py:118
+#: ithaca/ui/preferences.py:119
 msgid "Vidéos"
 msgstr ""
 
-#: ithaca/ui/preferences.py:119
+#: ithaca/ui/preferences.py:120
 msgid "Choix proposés"
 msgstr ""
 
-#: ithaca/ui/preferences.py:120
+#: ithaca/ui/preferences.py:121
 msgid "Préselectionnés dans la fenêtre de choix, qui retient aussi vos derniers choix"
 msgstr ""
 
-#: ithaca/ui/preferences.py:122 ithaca/ui/video_dialog.py:148
+#: ithaca/ui/preferences.py:123 ithaca/ui/video_dialog.py:148
 msgid "Type"
 msgstr ""
 
-#: ithaca/ui/preferences.py:124
+#: ithaca/ui/preferences.py:125
 msgid "Qualité maximale"
 msgstr ""
 
-#: ithaca/ui/preferences.py:126
+#: ithaca/ui/preferences.py:127
 msgid "Format vidéo"
 msgstr ""
 
-#: ithaca/ui/preferences.py:127
+#: ithaca/ui/preferences.py:128
 msgid "MP4 se lit partout ; MKV garde les pistes d'origine"
 msgstr ""
 
-#: ithaca/ui/preferences.py:128 ithaca/ui/video_dialog.py:164
+#: ithaca/ui/preferences.py:129 ithaca/ui/video_dialog.py:164
 msgid "Format audio"
 msgstr ""
 
-#: ithaca/ui/preferences.py:132
+#: ithaca/ui/preferences.py:133
 msgid "YouTube"
 msgstr ""
 
-#: ithaca/ui/preferences.py:134
+#: ithaca/ui/preferences.py:135
 msgid "Cookies du navigateur"
 msgstr ""
 
-#: ithaca/ui/preferences.py:136
+#: ithaca/ui/preferences.py:137
 msgid "Si YouTube demande de confirmer que vous n'êtes pas un robot : le navigateur où vous êtes connecté à YouTube"
 msgstr ""
 
-#: ithaca/ui/preferences.py:140
+#: ithaca/ui/preferences.py:141
 msgid "Composants"
 msgstr ""
 
-#: ithaca/ui/preferences.py:141
+#: ithaca/ui/preferences.py:142
 msgid "Installés dans votre dossier personnel depuis leurs pages GitHub officielles, somme de contrôle vérifiée"
 msgstr ""
 
-#: ithaca/ui/preferences.py:151
+#: ithaca/ui/preferences.py:152
 msgid "Mises à jour"
 msgstr ""
 
-#: ithaca/ui/preferences.py:154
+#: ithaca/ui/preferences.py:155
 msgid "Mettre à jour automatiquement"
 msgstr ""
 
-#: ithaca/ui/preferences.py:155
+#: ithaca/ui/preferences.py:156
 msgid "Une vérification par jour ; YouTube change souvent et yt-dlp doit suivre"
 msgstr ""
 
-#: ithaca/ui/preferences.py:180 ithaca/ui/tools_dialog.py:32
+#: ithaca/ui/preferences.py:181 ithaca/ui/tools_dialog.py:32
 msgid "Installer"
 msgstr ""
 
-#: ithaca/ui/preferences.py:180
+#: ithaca/ui/preferences.py:181
 msgid "Rechercher"
 msgstr ""
 
-#: ithaca/ui/preferences.py:203
+#: ithaca/ui/preferences.py:205
+msgid "Partage"
+msgstr ""
+
+#: ithaca/ui/preferences.py:206
+msgid "Après le téléchargement, Ithaca renvoie à son tour des morceaux aux autres (c'est l'esprit du torrent)"
+msgstr ""
+
+#: ithaca/ui/preferences.py:209
+msgid "Jusqu'au ratio choisi"
+msgstr ""
+
+#: ithaca/ui/preferences.py:209
+msgid "Sans limite"
+msgstr ""
+
+#: ithaca/ui/preferences.py:209
+msgid "Jamais"
+msgstr ""
+
+#: ithaca/ui/preferences.py:215
+msgid "1,0 : envoyer autant que reçu"
+msgstr ""
+
+#: ithaca/ui/preferences.py:221
+msgid "Vitesse d'envoi maximale (Ko/s)"
+msgstr ""
+
+#: ithaca/ui/preferences.py:222
+msgid "0 : sans limite"
+msgstr ""
+
+#: ithaca/ui/preferences.py:225
+msgid "Réseau"
+msgstr ""
+
+#: ithaca/ui/preferences.py:226
+msgid "Appliqué tout de suite aux torrents en cours"
+msgstr ""
+
+#: ithaca/ui/preferences.py:227
+msgid "Exiger le chiffrement"
+msgstr ""
+
+#: ithaca/ui/preferences.py:228
+msgid "Refuse les pairs non chiffrés : plus discret, un peu moins de pairs"
+msgstr ""
+
+#: ithaca/ui/preferences.py:229
+msgid "Ouvrir le port automatiquement"
+msgstr ""
+
+#: ithaca/ui/preferences.py:230
+msgid "UPnP / NAT-PMP : la box laisse entrer les autres pairs, c'est plus rapide"
+msgstr ""
+
+#: ithaca/ui/preferences.py:231
+msgid "DHT et échange de pairs"
+msgstr ""
+
+#: ithaca/ui/preferences.py:232
+msgid "Trouver des pairs sans tracker, indispensable pour la plupart des liens magnet"
+msgstr ""
+
+#: ithaca/ui/preferences.py:233
+msgid "Port d'écoute"
+msgstr ""
+
+#: ithaca/ui/preferences.py:237
+msgid "Ouvrir avec Ithaca"
+msgstr ""
+
+#: ithaca/ui/preferences.py:238
+msgid "Liens magnet et fichiers .torrent"
+msgstr ""
+
+#: ithaca/ui/preferences.py:239
+msgid "Utiliser Ithaca"
+msgstr ""
+
+#: ithaca/ui/preferences.py:261
+msgid "Installez d'abord Ithaca (./install.sh)"
+msgstr ""
+
+#: ithaca/ui/preferences.py:266
+msgid "Ithaca les ouvre"
+msgstr ""
+
+#: ithaca/ui/preferences.py:285
 msgid "Connexion"
 msgstr ""
 
-#: ithaca/ui/preferences.py:204
+#: ithaca/ui/preferences.py:286
 msgid "Authentification"
 msgstr ""
 
-#: ithaca/ui/preferences.py:205
+#: ithaca/ui/preferences.py:287
 msgid "Identifiants envoyés aux serveurs HTTP et FTP qui en demandent"
 msgstr ""
 
-#: ithaca/ui/preferences.py:216
+#: ithaca/ui/preferences.py:298
 msgid "Cookies"
 msgstr ""
 
-#: ithaca/ui/preferences.py:217
+#: ithaca/ui/preferences.py:299
 msgid "Fichier cookies.txt (format Netscape) exporté du navigateur, pour les sites où il faut être connecté"
 msgstr ""
 
-#: ithaca/ui/preferences.py:220
+#: ithaca/ui/preferences.py:302
 msgid "Choisir le fichier"
 msgstr ""
 
-#: ithaca/ui/preferences.py:223
+#: ithaca/ui/preferences.py:305
 msgid "Ne plus utiliser"
 msgstr ""
 
-#: ithaca/ui/preferences.py:235 ithaca/ui/preferences.py:134 ithaca/ui/video_dialog.py:169
+#: ithaca/ui/preferences.py:317 ithaca/ui/preferences.py:135 ithaca/ui/torrent_dialog.py:164 ithaca/ui/video_dialog.py:169
 msgid "Aucun"
 msgstr ""
 
-#: ithaca/ui/preferences.py:244
+#: ithaca/ui/preferences.py:326
 msgid "Fonctionnalités"
 msgstr ""
 
-#: ithaca/ui/preferences.py:246
+#: ithaca/ui/preferences.py:328
 msgid "Chaque fonctionnalité s'active ou se coupe tout de suite, sans redémarrer Ithaca"
 msgstr ""
 
-#: ithaca/ui/preferences.py:97
+#: ithaca/ui/preferences.py:98
 msgid "Les suivants attendent leur tour"
 msgstr ""
 
-#: ithaca/ui/preferences.py:99
+#: ithaca/ui/preferences.py:100
 msgid "Plus de connexions accélèrent les serveurs lents (16 au plus par serveur)"
 msgstr ""
 
-#: ithaca/ui/preferences.py:122 ithaca/ui/video_dialog.py:145
+#: ithaca/ui/preferences.py:123 ithaca/ui/video_dialog.py:145
 msgid "Vidéo"
 msgstr ""
 
-#: ithaca/ui/preferences.py:122 ithaca/ui/video_dialog.py:145 ithaca/ui/video_dialog.py:145
+#: ithaca/ui/preferences.py:123 ithaca/ui/video_dialog.py:145 ithaca/ui/video_dialog.py:145
 msgid "Audio seul"
 msgstr ""
 
-#: ithaca/ui/preferences.py:125 ithaca/ui/video_dialog.py:152
+#: ithaca/ui/preferences.py:234
+msgid "0 : choisi au hasard au premier torrent"
+msgstr ""
+
+#: ithaca/ui/preferences.py:126 ithaca/ui/video_dialog.py:152
 msgid "Meilleure"
 msgstr ""
 
-#: ithaca/ui/preferences.py:175
+#: ithaca/ui/preferences.py:176
 msgid "Non installé"
 msgstr ""
 
-#: ithaca/ui/preferences.py:197
+#: ithaca/ui/preferences.py:198
 msgid "yt-dlp et Deno sont à jour"
 msgstr ""
 
-#: ithaca/ui/preferences.py:240
+#: ithaca/ui/preferences.py:267
+msgid "Ouverts par : {0}"
+msgstr ""
+
+#: ithaca/ui/preferences.py:268
+msgid "aucune application"
+msgstr ""
+
+#: ithaca/ui/preferences.py:322
 msgid "Fichiers texte"
 msgstr ""
 
-#: ithaca/ui/preferences.py:240
+#: ithaca/ui/preferences.py:322
 msgid "Tous les fichiers"
 msgstr ""
 
-#: ithaca/ui/preferences.py:175
+#: ithaca/ui/preferences.py:176
 msgid "Version {0}"
 msgstr ""
 
-#: ithaca/ui/preferences.py:253
+#: ithaca/ui/preferences.py:335
 msgid "Manquant : {0}"
 msgstr ""
 
@@ -515,15 +647,23 @@ msgstr ""
 msgid "le serveur refuse trop de requêtes, réessayez dans quelques minutes"
 msgstr ""
 
-#: ithaca/ui/row.py:80
+#: ithaca/ui/row.py:62 ithaca/ui/torrent_dialog.py:57
+msgid "Recherche des informations du torrent…"
+msgstr ""
+
+#: ithaca/ui/row.py:64
+msgid "Vérification des fichiers…"
+msgstr ""
+
+#: ithaca/ui/row.py:97
 msgid "meilleure qualité"
 msgstr ""
 
-#: ithaca/ui/row.py:57
+#: ithaca/ui/row.py:72
 msgid "Préparation…"
 msgstr ""
 
-#: ithaca/ui/row.py:81
+#: ithaca/ui/row.py:98
 msgid "Vidéo {0} · {1}"
 msgstr ""
 
@@ -531,79 +671,93 @@ msgstr ""
 msgid "{0} — Terminé"
 msgstr ""
 
-#: ithaca/ui/row.py:45 ithaca/ui/tools_dialog.py:83
+#: ithaca/ui/row.py:44
+msgid "En partage — ratio {0} — ↑ {1} — {2}"
+msgstr ""
+
+#: ithaca/ui/row.py:50 ithaca/ui/tools_dialog.py:83
 msgid "{0} sur {1}"
 msgstr ""
 
-#: ithaca/ui/row.py:50
+#: ithaca/ui/row.py:55
 msgid "Nouvelle tentative ({0}/{1})…"
 msgstr ""
 
-#: ithaca/ui/row.py:59
+#: ithaca/ui/row.py:74
 msgid "Conversion…"
 msgstr ""
 
-#: ithaca/ui/row.py:59
+#: ithaca/ui/row.py:74
 msgid "Assemblage…"
 msgstr ""
 
-#: ithaca/ui/row.py:78
+#: ithaca/ui/row.py:95
 msgid "Audio · {0}"
 msgstr ""
 
-#: ithaca/ui/row.py:85
+#: ithaca/ui/row.py:102
 msgid "{0} %"
 msgstr ""
 
-#: ithaca/ui/row.py:150 ithaca/ui/row.py:192
+#: ithaca/ui/row.py:167 ithaca/ui/row.py:170 ithaca/ui/row.py:212
 msgid "Ouvrir"
 msgstr ""
 
-#: ithaca/ui/row.py:151 ithaca/ui/row.py:154 ithaca/ui/row.py:208
+#: ithaca/ui/row.py:168 ithaca/ui/row.py:230 ithaca/ui/row.py:174
 msgid "Retirer de la liste"
 msgstr ""
 
-#: ithaca/ui/row.py:204
+#: ithaca/ui/row.py:226
 msgid "Détails"
 msgstr ""
 
-#: ithaca/ui/row.py:44
+#: ithaca/ui/row.py:46 ithaca/ui/row.py:67
+msgid "{0} pair"
+msgid_plural "{0} pairs"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ithaca/ui/row.py:49
 msgid "Échec : {0}"
 msgstr ""
 
-#: ithaca/ui/row.py:48
+#: ithaca/ui/row.py:53
 msgid "En pause — {0}"
 msgstr ""
 
-#: ithaca/ui/row.py:52
+#: ithaca/ui/row.py:57
 msgid "En attente — {0}"
 msgstr ""
 
-#: ithaca/ui/row.py:55
+#: ithaca/ui/row.py:60
 msgid "Élément {0} sur {1}"
 msgstr ""
 
-#: ithaca/ui/row.py:62
+#: ithaca/ui/row.py:77 ithaca/ui/row.py:69
 msgid "{0} restantes"
 msgstr ""
 
-#: ithaca/ui/row.py:153 ithaca/ui/row.py:200
-msgid "Réessayer"
+#: ithaca/ui/row.py:171 ithaca/ui/row.py:222
+msgid "Arrêter le partage"
 msgstr ""
 
-#: ithaca/ui/row.py:196 ithaca/ui/row.py:159
+#: ithaca/ui/row.py:216 ithaca/ui/row.py:179
 msgid "Mettre en pause"
 msgstr ""
 
-#: ithaca/ui/row.py:209
+#: ithaca/ui/row.py:231
 msgid "Mettre à la corbeille"
 msgstr ""
 
-#: ithaca/ui/row.py:211 ithaca/ui/row.py:157 ithaca/ui/row.py:160
+#: ithaca/ui/row.py:233 ithaca/ui/row.py:177 ithaca/ui/row.py:180
 msgid "Annuler le téléchargement"
 msgstr ""
 
-#: ithaca/ui/row.py:156 ithaca/ui/row.py:198
+#: ithaca/ui/row.py:173 ithaca/ui/row.py:220
+msgid "Réessayer"
+msgstr ""
+
+#: ithaca/ui/row.py:218 ithaca/ui/row.py:176
 msgid "Reprendre"
 msgstr ""
 
@@ -611,7 +765,7 @@ msgstr ""
 msgid "Installer les composants vidéo ?"
 msgstr ""
 
-#: ithaca/ui/tools_dialog.py:31 ithaca/ui/tools_dialog.py:58 ithaca/ui/video_dialog.py:48 ithaca/ui/window.py:253
+#: ithaca/ui/tools_dialog.py:31 ithaca/ui/tools_dialog.py:58 ithaca/ui/torrent_dialog.py:45 ithaca/ui/video_dialog.py:48
 msgid "Annuler"
 msgstr ""
 
@@ -634,6 +788,64 @@ msgstr ""
 #: ithaca/ui/tools_dialog.py:78 ithaca/ui/tools_dialog.py:82
 msgid "Téléchargement de {0}…"
 msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:192 ithaca/ui/torrent_dialog.py:145 ithaca/ui/video_dialog.py:201 ithaca/ui/video_dialog.py:175
+msgid "Enregistrer dans"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:34 ithaca/ui/window.py:142
+msgid "Torrent"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:48 ithaca/ui/video_dialog.py:51 ithaca/ui/video_dialog.py:144 ithaca/ui/window.py:131
+msgid "Télécharger"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:62
+msgid "Torrent illisible"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:231
+msgid "Dossier introuvable"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:59
+msgid "Il faut trouver un premier pair : cela peut prendre un moment."
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:155
+msgid "Nom du dossier"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:155
+msgid "Nom du fichier"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:164
+msgid "Tout"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:76
+msgid "Ce torrent est déjà dans la liste"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:113
+msgid "Ce torrent est déjà dans la liste : {0}"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:203
+msgid "{0} sur {1} — {2} fichiers sur {3}"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:217
+msgid "« {0} » existe déjà : enregistré sous « {1} »"
+msgstr ""
+
+#: ithaca/ui/torrent_dialog.py:162
+msgid "{0} fichier"
+msgid_plural "{0} fichiers"
+msgstr[0] ""
+msgstr[1] ""
 
 #: ithaca/ui/video_dialog.py:28
 msgid "YouTube demande de confirmer que vous n'êtes pas un robot. Choisissez votre navigateur dans Préférences → Vidéos → Cookies du navigateur (il faut y être connecté à YouTube)."
@@ -663,16 +875,8 @@ msgstr ""
 msgid "Intégrés à la vidéo"
 msgstr ""
 
-#: ithaca/ui/video_dialog.py:201 ithaca/ui/video_dialog.py:175 ithaca/ui/window.py:328
-msgid "Enregistrer dans"
-msgstr ""
-
-#: ithaca/ui/video_dialog.py:39 ithaca/ui/window.py:119
+#: ithaca/ui/video_dialog.py:39 ithaca/ui/window.py:135
 msgid "Vidéo / audio"
-msgstr ""
-
-#: ithaca/ui/video_dialog.py:51 ithaca/ui/video_dialog.py:144 ithaca/ui/window.py:115
-msgid "Télécharger"
 msgstr ""
 
 #: ithaca/ui/video_dialog.py:67
@@ -701,132 +905,156 @@ msgstr ""
 msgid "Terminés"
 msgstr ""
 
-#: ithaca/ui/window.py:25
+#: ithaca/ui/window.py:26
 msgid "Échecs"
 msgstr ""
 
-#: ithaca/ui/window.py:87
+#: ithaca/ui/window.py:103
 msgid "Ouvrir le dossier des téléchargements"
 msgstr ""
 
-#: ithaca/ui/window.py:88 ithaca/ui/window.py:162 ithaca/ui/window.py:412
+#: ithaca/ui/window.py:104 ithaca/ui/window.py:188 ithaca/ui/window.py:492
 msgid "Tout mettre en pause"
 msgstr ""
 
-#: ithaca/ui/window.py:89 ithaca/ui/window.py:415
+#: ithaca/ui/window.py:105 ithaca/ui/window.py:495
 msgid "Tout reprendre"
 msgstr ""
 
-#: ithaca/ui/window.py:92
+#: ithaca/ui/window.py:108
 msgid "Effacer les terminés de la liste"
 msgstr ""
 
-#: ithaca/ui/window.py:93 ithaca/ui/window.py:253
+#: ithaca/ui/window.py:109 ithaca/ui/window.py:281
 msgid "Tout annuler"
 msgstr ""
 
-#: ithaca/ui/window.py:97
+#: ithaca/ui/window.py:113
 msgid "À propos d'Ithaca"
 msgstr ""
 
-#: ithaca/ui/window.py:98 ithaca/ui/window.py:459
+#: ithaca/ui/window.py:114 ithaca/ui/window.py:539
 msgid "Quitter"
 msgstr ""
 
-#: ithaca/ui/window.py:250
+#: ithaca/ui/window.py:144 ithaca/ui/window.py:347
+msgid "Ouvrir un fichier .torrent"
+msgstr ""
+
+#: ithaca/ui/window.py:278
 msgid "Annuler tous les téléchargements ?"
 msgstr ""
 
-#: ithaca/ui/window.py:456
+#: ithaca/ui/window.py:536
 msgid "Quitter Ithaca ?"
 msgstr ""
 
-#: ithaca/ui/window.py:106
+#: ithaca/ui/window.py:122
 msgid "Adresse (URL)"
 msgstr ""
 
-#: ithaca/ui/window.py:108
+#: ithaca/ui/window.py:124
 msgid "Coller"
 msgstr ""
 
-#: ithaca/ui/window.py:145
+#: ithaca/ui/window.py:171
 msgid "Vitesse limitée"
 msgstr ""
 
-#: ithaca/ui/window.py:156
+#: ithaca/ui/window.py:182
 msgid "Afficher la barre latérale"
 msgstr ""
 
-#: ithaca/ui/window.py:172
+#: ithaca/ui/window.py:198
 msgid "Aucun téléchargement"
 msgstr ""
 
-#: ithaca/ui/window.py:173
+#: ithaca/ui/window.py:199
 msgid "Collez une adresse dans le champ de gauche, ou glissez un lien dans la fenêtre."
 msgstr ""
 
-#: ithaca/ui/window.py:176 ithaca/ui/window.py:397
+#: ithaca/ui/window.py:202 ithaca/ui/window.py:474
 msgid "Rien ici"
 msgstr ""
 
-#: ithaca/ui/window.py:303
+#: ithaca/ui/window.py:338
 msgid "FFmpeg est nécessaire pour les vidéos"
 msgstr ""
 
-#: ithaca/ui/window.py:101
+#: ithaca/ui/window.py:354
+msgid "Les torrents sont désactivés (Préférences → Fonctionnalités)"
+msgstr ""
+
+#: ithaca/ui/window.py:357
+msgid "libtorrent est nécessaire pour les torrents"
+msgstr ""
+
+#: ithaca/ui/window.py:117
 msgid "Menu principal"
 msgstr ""
 
-#: ithaca/ui/window.py:251
+#: ithaca/ui/window.py:279
 msgid "{0} téléchargement en cours sera arrêté et son fichier partiel supprimé."
 msgid_plural "{0} téléchargements en cours seront arrêtés et leurs fichiers partiels supprimés."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:421
+#: ithaca/ui/window.py:501
 msgid "aria2 est introuvable : sudo apt install aria2"
 msgstr ""
 
-#: ithaca/ui/window.py:457
+#: ithaca/ui/window.py:537
 msgid "{0} téléchargement est en cours. Il reprendra au prochain lancement d'Ithaca."
 msgid_plural "{0} téléchargements sont en cours. Ils reprendront au prochain lancement d'Ithaca."
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:240
+#: ithaca/ui/window.py:268
 msgid "Impossible de mettre le fichier à la corbeille"
 msgstr ""
 
-#: ithaca/ui/window.py:243
+#: ithaca/ui/window.py:271
 msgid "« {0} » a été mis à la corbeille"
 msgstr ""
 
-#: ithaca/ui/window.py:304
+#: ithaca/ui/window.py:339 ithaca/ui/window.py:358
 msgid "Installez-le avec : {0}"
 msgstr ""
 
-#: ithaca/ui/window.py:323
+#: ithaca/ui/window.py:349
+msgid "Fichiers torrent"
+msgstr ""
+
+#: ithaca/ui/window.py:387
 msgid "Adresse non prise en charge : {0}"
 msgid_plural "Adresses non prises en charge : {0}"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:449
+#: ithaca/ui/window.py:529
 msgid "Vitesse limitée à {0}"
 msgstr ""
 
-#: ithaca/ui/window.py:423
+#: ithaca/ui/window.py:503
 msgid "aria2 n'a pas démarré : {0}"
 msgstr ""
 
-#: ithaca/ui/window.py:395
+#: ithaca/ui/window.py:471
 msgid "Aucun téléchargement en cours"
 msgstr ""
 
-#: ithaca/ui/window.py:396
+#: ithaca/ui/window.py:472
 msgid "Aucun téléchargement terminé"
 msgstr ""
 
-#: ithaca/ui/window.py:397
+#: ithaca/ui/window.py:473
+msgid "Aucun torrent en partage"
+msgstr ""
+
+#: ithaca/ui/window.py:474
 msgid "Aucun échec"
+msgstr ""
+
+#: ithaca/ui/window.py:454
+msgid "Playlist annulée : éléments terminés gardés dans « {0} »"
 msgstr ""

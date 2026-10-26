@@ -17,6 +17,7 @@ from .common import DialogWindow, copy_to_clipboard, full_date, open_folder, sho
 from .row import status_text, video_summary  # noqa: E402
 
 STATE_LABELS = {"waiting": tr("En attente"), "active": tr("En cours"), "paused": tr("En pause"),
+                "seeding": tr("En partage"),
                 "complete": tr("Terminé"), "error": tr("Échec")}
 
 
@@ -55,6 +56,9 @@ class DetailsWindow(DialogWindow):
         self.speed = self._row(progress, tr("Vitesse"))
         self.eta = self._row(progress, tr("Temps restant"))
         self.connections = self._row(progress, tr("Connexions"))
+        self.uploaded = self._row(progress, tr("Envoyé"))
+        self.ratio = self._row(progress, tr("Ratio"))
+        self.peers = self._row(progress, tr("Pairs"))
         page.add(progress)
 
         dates = Adw.PreferencesGroup(title=tr("Dates"))
@@ -97,6 +101,16 @@ class DetailsWindow(DialogWindow):
         self.eta.set_visible(active)
         self.connections.set_subtitle(str(d.connections))
         self.connections.set_visible(active and d.kind == "http")
+        torrent = d.kind == "torrent"
+        for row in (self.uploaded, self.ratio, self.peers):
+            row.set_visible(torrent and d.state not in ("complete", "error"))
+        if torrent:
+            from ..backend.torrents import ratio
+            from ..i18n import decimal
+            self.uploaded.set_subtitle(fmt.size(d.uploaded))
+            self.ratio.set_subtitle(decimal(ratio(d), 2))
+            self.peers.set_subtitle(str(d.peers))
+            self.url.set_title(tr("Source"))
         self.choice.set_visible(d.kind == "video")
         if d.kind == "video":
             self.choice.set_subtitle(video_summary(d))

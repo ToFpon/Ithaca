@@ -37,8 +37,9 @@ est une réécriture, pas un portage.
 2. ✅ Vidéos et audio : yt-dlp et Deno en binaires officiels téléchargés et mis à jour par Ithaca
    (~/.local/share/ithaca/bin), ffmpeg d'apt ; fenêtre de choix comme Varia ; playlists dans un
    sous-dossier.
-3. Torrents : python3-libtorrent (choix des fichiers, partage / ratio), .torrent et magnet
-   (Ithaca déclaré pour application/x-bittorrent et x-scheme-handler/magnet). Filtre « En partage ».
+3. ✅ Torrents : python3-libtorrent, fenêtre de choix à chaque torrent (dossier, nom du dossier ou
+   du fichier, fichiers cochés et renommés), partage jusqu'au ratio 1,0, chiffrement exigé, UPnP,
+   DHT ; .torrent et magnet (Préférences → Torrents → « Utiliser Ithaca »). Filtre « En partage ».
 4. Icône de la barre système (AppIndicator), planificateur, actions de fin (éteindre / veille,
    extraction avec le moteur sûr d'Odysseus), mode distant aria2 (RPC vers un NAS).
 Pas d'extension de navigateur (décision de Tof). « Afficher dans le dossier » passe par
@@ -103,6 +104,33 @@ org.freedesktop.FileManager1 (Odysseus s'il a l'option, sinon Nautilus).
   pas les octets. YouTube refuse le bac à sable (adresse de datacenter : « not a bot ») : les tests
   utilisent l'extracteur générique sur des vidéos générées par ffmpeg (une page HTML à deux
   `<video>` = une playlist).
+
+- Playlist annulée : les éléments terminés sont gardés (choix de Tof). Chaque élément fini est noté
+  dans `options["done_files"]` (ligne `after_move`, gardé après un redémarrage) ; `_cancel_cleanup`
+  supprime le reste du dossier caché puis range les terminés (événement `kept`, message).
+
+## Torrents (libtorrent)
+
+- `backend/torrents.py` : une session créée au premier torrent (aucun port ouvert avant), dans la
+  boucle GLib (libtorrent a ses fils, ses appels ne bloquent pas ; relevé toutes les 0,5 s : alertes +
+  `handle.status()` → `Manager._torrent_status`). Port tiré au hasard une fois puis gardé
+  (`torrent_port`, pour l'UPnP). Réglages appliqués en direct (`apply_settings`).
+- Ajout en deux temps : `prepare_file` / `prepare_magnet` → `Pending` (magnet ajouté en
+  `upload_mode` : informations reçues sans rien écrire), fenêtre de choix, puis `start` : priorités
+  (0 = décoché), `renamed_paths` (racine renommée + noms de fichiers), `move_storage` vers le dossier
+  choisi. Fichiers de bourrage (`.pad/…`, libtorrent 2) masqués (`files_of`).
+- Jamais d'écrasement : le nom proposé est libre (`free_name`) et revérifié au lancement — libtorrent
+  reprendrait sinon un fichier existant de l'utilisateur comme données du torrent. Annuler un
+  inachevé : `remove_torrent(delete_files)` (seulement ses fichiers) ; terminé / en partage : gardés.
+- États : `seeding` (fichiers complets, compte dans « Terminés » et « En partage »), puis `complete`
+  quand le ratio est atteint (`seed_mode` ratio / unlimited / never, `seed_ratio`) : torrent retiré
+  de la session, fichiers gardés. Ratio = envoyé / taille voulue.
+- Reprise : données de reprise avec les informations du torrent (`save_info_dict`) dans
+  `~/.local/share/ithaca/torrents/<id>.resume`, écrites au lancement, à la pause, toutes les 30 s si
+  besoin et en quittant (`shutdown` attend les alertes).
+- Tests (`test_torrents.py`, ui_smoke) : vraies sessions sur 127.0.0.1, chiffrement forcé des deux
+  côtés ; `ITHACA_TORRENT_LISTEN` coupe DHT / LSD / UPnP et met `min_reconnect_time` à 1 s (sinon un
+  pair quitté à la pause n'est recontacté qu'après 60 s, sans tracker pour en fournir d'autres).
 
 ## Fichiers : ne jamais écraser, ne supprimer que le nôtre
 

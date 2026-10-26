@@ -148,6 +148,10 @@ class Download:
         self.item_index = 0
         self.item_count = 0
         self.item_title = ""
+        # torrents : envoi, pairs (le ratio vient de libtorrent, gardé dans ses données de reprise)
+        self.upload_speed = 0
+        self.uploaded = 0
+        self.peers = 0
 
     @property
     def path(self) -> str:
@@ -155,6 +159,8 @@ class Download:
 
     @property
     def display_name(self) -> str:
+        if self.kind == "torrent":
+            return self.name or self.options.get("name") or self.url
         if self.kind == "video" and not (self.state == "complete" and self.name):
             return self.options.get("title") or self.name or self.url
         return self.name or name_from_url(self.url)
@@ -337,7 +343,7 @@ class Manager:
         self.engine: Optional[Engine] = None
         self.engine_error = ""
         self.engine_ready = False
-        self.total_speed = 0
+        self._torrents = None
         self._save_timer = 0
         self._last_progress_save = 0.0
         settings.connect(self._on_setting)
@@ -362,6 +368,13 @@ class Manager:
         for d in self.downloads:
             if d.kind == "video" and d.state in ("waiting", "active"):
                 self.videos.start(d)
+            elif d.kind == "torrent" and d.state in ("waiting", "active", "paused", "seeding"):
+                try:
+                    ok = self.torrents.restore(d)
+                except Exception:
+                    ok = False
+                if not ok:
+                    d.state, d.error = "error", d.error or "resume"
 
     def _engine_ready(self):
         self.engine_ready = True
@@ -381,6 +394,8 @@ class Manager:
         """Quitter : l'état est enregistré tel quel, les téléchargements reprendront au lancement."""
         self.save()
         self.videos.shutdown()
+        if self._torrents is not None:
+            self._torrents.shutdown()
         if self.engine is not None:
             self.engine.stop()
             self.engine.join(6)
@@ -496,6 +511,8 @@ class Manager:
         d.intent_until = time.monotonic() + 1.5
         if d.kind == "video":
             self.videos.pause(d)
+        elif d.kind == "torrent":
+            self.torrents.pause(d)
         elif d.gid and self.engine:
             gid = d.gid
             self.engine.submit(lambda rpc: rpc.call("aria2.forcePause", gid))
@@ -509,6 +526,8 @@ class Manager:
         d.intent_until = time.monotonic() + 1.5
         if d.kind == "video":
             self.videos.start(d)
+        elif d.kind == "torrent":
+            self.torrents.resume(d)
         elif d.gid and self.engine:
             gid = d.gid
             self.engine.submit(lambda rpc: rpc.call("aria2.unpause", gid))
@@ -533,7 +552,12 @@ class Manager:
             self._by_gid.pop(d.gid, None)
         d.gid, d.state, d.error, d.error_code, d.speed = "", "waiting", "", "", 0
         d.auto_retries = 0
-        if d.kind == "video":
+        if d.kind == "torrent":
+            self.torrents.remove(d, delete_files=False)
+            if not self.torrents.restore(d):
+                self._torrent_failed(d, d.error or "resume")
+                return
+        elif d.kind == "video":
             self.videos.start(d)
         elif self.engine_ready:
             self._submit_add(d)
@@ -555,7 +579,10 @@ class Manager:
         gid = d.gid
         if gid:
             self._by_gid.pop(gid, None)
-        if d.state != "complete":
+        if d.kind == "torrent":
+            if self._torrents is not None or d.state != "complete":
+                self.torrents.remove(d, delete_files=d.state not in ("complete", "seeding"))
+        elif d.state != "complete":
             if d.kind == "video":
                 self.videos.cancel(d)
             else:
@@ -591,6 +618,84 @@ class Manager:
             remove_partial(path)
         self.engine.submit(cmd)
 
+    # -- torrents ------------------------------------------------------------------------
+    @property
+    def torrents(self):
+        if self._torrents is None:
+            from .torrents import TorrentEngine
+            self._torrents = TorrentEngine(self)
+        return self._torrents
+
+    def add_torrent(self, pending, folder: str, wanted: set, root: str, names: dict) -> Download:
+        """Torrent choisi dans la fenêtre : dossier, fichiers voulus, dossier racine / noms renommés."""
+        d = Download(pending.source, folder)
+        d.kind = "torrent"
+        single = not pending.multi
+        d.name = (names.get(pending.files[0].index) or pending.files[0].path) if single else root
+        d.name_fixed = True
+        d.options = {"name": d.name}
+        self.downloads.append(d)
+        self._emit("added", d)
+        try:
+            self.torrents.start(d, pending, wanted, root, names)
+        except Exception as e:                   # session impossible (port…) : la carte le dit
+            self._torrent_failed(d, str(e))
+        self.save_soon()
+        return d
+
+    def _torrent_failed(self, d: Download, message: str):
+        d.state, d.error, d.speed = "error", message, 0
+        self._emit("changed", d)
+        self._emit("failed", d)
+        self.save_soon()
+
+    def _torrent_status(self, d: Download, st):
+        """État d'un torrent relevé par TorrentEngine (boucle GLib)."""
+        import libtorrent as lt
+        from .torrents import ratio
+        if d.state in ("complete", "error"):
+            return
+        err = getattr(st, "errc", None)
+        if err is not None and err.value():
+            self._torrent_failed(d, err.message())
+            return
+        S = lt.torrent_status.states
+        d.total, d.done = int(st.total_wanted), int(st.total_wanted_done)
+        d.upload_speed, d.uploaded, d.peers = int(st.upload_payload_rate), int(st.all_time_upload), int(st.num_peers)
+        d.speed = int(st.download_payload_rate)
+        if d.state == "paused":
+            d.speed = d.upload_speed = 0
+            self._emit("changed", d)
+            return
+        if st.state == S.downloading_metadata:
+            d.state, d.phase = "active", "metadata"
+        elif st.state in (S.checking_files, S.checking_resume_data):
+            d.state, d.phase = "active", "checking"
+        elif st.is_finished:
+            if d.state != "seeding":
+                d.state, d.phase, d.speed = "seeding", "", 0
+                d.finished = time.time()
+                self._emit("changed", d)
+                self._emit("completed", d)
+                self.save_soon()
+            mode = settings["seed_mode"]
+            if mode == "never" or (mode == "ratio" and ratio(d) >= float(settings["seed_ratio"])):
+                self.stop_seeding(d)
+                return
+        elif st.flags & lt.torrent_flags.paused:
+            d.state, d.phase = "waiting", ""          # en file (téléchargements simultanés)
+        else:
+            d.state, d.phase = "active", "download"
+        self._emit("changed", d)
+
+    def stop_seeding(self, d: Download):
+        if d.kind != "torrent" or d.state != "seeding":
+            return
+        self.torrents.stop_seeding(d)
+        d.state, d.speed, d.upload_speed, d.peers = "complete", 0, 0, 0
+        self._emit("changed", d)
+        self.save_soon()
+
     def clear_finished(self):
         for d in [d for d in self.downloads if d.state == "complete"]:
             self.remove(d)
@@ -601,7 +706,6 @@ class Manager:
 
     # -- relevé d'aria2 ------------------------------------------------------------
     def _apply(self, statuses: dict, speed: int):
-        self.total_speed = speed
         progressed = False
         for gid, s in statuses.items():
             d = self._by_gid.get(gid)
@@ -691,6 +795,14 @@ class Manager:
                 self.engine.submit(lambda rpc: rpc.call("aria2.removeDownloadResult", gid))
 
     # -- statistiques -----------------------------------------------------------------
+    @property
+    def total_speed(self) -> int:
+        return sum(d.speed for d in self.downloads if d.state == "active")
+
+    @property
+    def total_upload(self) -> int:
+        return sum(d.upload_speed for d in self.downloads if d.kind == "torrent")
+
     def count(self, kind: str) -> int:
         return sum(1 for d in self.downloads if matches(d, kind))
 
@@ -699,11 +811,13 @@ class Manager:
 
 
 def matches(d: Download, filt: str) -> bool:
-    """Filtres de la barre latérale : all, progress, complete, failed."""
+    """Filtres de la barre latérale : all, progress, complete, seeding, failed."""
     if filt == "progress":
         return d.state in UNFINISHED
     if filt == "complete":
-        return d.state == "complete"
+        return d.state in ("complete", "seeding")
+    if filt == "seeding":
+        return d.state == "seeding"
     if filt == "failed":
         return d.state == "error"
     return True

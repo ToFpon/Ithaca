@@ -3,7 +3,7 @@
 
     xvfb-run -a python3.12 tools/screenshot.py SORTIE.png [options]
 
-Options : --video (fenêtre de choix sur une vidéo locale ; yt-dlp : ITHACA_BIN_DIR) --demo (serveur local et téléchargements d'exemple : terminés, en cours, en pause, échec)
+Options : --torrent (fenêtre de choix sur un torrent d'exemple) --video (fenêtre de choix sur une vidéo locale ; yt-dlp : ITHACA_BIN_DIR) --demo (serveur local et téléchargements d'exemple : terminés, en cours, en pause, échec)
           --filter=all|progress|complete|failed --details --prefs=page --dark --delay=ms --size=LxH
 Configuration et état dans un dossier jetable : les vrais téléchargements ne sont jamais touchés.
 """
@@ -100,6 +100,23 @@ def on_ready(win):
     win.set_default_size(int(w), int(h))
     if "demo" in opts:
         GLib.timeout_add(600, lambda: (demo(win), False)[1])
+    if "torrent" in opts:
+        import libtorrent as lt
+        tdir = os.path.join(TMP, "tsrc", "Concert à Ithaque (2026)")
+        os.makedirs(os.path.join(tdir, "Bonus"))
+        for name, size in (("01 - Ouverture.flac", 31_000_000), ("02 - La traversée.flac", 42_000_000),
+                           ("03 - Retour.flac", 28_000_000), ("Bonus/Interview.mkv", 380_000_000),
+                           ("pochette.jpg", 900_000)):
+            with open(os.path.join(tdir, name), "wb") as fh:
+                fh.truncate(size)
+        fs = lt.file_storage()
+        lt.add_files(fs, tdir)
+        ct = lt.create_torrent(fs)
+        lt.set_piece_hashes(ct, os.path.dirname(tdir))
+        tpath = os.path.join(TMP, "concert.torrent")
+        with open(tpath, "wb") as fh:
+            fh.write(lt.bencode(ct.generate()))
+        GLib.timeout_add(600, lambda: (win.open_torrent(tpath), False)[1])
     if "video" in opts:
         import subprocess
         from server import Server

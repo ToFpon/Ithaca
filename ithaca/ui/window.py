@@ -22,9 +22,25 @@ from .row import DownloadRow  # noqa: E402
 FILTERS = [("all", tr("Tous"), "view-list-symbolic"),
            ("progress", tr("En cours"), "content-loading-symbolic"),
            ("complete", tr("Terminés"), "object-select-symbolic"),
+           ("seeding", tr("En partage"), "go-up-symbolic"),
            ("failed", tr("Échecs"), "dialog-error-symbolic")]
 
 TEXT_WIDGETS = (Gtk.Text, Gtk.TextView, Gtk.Entry)
+
+
+def torrent_source(url: str) -> str:
+    """Lien magnet, fichier .torrent local (chemin ou file://) ou adresse http(s) d'un .torrent ;
+    vide si ce n'est pas un torrent."""
+    u = url.strip()
+    if u.lower().startswith("magnet:?"):
+        return u
+    path = u
+    if u.startswith("file://"):
+        path = Gio.File.new_for_uri(u).get_path() or ""
+    low = path.split("?")[0].lower()
+    if low.endswith(".torrent") and (path.startswith("/") or u.startswith(("http://", "https://"))):
+        return path
+    return ""
 
 
 def split_urls(text: str) -> list[str]:
@@ -120,14 +136,24 @@ class MainWindow(Adw.ApplicationWindow):
                                                    can_shrink=True))
         self.video_btn.connect("clicked", lambda *_: self._video_clicked())
         add.append(self.video_btn)
+        self.torrent_sep = Gtk.Separator(margin_top=4, margin_bottom=4)
+        add.append(self.torrent_sep)
+        self.torrent_btn = Gtk.Button(css_classes=["suggested-action"])
+        self.torrent_btn.set_child(Adw.ButtonContent(icon_name="document-open-symbolic", label=tr("Torrent"),
+                                                     can_shrink=True))
+        self.torrent_btn.set_tooltip_text(tr("Ouvrir un fichier .torrent"))
+        self.torrent_btn.connect("clicked", lambda *_: self._torrent_clicked())
+        add.append(self.torrent_btn)
         frame = Gtk.Frame(child=add, margin_start=8, margin_end=8, margin_top=4)
         box.append(frame)
 
         self.filter_list = Gtk.ListBox(css_classes=["navigation-sidebar"])
         self.filter_counts = {}
+        self.filter_rows = {}
         for fid, label, icon in FILTERS:
             row = Gtk.ListBoxRow()
             row.filter_id = fid
+            self.filter_rows[fid] = row
             line = Gtk.Box(spacing=12, margin_start=6, margin_end=6)
             line.append(Gtk.Image(icon_name=icon))
             line.append(Gtk.Label(label=label, xalign=0, hexpand=True))
@@ -201,7 +227,7 @@ class MainWindow(Adw.ApplicationWindow):
         per_download = {
             "dl-open": self._open, "dl-show": self._show, "dl-pause": self.manager.pause,
             "dl-resume": self.manager.resume, "dl-retry": self.manager.retry, "dl-remove": self.manager.remove,
-            "dl-trash": self._trash, "dl-copy-url": self._copy_url, "dl-details": self._details,
+            "dl-trash": self._trash, "dl-stop-seed": self.manager.stop_seeding, "dl-copy-url": self._copy_url, "dl-details": self._details,
         }
         for name, cb in per_download.items():
             a = Gio.SimpleAction.new(name, GLib.VariantType.new("s"))
@@ -231,6 +257,8 @@ class MainWindow(Adw.ApplicationWindow):
         DetailsWindow(self.manager, d).present(self)
 
     def _trash(self, d: Download):
+        if d.kind == "torrent" and d.state == "seeding":
+            self.manager.stop_seeding(d)           # libtorrent lâche les fichiers avant la corbeille
         f = Gio.File.new_for_path(d.path)
 
         def done(src, res):
@@ -269,6 +297,13 @@ class MainWindow(Adw.ApplicationWindow):
         self.download_btn.set_sensitive(has_text)
         self.video_btn.set_sensitive(has_text)
         self.video_btn.set_visible(features.enabled("videos"))
+        torrents_on = features.enabled("torrents")
+        self.torrent_btn.set_visible(torrents_on)
+        self.torrent_sep.set_visible(torrents_on)
+        self.filter_rows["seeding"].set_visible(torrents_on or self.manager.count("seeding") > 0)
+
+    def _sync_seeding_row(self):
+        self.filter_rows["seeding"].set_visible(features.enabled("torrents") or self.manager.count("seeding") > 0)
 
     def _paste_into_entry(self):
         def done(clip, res):
@@ -307,9 +342,38 @@ class MainWindow(Adw.ApplicationWindow):
         from .video_dialog import VideoDialog
         ensure_tools(self, lambda: VideoDialog(self.manager, url).present(self))
 
+    def _torrent_clicked(self):
+        from .common import choose_files
+        choose_files(self, tr("Ouvrir un fichier .torrent"), download_dir(),
+                     lambda paths: [self.open_torrent(p) for p in paths],
+                     filters=[(tr("Fichiers torrent"), ["*.torrent"])])
+
+    def open_torrent(self, source: str, data: bytes = b""):
+        """Fenêtre de choix d'un torrent (lien magnet, fichier ou adresse d'un .torrent)."""
+        if not features.enabled("torrents"):
+            toast(self, tr("Les torrents sont désactivés (Préférences → Fonctionnalités)"))
+            return
+        if features.missing("torrents"):
+            alert(self, tr("libtorrent est nécessaire pour les torrents"),
+                  tr("Installez-le avec : {0}").format(features.install_command("torrents")))
+            return
+        from .torrent_dialog import TorrentDialog
+        TorrentDialog(self.manager, source, data).present(self)
+
     def add_urls(self, urls: list[str], folder: str = "", video: bool = False) -> bool:
         """Ajoute des liens ; False (et un message) si aucun n'est utilisable. Liens de sites vidéo
-        (YouTube…) ou video=True : fenêtre de choix vidéo / audio."""
+        (YouTube…) ou video=True : fenêtre de choix vidéo / audio. Liens magnet et .torrent : fenêtre
+        de choix du torrent."""
+        rest = []
+        for u in urls:
+            src = torrent_source(u)
+            if src:
+                self.open_torrent(src)
+            else:
+                rest.append(u)
+        if len(rest) < len(urls) and not rest:
+            return True
+        urls = rest
         good = [u for u in urls if is_supported_url(u)]
         bad = [u for u in urls if u not in good]
         if features.enabled("videos"):
@@ -333,9 +397,17 @@ class MainWindow(Adw.ApplicationWindow):
         return True
 
     def _install_drop(self):
-        target = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.COPY)
-        target.connect("drop", lambda _t, value, _x, _y: self.add_urls(split_urls(value)))
+        target = Gtk.DropTarget.new(GObject.TYPE_NONE, Gdk.DragAction.COPY)
+        target.set_gtypes([Gdk.FileList, GObject.TYPE_STRING])
+        target.connect("drop", self._on_drop)
         self.toast_overlay.add_controller(target)
+
+    def _on_drop(self, _target, value, _x, _y):
+        if isinstance(value, Gdk.FileList):
+            # fichiers déposés depuis le gestionnaire de fichiers : .torrent
+            uris = [f.get_uri() for f in value.get_files()]
+            return self.add_urls(uris)
+        return self.add_urls(split_urls(value))
 
     def _on_key(self, _ctrl, keyval, _code, state):
         mods = state & Gtk.accelerator_get_default_mod_mask()
@@ -378,6 +450,9 @@ class MainWindow(Adw.ApplicationWindow):
             return
         elif event in ("completed", "failed"):
             return
+        elif event == "kept":
+            toast(self, tr("Playlist annulée : éléments terminés gardés dans « {0} »").format(shown(d.name)))
+            return
         self.list.invalidate_filter()
         self._refresh()
 
@@ -386,6 +461,7 @@ class MainWindow(Adw.ApplicationWindow):
         self._refresh_header()
 
     def _refresh_counts(self):
+        self._sync_seeding_row()
         for fid, label in self.filter_counts.items():
             n = self.manager.count(fid)
             label.set_label(str(n) if n else "")
@@ -394,6 +470,7 @@ class MainWindow(Adw.ApplicationWindow):
         elif not self.manager.count(self.filter):
             self.nothing_page.set_title({"progress": tr("Aucun téléchargement en cours"),
                                          "complete": tr("Aucun téléchargement terminé"),
+                                         "seeding": tr("Aucun torrent en partage"),
                                          "failed": tr("Aucun échec")}.get(self.filter, tr("Rien ici")))
             self.stack.set_visible_child_name("nothing")
         else:
@@ -401,10 +478,13 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _refresh_header(self):
         running = self.manager.any_running()
+        up = self.manager.total_upload
+        parts = []
         if running:
-            self.speed_label.set_label("↓ " + fmt.speed(self.manager.total_speed))
-        else:
-            self.speed_label.set_label("Ithaca")
+            parts.append("↓ " + fmt.speed(self.manager.total_speed))
+        if up:
+            parts.append("↑ " + fmt.speed(up))
+        self.speed_label.set_label("   ".join(parts) if parts else "Ithaca")
         resumable = any(d.state == "paused" for d in self.manager.downloads)
         self.pause_all_btn.set_visible(running or resumable)
         if running:

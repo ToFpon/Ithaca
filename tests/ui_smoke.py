@@ -16,6 +16,7 @@ sys.path.insert(0, ROOT)
 sys.path.insert(0, os.path.join(ROOT, "tests"))
 TMP = tempfile.mkdtemp(prefix="ithaca-ui-")
 # yt-dlp et Deno réels (voir tests/test_videos.py), pris dans le vrai dossier personnel
+os.environ["ITHACA_TORRENT_LISTEN"] = "127.0.0.1:0"       # torrents : local, sans DHT ni UPnP
 os.environ.setdefault("ITHACA_BIN_DIR", os.environ.get("ITHACA_TEST_TOOLS")
                       or os.path.expanduser("~/.cache/ithaca-test-tools"))
 os.environ["HOME"] = os.path.join(TMP, "home")
@@ -246,8 +247,8 @@ def pause_reprise(win):
 
 @step
 def filtres(win):
-    for i, fid in enumerate(("all", "progress", "complete", "failed")):
-        win.filter_list.select_row(win.filter_list.get_row_at_index(i))
+    for fid in ("all", "progress", "complete", "seeding", "failed"):
+        win.filter_list.select_row(win.filter_rows[fid])
         yield pump(0.2)
         shown_ids = {r.download.id for r in visible_rows(win)}
         from ithaca.backend.downloads import matches
@@ -437,6 +438,112 @@ def preferences_videos(win):
     yield pump(0.2)
     check(not win.video_btn.get_visible(), "vidéos désactivées : bouton masqué")
     features.set_enabled("videos", True)
+
+
+def _seeder():
+    """Pair source local : un dossier « Album » de trois fichiers, partagé en chiffré."""
+    import libtorrent as lt
+    src = os.path.join(TMP, "tsrc")
+    os.makedirs(os.path.join(src, "Album"))
+    for name, size in (("01.flac", 300_000), ("02.flac", 200_000), ("pochette.jpg", 50_000)):
+        with open(os.path.join(src, "Album", name), "wb") as fh:
+            fh.write(os.urandom(size))
+    fs = lt.file_storage()
+    lt.add_files(fs, os.path.join(src, "Album"))
+    ct = lt.create_torrent(fs)
+    lt.set_piece_hashes(ct, src)
+    data = lt.bencode(ct.generate())
+    path = os.path.join(TMP, "album.torrent")
+    with open(path, "wb") as fh:
+        fh.write(data)
+    ses = lt.session({"listen_interfaces": "127.0.0.1:0", "enable_dht": False, "enable_lsd": False,
+                      "enable_upnp": False, "enable_natpmp": False, "allow_multiple_connections_per_ip": True,
+                      "out_enc_policy": int(lt.enc_policy.forced), "in_enc_policy": int(lt.enc_policy.forced),
+                      "min_reconnect_time": 1})
+    atp = lt.add_torrent_params()
+    atp.ti = lt.torrent_info(lt.bdecode(data))
+    atp.save_path = src
+    atp.flags |= lt.torrent_flags.seed_mode
+    ses.add_torrent(atp)
+    return ses, path, str(atp.ti.info_hashes().v1)
+
+
+@step
+def torrent(win):
+    from ithaca.backend import torrents
+    from ithaca.ui.torrent_dialog import TorrentDialog
+    from ithaca.ui.window import torrent_source
+    check(torrent_source("magnet:?xt=urn:btih:abc") and torrent_source("file:///tmp/a%20b.torrent") == "/tmp/a b.torrent"
+          and not torrent_source("https://exemple.fr/a.iso"), "liens torrent reconnus")
+    check(win.torrent_btn.get_visible() and win.filter_rows["seeding"].get_visible(), "bouton Torrent et filtre « En partage »")
+    if not torrents.available():
+        print("- libtorrent absent : étapes torrent sautées")
+        return
+    ses, path, ih = _seeder()
+    win._test_seeder = ses
+    win.add_urls(["file://" + path])
+    yield Wait(10, until=lambda: any(isinstance(w, TorrentDialog) and w.stack.get_visible_child_name() == "options"
+                                     for w in dialogs(win)))
+    ds = [w for w in dialogs(win) if isinstance(w, TorrentDialog)]
+    check(len(ds) == 1, "fenêtre de choix du torrent")
+    if not ds:
+        return
+    dlg = ds[0]
+    check(dlg.name_row.get_text() == "Album" and len(dlg.rows) == 3, "dossier et fichiers proposés")
+    for f, check_btn, row in dlg.rows:
+        if f.path.endswith("02.flac"):
+            check_btn.set_active(False)
+        if f.path.endswith("pochette.jpg"):
+            row.set_text("cover.jpg")
+    dlg.name_row.set_text("Mon album")
+    yield pump(0.2)
+    dlg.go.emit("clicked")
+    yield pump(0.5)
+    d = next((x for x in win.manager.downloads if x.kind == "torrent"), None)
+    check(d is not None and d.name == "Mon album", "torrent ajouté sous le nom choisi")
+    if d is None:
+        return
+    win.manager.torrents.connect_peer(d, "127.0.0.1", ses.listen_port())
+    yield Wait(30, until=lambda: d.state in ("seeding", "complete", "error"))
+    check(d.state == "seeding", f"téléchargé puis en partage ({d.state} {d.error})")
+    album = os.path.join(OUT, "Mon album")
+    check(sorted(os.listdir(album)) == ["01.flac", "cover.jpg"], "fichier décoché absent, fichier renommé")
+    win.filter_list.select_row(win.filter_rows["seeding"])
+    yield pump(0.3)
+    check([r.download for r in visible_rows(win)] == [d], "filtre « En partage »")
+    win.filter_list.select_row(win.filter_list.get_row_at_index(0))
+    check(win.rows[d.id].close_btn.get_action_name() == "win.dl-stop-seed", "bouton « Arrêter le partage »")
+    win.activate_action("win.dl-stop-seed", GLib.Variant.new_string(d.id))
+    yield pump(0.5)
+    check(d.state == "complete" and os.path.isdir(album), "partage arrêté, fichiers gardés")
+
+    # lien magnet : informations reçues, puis fenêtre fermée sans télécharger
+    win.add_urls([f"magnet:?xt=urn:btih:{ih}&dn=Album"])
+    yield pump(0.5)
+    ds = [w for w in dialogs(win) if isinstance(w, TorrentDialog)]
+    if ds:
+        dlg = ds[0]
+        check(dlg.stack.get_visible_child_name() in ("loading", "error"), "magnet : recherche des informations")
+    for w in ds:
+        w.close()
+    yield pump(0.3)
+    check(not win.manager.torrents.pending, "fenêtre fermée : magnet abandonné")
+
+
+@step
+def preferences_torrents(win):
+    app.activate_action("preferences", None)
+    yield pump(0.8)
+    ds = [w for w in dialogs(win) if isinstance(w, Adw.PreferencesWindow)]
+    if ds:
+        ds[0].set_visible_page_name("torrents")
+        yield pump(0.3)
+        settings["seed_ratio"] = 2.0
+        settings["torrent_encryption"] = False
+        yield pump(0.3)
+        settings["torrent_encryption"] = True
+        check(ds[0].get_visible_page_name() == "torrents", "page Torrents des préférences")
+        ds[0].close()
 
 
 @step

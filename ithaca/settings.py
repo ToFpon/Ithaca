@@ -34,6 +34,14 @@ DEFAULTS: dict[str, Any] = {
     "browser_cookies": "",          # navigateur dont yt-dlp lit les cookies (YouTube « pas un robot »)
     "tools_auto_update": True,      # yt-dlp et Deno tenus à jour (vérification une fois par jour)
     "tools_last_check": 0,
+    # Torrents (libtorrent)
+    "seed_mode": "ratio",           # ratio (partager jusqu'au ratio), unlimited, never
+    "seed_ratio": 1.0,
+    "torrent_encryption": True,     # chiffrement exigé (pairs non chiffrés refusés)
+    "torrent_upnp": True,           # ouverture automatique du port (UPnP / NAT-PMP)
+    "torrent_dht": True,            # DHT, découverte locale, échange de pairs
+    "torrent_port": 0,              # 0 = tiré au hasard au premier torrent, puis gardé
+    "torrent_upload_limit": 0,      # Ko/s, 0 = sans limite
     # Fenêtre
     "window_width": 900,
     "window_height": 620,

@@ -151,7 +151,12 @@ vers son propre service, dans le même fil, attend jusqu'au délai).
 
 Captures (Gtk.WidgetPaintable, configuration jetable, album d'exemple généré) :
 `xvfb-run -a python3.12 tools/screenshot.py SORTIE.png [--empty] [--dark] [--recolor] [--size=LxH]
-[--prefs=PAGE] [--hidden-list] [--delay=ms]`.
+[--prefs=PAGE] [--hidden-list] [--search=TEXTE] [--selection] [--delay=ms]`.
+Captures du README dans `docs/captures/` (en français, comme Odysseus ; README anglais puis français) :
+`LANGUAGE=fr … tools/screenshot.py docs/captures/NOM.png --delay=6000 [options]` — accueil, sombre
+(`--dark`), pochette (`--dark --recolor`), compact (`--size=380x720`), recherche (`--search=pén`), selection
+(`--selection`), vide (`--empty`), fonctionnalites (`--prefs=features`). Album de démonstration : deux albums
+de l'Odyssée (Ulysse, Pénélope), pochettes Mandelbrot, sons au volume modulé (forme d'onde vivante).
 
 ## Pièges connus
 

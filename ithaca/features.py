@@ -24,13 +24,13 @@ class Feature:
 FEATURES = [
     Feature("waveform", tr("Barre en forme d'onde"),
             tr("La barre de progression dessine la forme d'onde du morceau (calculée une fois, gardée en cache)"),
-            "media-playback-start-symbolic"),
+            "audio-x-generic-symbolic"),
     Feature("mpris", tr("Contrôle depuis le système"),
             tr("Panneau de GNOME, écran verrouillé et touches multimédia du clavier (MPRIS)"),
             "input-keyboard-symbolic"),
     Feature("background", tr("Lecture en arrière-plan"),
             tr("Fermer la fenêtre pendant la lecture laisse la musique jouer"),
-            "window-minimize-symbolic"),
+            "audio-headphones-symbolic"),
     Feature("recolor", tr("Couleurs de la pochette"),
             tr("Teinter la fenêtre d'après la pochette du morceau, comme Amberol ; sinon les couleurs "
                "du thème du système"),

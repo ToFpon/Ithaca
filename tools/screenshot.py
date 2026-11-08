@@ -4,6 +4,7 @@
     xvfb-run -a python3.12 tools/screenshot.py SORTIE.png [options]
 
 Options : --empty (page d'accueil) --dark --recolor --size=LxH --prefs=page --delay=ms --hidden-list
+          --search=texte (recherche dans la file) --selection (mode sélection, un morceau sur deux)
 Musique d'exemple générée par ffmpeg, sortie son factice, configuration jetable.
 """
 import os
@@ -26,7 +27,6 @@ gi.require_version("Adw", "1")
 gi.require_version("Graphene", "1.0")
 from gi.repository import Adw, GLib, Graphene, Gtk  # noqa: E402
 
-import media  # noqa: E402
 from ithaca import features  # noqa: E402
 from ithaca.app import IthacaApp  # noqa: E402
 
@@ -39,16 +39,41 @@ for a in sys.argv[2:]:
 delay = int(opts.get("delay", 3500))
 
 
+def song(path: str, seconds: int, freq: int, tags: dict, cover: str):
+    """Un son dont le volume varie (forme d'onde vivante, pas une barre pleine comme un sinus)."""
+    import subprocess
+    os.makedirs(os.path.dirname(path), exist_ok=True)
+    shape = f"volume='0.15+0.85*abs(sin(t*{0.7 + freq / 900:.2f}))*abs(cos(t*0.23))':eval=frame"
+    cmd = ["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", f"sine=frequency={freq}:duration={seconds}",
+           "-i", cover, "-map", "0:a", "-map", "1:v", "-af", shape, "-c:v", "mjpeg",
+           "-disposition:v", "attached_pic", "-c:a", "libmp3lame", "-id3v2_version", "3"]
+    for k, v in tags.items():
+        cmd += ["-metadata", f"{k}={v}"]
+    subprocess.run(cmd + [path], check=True)
+
+
 def demo_library() -> list[str]:
-    """Un album avec une pochette colorée, pour que l'on voie quelque chose."""
+    """Deux albums aux pochettes colorées, l'Odyssée en musique."""
     root = os.path.join(TMP, "Musique")
-    art = media.image(os.path.join(TMP, "art.png"), "600x600", "mandelbrot")
-    album = os.path.join(root, "Ulysse", "Le retour à Ithaque")
-    titles = ["Le chant des sirènes", "Calypso", "La tempête", "Pénélope tisse", "L'arc d'Ulysse", "Ithaque"]
-    for i, t in enumerate(titles, 1):
-        media.tone(os.path.join(album, f"{i:02d} - {t}.mp3"), 4 + i, 220 + 60 * i,
-                   {"title": t, "artist": "Ulysse", "album": "Le retour à Ithaque", "track": str(i)}, cover=art)
-    return [root]
+    import subprocess
+    albums = (
+        ("Ulysse", "Le retour à Ithaque", "mandelbrot=size=600x600",
+         ["Le chant des sirènes", "Calypso", "La tempête", "Pénélope tisse", "L'arc d'Ulysse", "Ithaque"]),
+        ("Pénélope", "La toile et l'attente",
+         "mandelbrot=size=600x600:start_x=-0.743643887:start_y=0.131825904:start_scale=0.004:inner=period",
+         ["Le métier à tisser", "Les prétendants", "Argos le fidèle", "Le retour du roi"]),
+    )
+    folders = []
+    for n, (artist, album, source, titles) in enumerate(albums):
+        art = os.path.join(TMP, f"art{n}.png")
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-f", "lavfi", "-i", source, "-frames:v", "1", art],
+                       check=True)
+        folder = os.path.join(root, artist, album)
+        folders.append(folder)
+        for i, t in enumerate(titles, 1):
+            song(os.path.join(folder, f"{i:02d} - {t}.mp3"), 40 + 17 * i, 180 + 70 * i + 40 * n,
+                 {"title": t, "artist": artist, "album": album, "track": str(i)}, art)
+    return folders                      # Ulysse d'abord
 
 
 def snap(win):
@@ -90,7 +115,22 @@ def on_ready(win):
     if "empty" not in opts:
         paths = demo_library()
         GLib.timeout_add(300, lambda: (win.add_paths(paths, play=True), False)[1])
-        GLib.timeout_add(1800, lambda: (app.controller.seek(2.3), False)[1])
+        GLib.timeout_add(1800, lambda: (app.controller.seek(21.0), False)[1])
+    if "search" in opts:
+        def search():
+            win.split.set_show_sidebar(True)
+            win.playlist.search_btn.set_active(True)
+            win.playlist.search_entry.set_text(opts["search"])
+            return False
+        GLib.timeout_add(delay - 1200, search)
+    if "selection" in opts:
+        def select():
+            win.playlist.set_selection_mode(True)
+            for i in range(0, win.playlist.store.get_n_items(), 2):
+                win.playlist.store.get_item(i).selected = True
+            win.playlist._refresh_checks()
+            return False
+        GLib.timeout_add(delay - 1200, select)
     if "prefs" in opts:
         def prefs():
             from ithaca.ui.preferences import PreferencesWindow

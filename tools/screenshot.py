@@ -5,6 +5,7 @@
 
 Options : --empty (page d'accueil) --dark --recolor --size=LxH --prefs=page --delay=ms --hidden-list
           --search=texte (recherche dans la file) --selection (mode sélection, un morceau sur deux)
+          --title=texte (titre long, capturé en plein défilement)
 Musique d'exemple générée par ffmpeg, sortie son factice, configuration jetable.
 """
 import os
@@ -131,6 +132,8 @@ def on_ready(win):
             win.playlist._refresh_checks()
             return False
         GLib.timeout_add(delay - 1200, select)
+    if "title" in opts:                 # titre long : capturé en plein défilement
+        GLib.timeout_add(delay - 3200, lambda: (win.title_label.set_label(opts["title"]), False)[1])
     if "prefs" in opts:
         def prefs():
             from ithaca.ui.preferences import PreferencesWindow

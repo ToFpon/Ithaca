@@ -121,6 +121,12 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   : Gtk.Widget dessiné (`do_snapshot`, couleur d'accent / texte estompé du thème), clic, glisser,
   ← / →. `ui/playlist_view.py` : Gtk.ListView (seules les lignes visibles existent), recherche sans
   accents (`unicodedata`, les écritures non latines restent intactes), mode sélection.
+  `ui/marquee.py` (demande de Tof) : titre du lecteur en texte défilant s'il ne tient pas — Gtk.Widget
+  qui porte un Gtk.Label (largeur minimale 0 : un titre long n'élargit jamais la fenêtre), pause 2 s,
+  aller à 30 px/s, pause, retour (`scroll_offset`), tick callback seulement quand le texte déborde,
+  fondu des bords par `push_mask` ; animations coupées dans le système → « … » comme avant. Même usage
+  qu'un Gtk.Label (`set_label` / `get_label`). Testé : `titre_defilant` d'ui_smoke ; capture
+  `tools/screenshot.py … --title=TEXTE`.
   `ui/cover.py` : pochettes carrées (recadrées au centre, Gtk.Image à taille fixe — un Gtk.Picture
   prenait la taille naturelle de l'image), cache de textures, recoloration (découpage médian,
   3 couleurs, fournisseur CSS remplacé à chaque pochette).

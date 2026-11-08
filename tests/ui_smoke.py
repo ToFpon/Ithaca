@@ -439,6 +439,29 @@ def replier_la_file(win):
 
 
 @step
+def titre_defilant(win):
+    """Titre trop long pour la fenêtre : il défile (pause, aller, pause, retour) sans élargir la
+    fenêtre ; un titre qui tient reste immobile."""
+    from ithaca.ui.marquee import PAUSE, scroll_offset
+    check(scroll_offset(0.5, 100) == 0 and scroll_offset(PAUSE + 1, 100) > 0
+          and scroll_offset(PAUSE + 100 / 30 + 0.5, 100) == 100
+          and 0 < scroll_offset(PAUSE * 2 + 100 / 30 + 1, 100) < 100, "défilement : pause, aller, pause, retour")
+    title = win.title_label
+    w0 = win.get_width()
+    long = "Le très long chant des sirènes qui envoûte les marins jusqu'au bout de la nuit, version intégrale"
+    title.set_label(long)
+    yield Wait(0.5)
+    check(title.overflow() > 0 and title._tick is not None, "titre long : il déborde et défile")
+    check(abs(win.get_width() - w0) <= 2, "titre long : la fenêtre ne s'élargit pas")
+    yield Wait(4, until=lambda: title.offset > 5)
+    check(title.offset > 5, f"titre long : il glisse ({title.offset:.0f} px)")
+    title.set_label("Ithaque")
+    yield Wait(0.5)
+    check(title.overflow() == 0 and title._tick is None and title.offset == 0, "titre court : immobile")
+    check(title.get_label() == "Ithaque", "titre lu comme un Gtk.Label")
+
+
+@step
 def selection(win):
     win.playlist.set_selection_mode(True)
     yield pump(0.2)

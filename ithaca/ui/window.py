@@ -19,6 +19,7 @@ from ..i18n import ntr, tr  # noqa: E402
 from ..settings import settings  # noqa: E402
 from .common import choose_files, choose_folder, copy_to_clipboard, show_in_folder, shown, toast  # noqa: E402
 from .cover import CoverView, Recolor  # noqa: E402
+from .marquee import Marquee  # noqa: E402
 from .playlist_view import PlaylistView  # noqa: E402
 from .waveform_view import WaveformView  # noqa: E402
 
@@ -153,8 +154,9 @@ class MainWindow(Adw.ApplicationWindow):
         box.append(wave_box)
 
         details = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, css_classes=["song-details"])
-        self.title_label = Gtk.Label(css_classes=["song-title"], ellipsize=Pango.EllipsizeMode.END,
-                                     max_width_chars=28, selectable=False)
+        self.title_label = Marquee(css_classes=["song-title"])     # titre trop long : il défile
+        self.title_label.set_margin_start(18)
+        self.title_label.set_margin_end(18)
         self.artist_label = Gtk.Label(css_classes=["song-artist"], ellipsize=Pango.EllipsizeMode.END,
                                       max_width_chars=34)
         self.album_label = Gtk.Label(css_classes=["song-album", "dim-label"], ellipsize=Pango.EllipsizeMode.END,

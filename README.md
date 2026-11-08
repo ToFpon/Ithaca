@@ -3,7 +3,7 @@
 **A small GTK4 / libadwaita music player for GNOME that plays your music, and nothing else. Inspired by Amberol, without Flatpak.**
 **Un petit lecteur de musique GTK4 / libadwaita pour GNOME, qui joue votre musique et rien d'autre. Inspiré d'Amberol, sans Flatpak.**
 
-[English](#english) · [Français](#français)
+[English](#english) · [Français](#français) · [Website / Site](https://tofmicro.pages-perso.free.fr/Ithaca/)
 
 ![Ithaca](docs/captures/accueil.png)
 

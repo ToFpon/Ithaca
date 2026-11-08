@@ -1,3 +1,11 @@
+ithaca (1.0.1~noble1) noble; urgency=medium
+
+  * Barre système : l'icône d'Ithaca s'affiche avec l'extension
+    AppIndicator d'Ubuntu (icône d'attente « ••• » à la place).
+  * Site de présentation : https://tofmicro.pages-perso.free.fr/Ithaca/
+
+ -- Tof <nourpon@gmail.com>  Sun, 08 Nov 2026 21:00:00 +0000
+
 ithaca (1.0.0~noble1) noble; urgency=medium
 
   * Première version : petit lecteur de musique inspiré d'Amberol, pour

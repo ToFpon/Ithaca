@@ -26,6 +26,7 @@ TEXT_WIDGETS = (Gtk.Text, Gtk.TextView, Gtk.Entry, Gtk.SearchEntry)
 MIN_WIDTH = 360                       # largeur minimale de la fenêtre
 SIDEBAR_MAX, SIDEBAR_FRACTION = 360, 0.4
 COLLAPSE_SP = 560                     # en dessous, la file passe par-dessus le lecteur (Adw.Breakpoint)
+COMPACT_WIDTH = 430                   # file masquée : le lecteur seul, comme la capture « compact » du site
 
 
 def width_with_playlist(content: int) -> int:
@@ -84,6 +85,7 @@ class MainWindow(Adw.ApplicationWindow):
         bp.connect("unapply", lambda *_: self._set_narrow(False))
         self.add_breakpoint(bp)
         self._frame = None                  # cadre de la fenêtre (CSD) : taille par défaut − largeur
+        self._wide = None                   # (largeur avec la file, largeur compacte posée) pour revenir
         low = Adw.Breakpoint.new(Adw.BreakpointCondition.parse("max-height: 680sp"))
         self.cover.add_size_setters(low, 180)
         self.add_breakpoint(low)
@@ -345,10 +347,11 @@ class MainWindow(Adw.ApplicationWindow):
         self.set_playlist_shown(not self.split.get_show_sidebar())
 
     def set_playlist_shown(self, show: bool):
-        """Afficher / masquer la file. La fenêtre se replie de la largeur de la file (ou s'élargit
-        d'autant) et le lecteur garde sa taille : masquer la file laissait sinon une grande fenêtre vide
-        autour du lecteur (retour de Tof). Rien ne bouge si la fenêtre est agrandie ou en plein écran,
-        ni pour masquer la file posée par-dessus le lecteur (fenêtre étroite, « repliée »)."""
+        """Afficher / masquer la file. Masquée : la fenêtre passe au format compact (le lecteur seul,
+        COMPACT_WIDTH) ; réaffichée : elle retrouve la largeur d'avant (ou s'élargit de la file si on l'a
+        redimensionnée entre-temps). Masquer laissait sinon une grande fenêtre vide autour du lecteur
+        (retour de Tof). Rien ne bouge si la fenêtre est agrandie ou en plein écran, ni pour masquer la
+        file posée par-dessus le lecteur (fenêtre étroite, « repliée »)."""
         if self.split.get_show_sidebar() == show:
             return
         free = self.get_mapped() and not self.is_maximized() and not self.is_fullscreen()
@@ -362,10 +365,14 @@ class MainWindow(Adw.ApplicationWindow):
                 self._frame = max(dw - self.get_width(), 0)   # cadre CSD : compté par la taille par défaut
             current = dw - self._frame
             if not show and not self.split.get_collapsed():   # file à côté du lecteur (pas par-dessus)
-                side = min(max(current * SIDEBAR_FRACTION, self.split.get_min_sidebar_width()), SIDEBAR_MAX)
-                width = max(round(current - side), MIN_WIDTH)
+                width = min(current, COMPACT_WIDTH)
+                self._wide = (current, width)
             elif show:
-                width = width_with_playlist(current)          # file masquée : le lecteur a toute la fenêtre
+                if self._wide and self._wide[1] == current:   # pas redimensionnée depuis : comme avant
+                    width = self._wide[0]
+                else:
+                    width = width_with_playlist(current)      # file masquée : le lecteur a toute la fenêtre
+                self._wide = None
         if show and width is None and self._narrow:
             self.split.set_collapsed(True)                    # fenêtre étroite qu'on n'élargit pas
         elif show and width is not None:

@@ -395,28 +395,26 @@ def listes_de_lecture(win):
 
 @step
 def replier_la_file(win):
-    """F9 : la fenêtre se replie de la largeur de la file (le lecteur garde sa taille), puis s'élargit
-    d'autant pour la réafficher — pas une grande fenêtre vide autour du lecteur (retour de Tof)."""
+    """F9 : la fenêtre passe au format compact (le lecteur seul, comme la capture du site), puis
+    retrouve sa largeur — pas une grande fenêtre vide autour du lecteur (retour de Tof)."""
+    from ithaca.ui.window import COMPACT_WIDTH
     win.set_playlist_shown(True)
     yield Wait(3, until=lambda: win.split.get_show_sidebar() and not win.split.get_collapsed())
     yield Wait(0.6)                                     # fin de l'animation de la file
-    w0, player = win.get_width(), win.split.get_content().get_width()
-    side = win.playlist.get_width()
+    w0 = win.get_width()
     check(win.sidebar_btn.get_active() and win.playlist_btn.get_active(), "boutons de la file actifs")
     win.activate_action("win.toggle-playlist", None)
     yield Wait(3, until=lambda: win.get_width() < w0)
     yield Wait(0.6)
     check(not win.split.get_show_sidebar(), "F9 masque la file")
-    check(abs(win.get_width() - (w0 - side)) <= 2, f"fenêtre repliée de la file ({w0} → {win.get_width()})")
-    check(abs(win.split.get_content().get_width() - player) <= 2, "le lecteur garde sa largeur")
+    check(abs(win.get_width() - COMPACT_WIDTH) <= 2, f"fenêtre compacte ({w0} → {win.get_width()})")
+    check(abs(win.split.get_content().get_width() - win.get_width()) <= 2, "le lecteur occupe la fenêtre")
     check(not win.sidebar_btn.get_active() and not win.playlist_btn.get_active(), "boutons de la file éteints")
     win.sidebar_btn.set_active(True)
     yield Wait(3, until=lambda: win.get_width() >= w0 - 2 and not win.split.get_collapsed())
     yield Wait(0.6)
     check(win.split.get_show_sidebar() and not win.split.get_collapsed(), "le bouton réaffiche la file à côté")
-    check(abs(win.get_width() - w0) <= 2, f"fenêtre élargie de la file ({win.get_width()})")
-    check(abs(win.split.get_content().get_width() - player) <= 2,
-          f"le lecteur a retrouvé sa largeur ({player} → {win.split.get_content().get_width()})")
+    check(abs(win.get_width() - w0) <= 2, f"fenêtre revenue à sa largeur ({win.get_width()})")
     for _ in range(6):                                  # clics rapides : la fenêtre ne dérive pas
         win.activate_action("win.toggle-playlist", None)
         yield Wait(0.03)

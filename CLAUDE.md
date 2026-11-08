@@ -103,8 +103,10 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
 - `ui/window.py` : disposition d'Amberol (Stack accueil / lecteur, OverlaySplitView avec la file en
   panneau, replié sous 560 sp ; pochette réduite à 180 px sous 680 sp de haut). Afficher / masquer la
   file (F9, bouton de la barre de titre comme Odysseus, bouton du bas, retour de la file) passe par
-  `MainWindow.set_playlist_shown` : la fenêtre se replie de la largeur de la file ou s'élargit d'autant,
-  le lecteur garde sa taille (demande de Tof : masquer laissait une grande fenêtre vide) ; pas de
+  `MainWindow.set_playlist_shown` : masquée → fenêtre au format compact (`COMPACT_WIDTH`, le lecteur
+  seul comme la capture « compact » du site — choix de Tof, pas seulement « moins la file ») ;
+  réaffichée → largeur d'avant (`_wide`), ou élargie de la file si redimensionnée entre-temps (demande
+  de Tof : masquer laissait une grande fenêtre vide) ; pas de
   changement agrandie / plein écran ; `set_default_size` compte le cadre CSD (10 px), `get_width` non.
   Calcul sur la taille DEMANDÉE (`get_default_size` − cadre), jamais sur la taille mesurée : sous un
   vrai gestionnaire de fenêtres le redimensionnement arrive en différé, des clics rapides faisaient

@@ -106,6 +106,7 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   nom de la station = titre de la liste, sinon nom du serveur, retenu dans queue.json (`titles`).
   Titre en cours : étiquette TAG (ICY) → `Song.now_playing`, affiché en grand, station en dessous
   (`window.artist_line`) ; « En direct », ni forme d'onde ni avance. Testé avec un MP3 servi en HTTP.
+  Validé chez Tof avec de vraies webradios en .m3u, ainsi que l'ouverture et l'enregistrement des listes.
 
 ## Tests
 

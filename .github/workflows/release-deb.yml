@@ -1,0 +1,72 @@
+# Paquet .deb publié sur la page « Releases » de GitHub, pour les distributions basées sur Debian qui
+# n'utilisent pas le PPA (Debian 13, PCLinuxOS Debian…). Déclenché quand debian/changelog change sur
+# main (commit « Version X ») ; l'étiquette vX est créée par la publication. Aussi à la main (onglet
+# Actions → Run workflow). Rien à envoyer depuis le poste de Tof (pas d'identifiants GitHub en HTTPS).
+#
+# Version du paquet : « X~deb1 » (le changelog vise noble, « X~noble1 ») ; « ~deb1 » est plus ancien
+# que « ~noble1 » pour apt, donc quelqu'un qui ajoute ensuite le PPA passe à son paquet sans rien faire.
+name: Paquet .deb (GitHub)
+
+on:
+  push:
+    branches: [main]
+    paths: [debian/changelog]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  deb:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Outils de construction
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends build-essential devscripts debhelper dh-python python3 lintian
+
+      - name: Version
+        run: |
+          V=$(dpkg-parsechangelog -S Version)
+          BASE=${V%%~*}
+          echo "BASE=$BASE" >> "$GITHUB_ENV"
+          sed -i "1s/($V) [a-z]*;/($BASE~deb1) unstable;/" debian/changelog
+          head -1 debian/changelog
+
+      - name: Construction
+        run: |
+          dpkg-buildpackage -us -uc -b
+          lintian ../ithaca_*_all.deb || true
+          cp ../ithaca_*_all.deb "ithaca_${BASE}_all.deb"
+
+      - name: Notes (fiche AppStream, en anglais)
+        run: |
+          python3 - <<'PY' > notes.md
+          import os, xml.etree.ElementTree as ET
+          base = os.environ["BASE"]
+          root = ET.parse("data/io.github.ithaca.Ithaca.metainfo.xml").getroot()
+          rel = next((r for r in root.iter("release") if r.get("version") == base), None)
+          items = [li.text.strip() for li in rel.iter("li")] if rel is not None else []
+          print("\n".join(f"- {t}" for t in items) or f"Ithaca {base}")
+          print()
+          print("**Ubuntu 24.04 / 26.04, Zorin OS 18, Linux Mint 22:** prefer the PPA, updates then come "
+                "with the system's:")
+          print("```\nsudo add-apt-repository ppa:nourpon/ithaca\nsudo apt update && sudo apt install ithaca\n```")
+          print("**Other Debian-based distributions (Debian 13…):** download the .deb below, then:")
+          print(f"```\nsudo apt install ./ithaca_{base}_all.deb\n```")
+          PY
+          cat notes.md
+
+      - name: Publication
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v$BASE"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "ithaca_${BASE}_all.deb" --clobber
+          else
+            gh release create "$TAG" "ithaca_${BASE}_all.deb" --target "$GITHUB_SHA" \
+              --title "Ithaca $BASE" --notes-file notes.md
+          fi

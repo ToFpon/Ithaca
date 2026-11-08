@@ -17,6 +17,16 @@ thème GTK du système et utilise GStreamer de la distribution.
 - Couleurs du thème du système, ou, en option, teintées d'après la pochette comme Amberol.
 - Interface en français, anglais et allemand.
 
+## Installer (Ubuntu 24.04 / 26.04, Zorin OS 18, Linux Mint 22)
+
+```sh
+sudo add-apt-repository ppa:nourpon/ithaca
+sudo apt update && sudo apt install ithaca
+```
+
+Autres distributions basées sur Debian (Debian 13…) : le `.deb` de la page « Releases » de GitHub,
+puis `sudo apt install ./ithaca_X_all.deb`.
+
 ## Essayer sans installer
 
 ```sh

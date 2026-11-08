@@ -25,6 +25,11 @@ if [ "$1" = "--uninstall" ]; then
     exit 0
 fi
 
+if [ -d /usr/share/ithaca ]; then
+    echo "Attention : le paquet ithaca (PPA) est déjà installé. Cette installation dans ~/.local"
+    echo "passera devant lui ; pour revenir au paquet : ./install.sh --uninstall"
+fi
+
 missing=""
 python3 -c "import gi; gi.require_version('Gtk','4.0'); gi.require_version('Adw','1'); from gi.repository import Adw; assert Adw.MINOR_VERSION >= 5" 2>/dev/null \
     || missing="$missing python3-gi gir1.2-gtk-4.0 gir1.2-adw-1"

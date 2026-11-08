@@ -1,0 +1,27 @@
+.TH ITHACA 1 "November 2026" "Ithaca 1.0.0" "User Commands"
+.SH NAME
+ithaca \- small music player for GNOME
+.SH SYNOPSIS
+.B ithaca
+[\fIOPTION\fR] [\fIFILE\fR|\fIFOLDER\fR|\fIPLAYLIST\fR...]
+.SH DESCRIPTION
+Ithaca plays your music, and nothing else. Songs, folders and playlists
+(.m3u, .m3u8, .xspf, .pls) given on the command line are added to the play
+queue and the first one is played. If Ithaca is already running, they are
+sent to the running instance.
+.SH OPTIONS
+.TP
+.BR \-v ", " \-\-version
+Print the version and exit.
+.SH FILES
+.TP
+.I ~/.config/ithaca/settings.json
+Preferences.
+.TP
+.I ~/.local/share/ithaca/queue.json
+The play queue, restored with "Restore Playlist".
+.TP
+.I ~/.cache/ithaca/
+Cover art and waveform caches.
+.SH AUTHOR
+Tof <nourpon@gmail.com>

@@ -1,0 +1,18 @@
+#!/usr/bin/make -f
+# Application en Python sans module installé dans site-packages : le code va dans
+# /usr/share/ithaca (privé), dh_python3 le compile à l'installation (py3compile).
+
+%:
+	dh $@ --with python3
+
+override_dh_auto_build:
+override_dh_auto_test:
+
+override_dh_auto_install:
+	install -d debian/ithaca/usr/share/ithaca
+	cp -r ithaca data debian/ithaca/usr/share/ithaca/
+	find debian/ithaca/usr/share/ithaca -name __pycache__ -type d -prune -exec rm -rf {} +
+	rm -f debian/ithaca/usr/share/ithaca/data/locale/*.pot
+
+override_dh_python3:
+	dh_python3 /usr/share/ithaca

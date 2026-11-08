@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>io.github.ithaca.Ithaca</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-3.0-or-later</project_license>
+  <name>Ithaca</name>
+  <summary>Play your music, and nothing else</summary>
+  <summary xml:lang="fr">Écouter votre musique, et rien d'autre</summary>
+  <summary xml:lang="de">Ihre Musik abspielen, und sonst nichts</summary>
+  <developer id="io.github.ithaca">
+    <name>Tof</name>
+  </developer>
+  <description>
+    <p>
+      Ithaca is a small music player for GNOME, inspired by Amberol. It does not manage a library:
+      open songs, folders or playlists and they join the play queue, which is remembered between
+      sessions. It follows the desktop theme, or optionally tints the window after the album cover.
+    </p>
+    <p xml:lang="fr">
+      Ithaca est un petit lecteur de musique pour GNOME, inspiré d'Amberol. Pas de bibliothèque à
+      gérer : on ouvre des morceaux, des dossiers ou des listes de lecture et ils rejoignent la file,
+      retenue d'une session à l'autre. Il suit le thème du bureau, ou, en option, se teinte d'après la
+      pochette.
+    </p>
+    <p xml:lang="de">
+      Ithaca ist ein kleiner Musikplayer für GNOME, inspiriert von Amberol. Keine Bibliothek zu
+      verwalten: Titel, Ordner oder Wiedergabelisten öffnen, und sie kommen in die Warteschlange, die
+      zwischen den Sitzungen erhalten bleibt. Es folgt dem Thema der Arbeitsumgebung oder färbt das
+      Fenster auf Wunsch nach dem Cover ein.
+    </p>
+    <ul>
+      <li>Large cover art, waveform progress bar, gapless playback</li>
+      <li>Shuffle, repeat, search in the queue</li>
+      <li>Playlists (.m3u, .m3u8, .xspf, .pls) and web radios</li>
+      <li>ReplayGain, media keys and GNOME panel controls (MPRIS)</li>
+      <li>Background playback with a tray icon</li>
+    </ul>
+    <ul xml:lang="fr">
+      <li>Grande pochette, barre en forme d'onde, enchaînement sans blanc</li>
+      <li>Aléatoire, répétition, recherche dans la file</li>
+      <li>Listes de lecture (.m3u, .m3u8, .xspf, .pls) et webradios</li>
+      <li>ReplayGain, touches multimédia et contrôle depuis le panneau de GNOME (MPRIS)</li>
+      <li>Lecture en arrière-plan avec icône dans la barre système</li>
+    </ul>
+    <ul xml:lang="de">
+      <li>Großes Cover, Wellenform-Leiste, lückenlose Wiedergabe</li>
+      <li>Zufallswiedergabe, Wiederholen, Suche in der Warteschlange</li>
+      <li>Wiedergabelisten (.m3u, .m3u8, .xspf, .pls) und Webradios</li>
+      <li>ReplayGain, Medientasten und Steuerung über die GNOME-Leiste (MPRIS)</li>
+      <li>Wiedergabe im Hintergrund mit Symbol in der Systemleiste</li>
+    </ul>
+  </description>
+  <url type="homepage">https://github.com/ToFpon/Ithaca</url>
+  <url type="bugtracker">https://github.com/ToFpon/Ithaca/issues</url>
+  <launchable type="desktop-id">io.github.ithaca.Ithaca.desktop</launchable>
+  <categories>
+    <category>AudioVideo</category>
+    <category>Audio</category>
+    <category>Player</category>
+  </categories>
+  <keywords>
+    <keyword>music</keyword>
+    <keyword>player</keyword>
+    <keyword>playlist</keyword>
+    <keyword>radio</keyword>
+  </keywords>
+  <provides>
+    <binary>ithaca</binary>
+  </provides>
+  <requires>
+    <display_length compare="ge">360</display_length>
+  </requires>
+  <content_rating type="oars-1.1"/>
+  <releases>
+    <release version="1.0.0" date="2026-11-08">
+      <description>
+        <ul>
+          <li>First release: a small music player inspired by Amberol, for Ubuntu 24.04 / Zorin OS 18 without Flatpak</li>
+          <li>Cover art, waveform bar, gapless playback, shuffle, repeat, search in the queue</li>
+          <li>Playlists (.m3u, .m3u8, .xspf, .pls) and web radios with the title announced by the station</li>
+          <li>ReplayGain, MPRIS media controls, background playback with a tray icon</li>
+        </ul>
+      </description>
+    </release>
+  </releases>
+</component>

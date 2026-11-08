@@ -31,6 +31,23 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   (code dans `~/.local/lib/ithaca`, jamais dans `~/.local/share/ithaca` qui contient la file ;
   `--uninstall` n'y touche pas).
 
+## Publication (comme Odysseus)
+
+- PPA `ppa:nourpon/ithaca` (https://launchpad.net/~nourpon/+archive/ubuntu/ithaca) : `tools/ppa.sh`
+  (repris d'Odysseus) envoie l'entrée de tête de `debian/changelog` pour noble (24.04, « X~noble1 »)
+  puis resolute (26.04, « X~resolute1 », réécrite dans une copie). Tourne chez Tof (sa clé GPG,
+  `dput`) ; `--build` construit et signe sans envoyer. Nouvelle version : `dch -v X~noble1 "…"`,
+  `dch -r`, version dans `ithaca/__init__.py` et `<release>` dans la fiche AppStream, commit
+  « Version X », push, `tools/ppa.sh`.
+- `.github/workflows/release-deb.yml` : au push de `debian/changelog` sur main, .deb « X~deb1 » (plus
+  ancien que « ~noble1 » : le PPA prend le relais) publié dans les Releases, notes tirées de la fiche
+  AppStream (`data/io.github.ithaca.Ithaca.metainfo.xml`, en anglais).
+- Paquet : code privé dans /usr/share/ithaca (dh_python3), lanceur `/usr/bin/python3 -P -c …`
+  (debian/bin/ithaca), service D-Bus (.desktop en DBusActivatable), page de manuel. Vérifié ici :
+  dpkg-buildpackage (binaire et source), lintian sans remarque, appstreamcli validate (seule note
+  pédante : majuscules de l'identifiant, comme Odysseus), installé puis lancé (le `/usr/bin/python3`
+  du bac à sable est un 3.13 sans gi : lancer le même lanceur avec python3.12).
+
 ## Choix de Tof (comme Amberol)
 
 - Pas de bibliothèque : fichiers et dossiers ouverts (boutons, glisser-déposer, « Ouvrir avec »,

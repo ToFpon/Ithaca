@@ -1,0 +1,29 @@
+Source: ithaca
+Section: sound
+Priority: optional
+Maintainer: Tof <nourpon@gmail.com>
+Build-Depends: debhelper-compat (= 13), dh-python, python3:any
+Standards-Version: 4.6.2
+Homepage: https://github.com/ToFpon/Ithaca
+Vcs-Browser: https://github.com/ToFpon/Ithaca
+Vcs-Git: https://github.com/ToFpon/Ithaca.git
+Rules-Requires-Root: no
+
+Package: ithaca
+Architecture: all
+Depends: ${misc:Depends}, ${python3:Depends}, python3 (>= 3.10), python3-gi, gir1.2-gtk-4.0 (>= 4.14),
+ gir1.2-adw-1 (>= 1.5), gir1.2-glib-2.0, gir1.2-gstreamer-1.0, gir1.2-gst-plugins-base-1.0,
+ gstreamer1.0-plugins-base, gstreamer1.0-plugins-good
+Recommends: gstreamer1.0-libav, gstreamer1.0-plugins-ugly
+Suggests: gnome-shell-extension-appindicator
+Description: small music player for GNOME, inspired by Amberol
+ Ithaca plays your music, and nothing else. It does not manage a library:
+ open songs, folders or playlists and they are added to the play queue,
+ which is remembered between sessions.
+  - large cover art, waveform progress bar, gapless playback;
+  - shuffle, repeat, search in the queue;
+  - playlists (.m3u, .m3u8, .xspf, .pls) and web radios;
+  - ReplayGain, media keys and GNOME panel controls (MPRIS);
+  - background playback with a tray icon.
+ It follows the desktop theme (Adwaita, light/dark, accent colour), or
+ optionally tints the window after the album cover.

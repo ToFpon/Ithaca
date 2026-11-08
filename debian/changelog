@@ -1,0 +1,12 @@
+ithaca (1.0.0~noble1) noble; urgency=medium
+
+  * Première version : petit lecteur de musique inspiré d'Amberol, pour
+    Ubuntu 24.04 / Zorin OS 18, sans Flatpak.
+  * Pochette, barre en forme d'onde, enchaînement sans blanc, aléatoire,
+    répétition, recherche dans la file.
+  * Listes de lecture (.m3u, .m3u8, .xspf, .pls) et webradios, avec le
+    titre annoncé par la station.
+  * ReplayGain, contrôle MPRIS (panneau de GNOME, touches multimédia),
+    lecture en arrière-plan avec icône dans la barre système.
+
+ -- Tof <nourpon@gmail.com>  Sun, 08 Nov 2026 18:00:00 +0000

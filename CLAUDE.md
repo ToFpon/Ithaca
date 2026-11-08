@@ -106,7 +106,16 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   `MainWindow.set_playlist_shown` : la fenêtre se replie de la largeur de la file ou s'élargit d'autant,
   le lecteur garde sa taille (demande de Tof : masquer laissait une grande fenêtre vide) ; pas de
   changement agrandie / plein écran ; `set_default_size` compte le cadre CSD (10 px), `get_width` non.
-  Testé : `replier_la_file` d'ui_smoke. `ui/waveform_view.py`
+  Calcul sur la taille DEMANDÉE (`get_default_size` − cadre), jamais sur la taille mesurée : sous un
+  vrai gestionnaire de fenêtres le redimensionnement arrive en différé, des clics rapides faisaient
+  grandir la fenêtre. Mode « replié » (file par-dessus le lecteur) : le point de rupture n'a plus de
+  setter, ses signaux apply / unapply passent par `_set_narrow` — replié seulement si la fenêtre est
+  étroite ET la file affichée ; on élargit pour afficher → `collapsed` remis à False avant. Changer de
+  mode en pleine animation donnait « Trying to snapshot AdwGizmo … without a current allocation » (vu
+  chez Tof) ; ui_smoke échoue sur cet avertissement. Rétrécir la fenêtre à la main : libadwaita masque
+  la file (normal). Testé : `replier_la_file` d'ui_smoke, AUSSI sous un vrai gestionnaire de fenêtres
+  (xvfb seul redimensionne tout de suite et ne montrait rien) : `apt install openbox`, openbox lancé en
+  fond dans le xvfb-run avant le test. `ui/waveform_view.py`
   : Gtk.Widget dessiné (`do_snapshot`, couleur d'accent / texte estompé du thème), clic, glisser,
   ← / →. `ui/playlist_view.py` : Gtk.ListView (seules les lignes visibles existent), recherche sans
   accents (`unicodedata`, les écritures non latines restent intactes), mode sélection.

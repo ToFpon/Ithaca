@@ -75,7 +75,7 @@ def _tee_stderr():
     with os.fdopen(_err_r, "rb", 0) as f:
         for line in iter(f.readline, b""):
             os.write(_err_orig, line)
-            if b"-CRITICAL **" in line:
+            if b"-CRITICAL **" in line or b"without a current allocation" in line:
                 CRITICALS.append(line.decode("utf-8", "replace").strip())
 
 
@@ -417,6 +417,27 @@ def replier_la_file(win):
     check(abs(win.get_width() - w0) <= 2, f"fenêtre élargie de la file ({win.get_width()})")
     check(abs(win.split.get_content().get_width() - player) <= 2,
           f"le lecteur a retrouvé sa largeur ({player} → {win.split.get_content().get_width()})")
+    for _ in range(6):                                  # clics rapides : la fenêtre ne dérive pas
+        win.activate_action("win.toggle-playlist", None)
+        yield Wait(0.03)
+    yield Wait(3, until=lambda: abs(win.get_width() - w0) <= 2)
+    yield Wait(0.6)
+    check(abs(win.get_width() - w0) <= 2 and win.split.get_show_sidebar(), "clics rapides : même largeur")
+    check(not win.split.get_collapsed(), "file masquée puis réaffichée : jamais par-dessus le lecteur")
+    # fenêtre rétrécie à la main, file affichée : libadwaita la masque (mode « replié ») ; F9 élargit
+    # alors la fenêtre pour la remettre à côté du lecteur
+    dw, dh = win.get_default_size()
+    win.set_default_size(450, dh)
+    yield Wait(3, until=lambda: win.split.get_collapsed())
+    yield Wait(0.6)
+    check(win.split.get_collapsed() and not win.split.get_show_sidebar(), "fenêtre rétrécie : file repliée")
+    win.activate_action("win.toggle-playlist", None)
+    yield Wait(3, until=lambda: not win.split.get_collapsed())
+    yield Wait(0.6)
+    check(win.split.get_show_sidebar() and not win.split.get_collapsed() and win.get_width() > 600,
+          f"fenêtre rétrécie : F9 l'élargit, file à côté ({win.get_width()})")
+    win.set_default_size(dw, dh)
+    yield Wait(3, until=lambda: abs(win.get_width() - w0) <= 2)
 
 
 @step

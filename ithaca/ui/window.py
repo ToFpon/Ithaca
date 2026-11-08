@@ -75,9 +75,15 @@ class MainWindow(Adw.ApplicationWindow):
         handle = Gtk.WindowHandle(child=self.toast_overlay)
         self.set_content(handle)
 
+        # Fenêtre étroite : la file passe par-dessus le lecteur — seulement si elle est affichée. Une
+        # file masquée ne « replie » pas la vue : sinon replier la fenêtre avec la file (F9) changeait de
+        # mode en pleine animation (« Trying to snapshot AdwGizmo without a current allocation »).
+        self._narrow = False
         bp = Adw.Breakpoint.new(Adw.BreakpointCondition.parse(f"max-width: {COLLAPSE_SP}sp"))
-        bp.add_setter(self.split, "collapsed", True)
+        bp.connect("apply", lambda *_: self._set_narrow(True))
+        bp.connect("unapply", lambda *_: self._set_narrow(False))
         self.add_breakpoint(bp)
+        self._frame = None                  # cadre de la fenêtre (CSD) : taille par défaut − largeur
         low = Adw.Breakpoint.new(Adw.BreakpointCondition.parse("max-height: 680sp"))
         self.cover.add_size_setters(low, 180)
         self.add_breakpoint(low)
@@ -346,18 +352,33 @@ class MainWindow(Adw.ApplicationWindow):
         if self.split.get_show_sidebar() == show:
             return
         free = self.get_mapped() and not self.is_maximized() and not self.is_fullscreen()
+        dw, dh = self.get_default_size()
         width = None
-        if free and not show and not self.split.get_collapsed():
-            width = max(self.get_width() - self.playlist.get_width(), MIN_WIDTH)
-        elif free and show:
-            width = width_with_playlist(self.get_width())     # file masquée : le lecteur a toute la fenêtre
+        if free and dw > 0:
+            # Calcul sur la taille DEMANDÉE (connue tout de suite), jamais sur la taille mesurée : avec un
+            # vrai gestionnaire de fenêtres, le redimensionnement arrive plus tard, et des clics rapides
+            # faisaient grandir la fenêtre à chaque aller-retour.
+            if self._frame is None:
+                self._frame = max(dw - self.get_width(), 0)   # cadre CSD : compté par la taille par défaut
+            current = dw - self._frame
+            if not show and not self.split.get_collapsed():   # file à côté du lecteur (pas par-dessus)
+                side = min(max(current * SIDEBAR_FRACTION, self.split.get_min_sidebar_width()), SIDEBAR_MAX)
+                width = max(round(current - side), MIN_WIDTH)
+            elif show:
+                width = width_with_playlist(current)          # file masquée : le lecteur a toute la fenêtre
+        if show and width is None and self._narrow:
+            self.split.set_collapsed(True)                    # fenêtre étroite qu'on n'élargit pas
+        elif show and width is not None:
+            # on élargit : la file s'affiche directement à côté, sans passer par-dessus le lecteur le
+            # temps du redimensionnement (changer de mode en pleine animation → AdwGizmo)
+            self.split.set_collapsed(False)
         self.split.set_show_sidebar(show)
         if width is not None:
-            # la taille par défaut compte le cadre de la fenêtre (CSD), get_width non
-            dw, dh = self.get_default_size()
-            frame_w = dw - self.get_width() if dw > 0 else 0
-            frame_h = dh - self.get_height() if dh > 0 else 0
-            self.set_default_size(width + max(frame_w, 0), self.get_height() + max(frame_h, 0))
+            self.set_default_size(width + self._frame, dh)
+
+    def _set_narrow(self, narrow: bool):
+        self._narrow = narrow
+        self.split.set_collapsed(narrow and self.split.get_show_sidebar())
 
     # -- ajout --------------------------------------------------------------------------------
     def _music_dir(self) -> str:

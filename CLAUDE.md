@@ -103,6 +103,15 @@ Captures (Gtk.WidgetPaintable, configuration jetable, album d'exemple généré)
 
 ## Pièges connus
 
+Le CLAUDE.md d'Odysseus (`ToFpon/Odysseus`) recense beaucoup de pièges de GTK 4.14 / libadwaita 1.5
+vécus en vrai (raccourcis, focus, menus, boutons latéraux de la souris, ColumnView…) : le relire
+avant de toucher à ces sujets.
+
+- Raccourcis de l'application (Ctrl+← / →, Maj+← / →) : GTK 4 les traite AVANT le champ qui a le
+  focus. `MainWindow._on_key` (contrôleur en capture) les rend à `Gtk.Text` par `move-cursor` ;
+  testé dans ui_smoke (recherche de la file). Tout nouveau raccourci sur une touche d'édition doit
+  y passer.
+
 - `css_classes=[…]` au constructeur d'une fenêtre REMPLACE ses classes (« background »…) : texte
   blanc sur fond blanc. Toujours `add_css_class` pour une fenêtre.
 - Textes venus de l'extérieur (noms de fichiers, étiquettes) : la description d'`Adw.StatusPage` et le

@@ -348,9 +348,24 @@ class MainWindow(Adw.ApplicationWindow):
             self.add_paths(paths)
         return bool(paths)
 
+    # Raccourcis de l'application sur des touches qui ont un sens dans un champ : GTK 4 traite les
+    # raccourcis AVANT le widget qui a le focus (piège noté dans Odysseus). Dans la recherche,
+    # Ctrl+← / → (mot par mot) et Maj+← / → (sélection) changeaient de morceau ou sautaient de 10 s :
+    # ce contrôleur en capture les rend au champ (signal move-cursor de Gtk.Text).
+    _TEXT_MOVES = {
+        (Gdk.KEY_Left, Gdk.ModifierType.CONTROL_MASK): (Gtk.MovementStep.WORDS, -1, False),
+        (Gdk.KEY_Right, Gdk.ModifierType.CONTROL_MASK): (Gtk.MovementStep.WORDS, 1, False),
+        (Gdk.KEY_Left, Gdk.ModifierType.SHIFT_MASK): (Gtk.MovementStep.VISUAL_POSITIONS, -1, True),
+        (Gdk.KEY_Right, Gdk.ModifierType.SHIFT_MASK): (Gtk.MovementStep.VISUAL_POSITIONS, 1, True),
+    }
+
     def _on_key(self, _ctrl, keyval, _code, state):
         mods = state & Gtk.accelerator_get_default_mod_mask()
         focus = self.get_focus()
+        move = self._TEXT_MOVES.get((keyval, mods))
+        if move is not None and isinstance(focus, Gtk.Text):
+            focus.emit("move-cursor", *move)
+            return True
         if keyval == Gdk.KEY_space and not mods and not isinstance(focus, TEXT_WIDGETS) \
                 and not isinstance(focus, (Gtk.Button,)):
             self.c.toggle()

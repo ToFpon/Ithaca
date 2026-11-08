@@ -101,7 +101,12 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   contrairement à ce que laissait penser Odysseus) ; PropertiesChanged à chaque événement, Seeked
   sur un saut. Démarré / arrêté en direct (`features` « mpris »), seulement avec un bus de session.
 - `ui/window.py` : disposition d'Amberol (Stack accueil / lecteur, OverlaySplitView avec la file en
-  panneau, replié sous 560 sp ; pochette réduite à 180 px sous 680 sp de haut). `ui/waveform_view.py`
+  panneau, replié sous 560 sp ; pochette réduite à 180 px sous 680 sp de haut). Afficher / masquer la
+  file (F9, bouton de la barre de titre comme Odysseus, bouton du bas, retour de la file) passe par
+  `MainWindow.set_playlist_shown` : la fenêtre se replie de la largeur de la file ou s'élargit d'autant,
+  le lecteur garde sa taille (demande de Tof : masquer laissait une grande fenêtre vide) ; pas de
+  changement agrandie / plein écran ; `set_default_size` compte le cadre CSD (10 px), `get_width` non.
+  Testé : `replier_la_file` d'ui_smoke. `ui/waveform_view.py`
   : Gtk.Widget dessiné (`do_snapshot`, couleur d'accent / texte estompé du thème), clic, glisser,
   ← / →. `ui/playlist_view.py` : Gtk.ListView (seules les lignes visibles existent), recherche sans
   accents (`unicodedata`, les écritures non latines restent intactes), mode sélection.

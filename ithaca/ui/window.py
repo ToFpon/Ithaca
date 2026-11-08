@@ -23,6 +23,21 @@ from .playlist_view import PlaylistView  # noqa: E402
 from .waveform_view import WaveformView  # noqa: E402
 
 TEXT_WIDGETS = (Gtk.Text, Gtk.TextView, Gtk.Entry, Gtk.SearchEntry)
+MIN_WIDTH = 360                       # largeur minimale de la fenêtre
+SIDEBAR_MAX, SIDEBAR_FRACTION = 360, 0.4
+COLLAPSE_SP = 560                     # en dessous, la file passe par-dessus le lecteur (Adw.Breakpoint)
+
+
+def width_with_playlist(content: int) -> int:
+    """Largeur de fenêtre qui garde au lecteur la largeur `content` une fois la file affichée
+    (file = 40 % de la fenêtre, 360 px au plus), sans retomber sous le point de repli."""
+    if content + SIDEBAR_MAX >= SIDEBAR_MAX / SIDEBAR_FRACTION:
+        width = content + SIDEBAR_MAX
+    else:
+        width = round(content / (1 - SIDEBAR_FRACTION))
+    dpi = Gtk.Settings.get_default().get_property("gtk-xft-dpi") if Gtk.Settings.get_default() else -1
+    scale = dpi / (96 * 1024) if dpi and dpi > 0 else 1.0     # sp = px × mise à l'échelle du texte
+    return max(width, round(COLLAPSE_SP * scale) + 40)
 
 
 def artist_line(song) -> str:
@@ -42,7 +57,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.add_css_class("ithaca-window")
         self.c = app.controller
         self.set_default_size(settings["window_width"], settings["window_height"])
-        self.set_size_request(360, 540)
+        self.set_size_request(MIN_WIDTH, 540)
         self.waveforms = WaveformGenerator()
         self.recolor = Recolor()
         self._dragging_volume = False
@@ -60,7 +75,7 @@ class MainWindow(Adw.ApplicationWindow):
         handle = Gtk.WindowHandle(child=self.toast_overlay)
         self.set_content(handle)
 
-        bp = Adw.Breakpoint.new(Adw.BreakpointCondition.parse("max-width: 560sp"))
+        bp = Adw.Breakpoint.new(Adw.BreakpointCondition.parse(f"max-width: {COLLAPSE_SP}sp"))
         bp.add_setter(self.split, "collapsed", True)
         self.add_breakpoint(bp)
         low = Adw.Breakpoint.new(Adw.BreakpointCondition.parse("max-height: 680sp"))
@@ -102,9 +117,14 @@ class MainWindow(Adw.ApplicationWindow):
         return tv
 
     def _build_main(self) -> Gtk.Widget:
-        self.split = Adw.OverlaySplitView(max_sidebar_width=360, sidebar_width_fraction=0.4)
+        self.split = Adw.OverlaySplitView(max_sidebar_width=SIDEBAR_MAX, sidebar_width_fraction=SIDEBAR_FRACTION)
         content = Adw.ToolbarView()
-        content.add_top_bar(Adw.HeaderBar(show_title=False))
+        header = Adw.HeaderBar(show_title=False)
+        # comme le bouton de la barre latérale d'Odysseus ; F9 et le bouton du bas font la même chose
+        self.sidebar_btn = Gtk.ToggleButton(icon_name="sidebar-show-symbolic", tooltip_text=tr("Afficher la file"))
+        self.sidebar_btn.connect("toggled", self._on_playlist_toggled)
+        header.pack_start(self.sidebar_btn)
+        content.add_top_bar(header)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, valign=Gtk.Align.CENTER, vexpand=True,
                       css_classes=["main-box"])
         self.cover = CoverView(256)
@@ -139,7 +159,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.split.set_content(content)
 
         self.playlist = PlaylistView(self.c)
-        self.playlist.back_btn.connect("clicked", lambda *_: self.split.set_show_sidebar(False))
+        self.playlist.back_btn.connect("clicked", lambda *_: self.set_playlist_shown(False))
         self.split.set_sidebar(self.playlist)
         return self.split
 
@@ -310,13 +330,34 @@ class MainWindow(Adw.ApplicationWindow):
             show_in_folder(self, song.path)
 
     def _toggle_search(self):
-        self.split.set_show_sidebar(True)
+        self.set_playlist_shown(True)
         self.playlist.search_btn.set_active(not self.playlist.search_btn.get_active())
         if self.playlist.search_btn.get_active():
             self.playlist.search_entry.grab_focus()
 
     def _toggle_playlist(self):
-        self.split.set_show_sidebar(not self.split.get_show_sidebar())
+        self.set_playlist_shown(not self.split.get_show_sidebar())
+
+    def set_playlist_shown(self, show: bool):
+        """Afficher / masquer la file. La fenêtre se replie de la largeur de la file (ou s'élargit
+        d'autant) et le lecteur garde sa taille : masquer la file laissait sinon une grande fenêtre vide
+        autour du lecteur (retour de Tof). Rien ne bouge si la fenêtre est agrandie ou en plein écran,
+        ni pour masquer la file posée par-dessus le lecteur (fenêtre étroite, « repliée »)."""
+        if self.split.get_show_sidebar() == show:
+            return
+        free = self.get_mapped() and not self.is_maximized() and not self.is_fullscreen()
+        width = None
+        if free and not show and not self.split.get_collapsed():
+            width = max(self.get_width() - self.playlist.get_width(), MIN_WIDTH)
+        elif free and show:
+            width = width_with_playlist(self.get_width())     # file masquée : le lecteur a toute la fenêtre
+        self.split.set_show_sidebar(show)
+        if width is not None:
+            # la taille par défaut compte le cadre de la fenêtre (CSD), get_width non
+            dw, dh = self.get_default_size()
+            frame_w = dw - self.get_width() if dw > 0 else 0
+            frame_h = dh - self.get_height() if dh > 0 else 0
+            self.set_default_size(width + max(frame_w, 0), self.get_height() + max(frame_h, 0))
 
     # -- ajout --------------------------------------------------------------------------------
     def _music_dir(self) -> str:
@@ -557,12 +598,13 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _on_playlist_toggled(self, button):
         if self.split.get_show_sidebar() != button.get_active():
-            self.split.set_show_sidebar(button.get_active())
+            self.set_playlist_shown(button.get_active())
 
     def _sync_playlist_button(self):
         shown_ = self.split.get_show_sidebar()
-        if self.playlist_btn.get_active() != shown_:
-            self.playlist_btn.set_active(shown_)
+        for btn in (self.playlist_btn, self.sidebar_btn):
+            if btn.get_active() != shown_:
+                btn.set_active(shown_)
         self.playlist.back_btn.set_visible(self.split.get_collapsed())
         if not self.split.get_collapsed():
             settings["playlist_visible"] = shown_

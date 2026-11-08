@@ -1,3 +1,10 @@
+ithaca (1.0.3~noble1) noble; urgency=medium
+
+  * Espace met en lecture / pause même quand un bouton a le focus (il
+    « recliquait » le dernier bouton utilisé : suivant, aléatoire…).
+
+ -- Tof <nourpon@gmail.com>  Sun, 08 Nov 2026 23:30:00 +0000
+
 ithaca (1.0.2~noble1) noble; urgency=medium
 
   * Masquer la file de lecture (F9, boutons) met la fenêtre au format

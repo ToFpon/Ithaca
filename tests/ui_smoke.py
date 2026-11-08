@@ -40,6 +40,7 @@ sys.excepthook = hook
 import media  # noqa: E402
 from ithaca import features  # noqa: E402
 from ithaca.app import IthacaApp  # noqa: E402
+from ithaca.i18n import tr  # noqa: E402
 from ithaca.settings import settings  # noqa: E402
 
 LIB = media.library(os.path.join(TMP, "lib"))
@@ -358,6 +359,38 @@ def restauration(win):
     win.activate_action("win.restore", None)
     yield Wait(10, until=lambda: len(c().queue) == len(saved))
     check([s.path for s in c().queue.items] == saved, "file restaurée")
+
+
+@step
+def listes_de_lecture(win):
+    from ithaca.backend import playlists
+    from ithaca.backend.song import Song
+    from ithaca.ui.window import artist_line
+    folder = os.path.join(TMP, "listes")
+    os.makedirs(folder)
+    songs = list(c().queue.items)
+    path = win.write_playlist(songs, os.path.join(folder, "Voyage.xspf"))
+    check(path and len(playlists.parse(path)) == len(songs), "file enregistrée en XSPF")
+    m3u = win.write_playlist(songs[:2], os.path.join(folder, "Deux"))
+    check(m3u.endswith("Deux.m3u"), "extension .m3u ajoutée")
+    win.append_to_playlist(songs, m3u)
+    check(len(playlists.parse(m3u)) == len(songs), "liste complétée sans doublon")
+    n = len(c().queue)
+    c().clear()
+    yield pump(0.3)
+    win.add_paths([path])
+    yield Wait(10, until=lambda: len(c().queue) == n)
+    check(len(c().queue) == n, "liste ouverte : morceaux dans la file")
+    win.playlist.set_selection_mode(True)
+    check(not win.playlist.save_btn.get_sensitive(), "rien de sélectionné : enregistrement inactif")
+    win.playlist.select_all()
+    check(win.playlist.save_btn.get_sensitive(), "sélection : « Enregistrer comme liste »")
+    win.playlist.set_selection_mode(False)
+    radio = Song("http://radio.example/flux", title="Radio Ithaque")
+    check(artist_line(radio) == tr("Webradio") and radio.display_title == "Radio Ithaque", "webradio affichée")
+    radio.now_playing = "Ouverture"
+    check(artist_line(radio) == "Radio Ithaque" and radio.display_title == "Ouverture",
+          "titre annoncé par la webradio, station en dessous")
 
 
 @step

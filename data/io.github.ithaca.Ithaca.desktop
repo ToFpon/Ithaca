@@ -17,4 +17,4 @@ Keywords[de]=Musik;Audio;Wiedergabe;Lied;Playlist;mp3;flac;
 StartupNotify=true
 DBusActivatable=true
 StartupWMClass=io.github.ithaca.Ithaca
-MimeType=audio/mpeg;audio/flac;audio/x-flac;audio/ogg;audio/x-vorbis+ogg;audio/x-opus+ogg;audio/mp4;audio/x-m4a;audio/aac;audio/x-wav;audio/x-wavpack;audio/x-ape;audio/x-musepack;audio/x-aiff;audio/x-ms-wma;audio/x-matroska;inode/directory;
+MimeType=audio/mpeg;audio/flac;audio/x-flac;audio/ogg;audio/x-vorbis+ogg;audio/x-opus+ogg;audio/mp4;audio/x-m4a;audio/aac;audio/x-wav;audio/x-wavpack;audio/x-ape;audio/x-musepack;audio/x-aiff;audio/x-ms-wma;audio/x-matroska;audio/x-mpegurl;audio/mpegurl;application/xspf+xml;audio/x-scpls;inode/directory;

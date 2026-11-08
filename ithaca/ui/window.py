@@ -23,6 +23,13 @@ from .playlist_view import PlaylistView  # noqa: E402
 from .waveform_view import WaveformView  # noqa: E402
 
 TEXT_WIDGETS = (Gtk.Text, Gtk.TextView, Gtk.Entry, Gtk.SearchEntry)
+
+
+def artist_line(song) -> str:
+    """Seconde ligne : l'artiste ; pour une webradio, la station (ou « Webradio »)."""
+    if song.stream:
+        return song.title if song.now_playing and song.title else tr("Webradio")
+    return song.artist or tr("Artiste inconnu")
 REPEAT_ICONS = {"consecutive": "media-playlist-consecutive-symbolic", "all": "media-playlist-repeat-symbolic",
                 "one": "media-playlist-repeat-song-symbolic"}
 
@@ -195,6 +202,8 @@ class MainWindow(Adw.ApplicationWindow):
         s2 = Gio.Menu()
         s2.append(tr("Ajouter des morceaux"), "win.add-songs")
         s2.append(tr("Ajouter un dossier"), "win.add-folder")
+        s2.append(tr("Enregistrer la file…"), "win.save-playlist")
+        s2.append(tr("Ajouter la file à une liste…"), "win.append-playlist")
         s2.append(tr("Vider la file"), "win.clear")
         menu.append_section(None, s2)
         s3 = Gio.Menu()
@@ -223,6 +232,10 @@ class MainWindow(Adw.ApplicationWindow):
             "play": self.c.toggle, "next": self.c.next, "previous": self.c.previous,
             "add-songs": self.add_songs, "add-folder": self.add_folder, "clear": self.c.clear,
             "restore": self.restore, "copy": self._copy, "open-folder": self._open_folder,
+            "save-playlist": lambda: self.save_playlist(list(self.c.queue.items)),
+            "append-playlist": lambda: self.append_playlist(list(self.c.queue.items)),
+            "save-selection": lambda: self.save_playlist(self.playlist.selected_songs()),
+            "append-selection": lambda: self.append_playlist(self.playlist.selected_songs()),
             "search": self._toggle_search, "toggle-playlist": self._toggle_playlist,
             "mute": lambda: self.c.set_muted(not settings["muted"]),
             "seek-forward": lambda: self.c.seek(min(self.c.player.duration(), self.c.player.position() + 10)),
@@ -311,10 +324,65 @@ class MainWindow(Adw.ApplicationWindow):
         return d if d and os.path.isdir(d) else os.path.expanduser("~")
 
     def add_songs(self):
+        from ..backend.playlists import READ_EXTS
         from ..backend.song import AUDIO_EXTS
+        exts = AUDIO_EXTS + READ_EXTS
         choose_files(self, tr("Ajouter des morceaux"), self._music_dir(), self.add_paths,
-                     filters=[(tr("Fichiers audio"), ["*" + e for e in AUDIO_EXTS] + ["*" + e.upper() for e in AUDIO_EXTS]),
+                     filters=[(tr("Musique et listes de lecture"), ["*" + e for e in exts] + ["*" + e.upper() for e in exts]),
+                              (tr("Listes de lecture"), ["*" + e for e in READ_EXTS] + ["*" + e.upper() for e in READ_EXTS]),
                               (tr("Tous les fichiers"), ["*"])])
+
+    # -- listes de lecture ---------------------------------------------------------------------
+    def save_playlist(self, songs: list):
+        """Nouvelle liste (.m3u, .m3u8 ou .xspf d'après le nom ; .m3u si aucun)."""
+        if not songs:
+            return
+        from .common import choose_save
+        choose_save(self, tr("Enregistrer la liste de lecture"),
+                    os.path.join(self._music_dir(), tr("Liste de lecture") + ".m3u"),
+                    lambda path: self.write_playlist(songs, path))
+
+    def write_playlist(self, songs: list, path: str) -> str:
+        from ..backend import playlists
+        try:
+            final = playlists.save(songs, path)
+        except OSError as e:
+            from .common import error
+            error(self, tr("Impossible d'enregistrer la liste"), e.strerror or str(e))
+            return ""
+        toast(self, tr("Liste enregistrée : {0}").format(shown(os.path.basename(final))))
+        self.playlist.set_selection_mode(False)
+        return final
+
+    def append_playlist(self, songs: list):
+        """Compléter une liste existante (sans doublon, contenu gardé)."""
+        if not songs:
+            return
+        from ..backend import playlists
+        choose_files(self, tr("Ajouter à une liste de lecture"), self._music_dir(),
+                     lambda paths: self.append_to_playlist(songs, paths[0]), multiple=False,
+                     filters=[(tr("Listes de lecture"), ["*" + e for e in playlists.WRITE_EXTS])])
+
+    def append_to_playlist(self, songs: list, path: str):
+        from ..backend import playlists
+        if not path.lower().endswith(playlists.WRITE_EXTS):
+            toast(self, tr("Format non pris en charge : {0}").format(shown(os.path.basename(path))))
+            return
+        try:
+            added, present = playlists.append(songs, path)
+        except (OSError, ValueError, SyntaxError) as e:      # liste illisible (XML abîmé : ParseError)
+            from .common import error
+            error(self, tr("Impossible de compléter la liste"), str(e))
+            return
+        name = shown(os.path.basename(path))
+        if added:
+            msg = ntr("{0} morceau ajouté à « {1} »", "{0} morceaux ajoutés à « {1} »", added).format(added, name)
+            if present:
+                msg += " " + ntr("({0} déjà présent)", "({0} déjà présents)", present).format(present)
+        else:
+            msg = tr("Tout est déjà dans « {0} »").format(name)
+        toast(self, msg)
+        self.playlist.set_selection_mode(False)
 
     def add_folder(self):
         choose_folder(self, tr("Ajouter un dossier"), self._music_dir(), lambda p: self.add_paths([p]))
@@ -422,15 +490,17 @@ class MainWindow(Adw.ApplicationWindow):
             return
         self.title_label.set_label(shown(song.display_title))
         self.title_label.set_tooltip_text(shown(song.display_title))
-        self.artist_label.set_label(shown(song.artist or tr("Artiste inconnu")))
+        self.artist_label.set_label(shown(artist_line(song)))
         self.album_label.set_label(shown(song.album))
         self.album_label.set_visible(bool(song.album))
         self.cover.set_cover(song.cover)
         self.set_title(shown(" — ".join(x for x in (song.display_title, song.artist) if x)))
-        self.waveform.set_peaks(None)
-        self.waveform.set_position(0, song.duration)
-        if features.enabled("waveform"):
-            self.waveforms.request(song, self._on_peaks)
+        if self.waveform.song_path != song.path:          # titre d'une webradio changé : même flux
+            self.waveform.song_path = song.path
+            self.waveform.set_peaks(None)
+            self.waveform.set_position(0, song.duration)
+            if features.enabled("waveform") and not song.stream:
+                self.waveforms.request(song, self._on_peaks)
         self._apply_recolor(song.cover)
         self._sync_position(self.c.player.position())
 
@@ -440,6 +510,11 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _sync_position(self, pos: float):
         song = self.c.song
+        if song is not None and song.stream:
+            self.waveform.set_position(0, 0)               # pas de durée : ni forme d'onde ni avance
+            self.elapsed.set_label(fmt.duration(pos))
+            self.remaining.set_label(tr("En direct"))
+            return
         dur = self.c.player.duration() if song is not None else 0.0
         self.waveform.set_position(pos, dur)
         self.elapsed.set_label(fmt.duration(pos))
@@ -450,7 +525,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.play_btn.set_icon_name("media-playback-pause-symbolic" if playing else "media-playback-start-symbolic")
         self.play_btn.set_tooltip_text(tr("Pause") if playing else tr("Lire"))
         has = len(self.c.queue) > 0
-        for name in ("play", "next", "previous", "copy", "open-folder", "clear"):
+        for name in ("play", "next", "previous", "copy", "open-folder", "clear", "save-playlist", "append-playlist"):
             self.lookup_action(name).set_enabled(has)
         app = self.get_application()
         if app is not None:

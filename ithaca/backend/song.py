@@ -48,17 +48,27 @@ class Song:
     album_gain: Optional[float] = None
     track_peak: Optional[float] = None
     album_peak: Optional[float] = None
+    now_playing: str = ""          # flux : titre en cours annoncé par la station (étiquette ICY)
+
+    @property
+    def stream(self) -> bool:
+        """Webradio ou autre flux réseau (path est alors une adresse)."""
+        return "://" in self.path
 
     @property
     def uri(self) -> str:
-        return Gst.filename_to_uri(self.path)
+        return self.path if self.stream else Gst.filename_to_uri(self.path)
 
     @property
     def display_title(self) -> str:
+        if self.stream:
+            return self.now_playing or self.title or self.path
         return self.title or os.path.splitext(os.path.basename(self.path))[0]
 
     def key(self) -> str:
         """Empreinte du fichier (chemin, taille, date) : cache de la forme d'onde."""
+        if self.stream:
+            return hashlib.sha1(self.path.encode("utf-8", "surrogateescape")).hexdigest()
         try:
             st = os.stat(self.path)
             raw = f"{self.path}|{st.st_size}|{st.st_mtime_ns}"
@@ -173,11 +183,25 @@ def read_song(path: str, discoverer=None) -> Optional[Song]:
     return song
 
 
-def expand(paths: list[str]) -> list[str]:
-    """Fichiers audio des chemins donnés (dossiers parcourus, ordre naturel des noms)."""
+def expand(paths: list[str], titles: Optional[dict] = None) -> list[str]:
+    """Fichiers audio des chemins donnés (dossiers parcourus, ordre naturel des noms ; listes de
+    lecture dépliées, leurs flux compris). titles : reçoit le titre donné par la liste aux flux."""
+    from . import playlists
     out = []
     for p in paths:
-        if os.path.isdir(p):
+        if playlists.is_stream(p):
+            out.append(p)
+        elif os.path.isfile(p) and playlists.is_playlist(p):
+            for e in playlists.parse(p):
+                if playlists.is_stream(e.location):
+                    if titles is not None and e.title:
+                        titles.setdefault(e.location, e.title)
+                    out.append(e.location)
+                elif os.path.isdir(e.location):
+                    out += expand([e.location])
+                else:
+                    out.append(e.location)        # absent : compté comme ignoré au chargement
+        elif os.path.isdir(p):
             for root, dirs, files in os.walk(p):
                 dirs[:] = sorted((d for d in dirs if not d.startswith(".")), key=name_key)
                 for f in sorted(files, key=name_key):
@@ -197,12 +221,18 @@ def load_paths(paths: list[str], on_songs: Callable[[list[Song]], None],
         GLib.idle_add(lambda: (fn(*args), False)[1])
 
     def work():
+        from .playlists import title_for_stream
         d = GstPbutils.Discoverer.new(5 * Gst.SECOND)
         batch, read, skipped = [], 0, 0
-        for path in expand(paths):
+        titles: dict = {}
+        for path in expand(paths, titles):
             if cancel is not None and cancel.is_set():
                 return
-            song = read_song(path, d)
+            if "://" in path:
+                # flux : pas d'analyse (une webradio ne finit jamais), nom donné par la liste
+                song = Song(path, title=title_for_stream(path, titles.get(path, "")))
+            else:
+                song = read_song(path, d) if os.path.isfile(path) else None
             if song is None:
                 skipped += 1
                 continue

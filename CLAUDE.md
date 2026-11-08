@@ -83,17 +83,36 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   KeyboardInterrupt ; Ctrl+C dans le terminal).
 - `backend/tray.py` : icône AppIndicator sans libayatana-appindicator (GTK 3, incompatible avec
   GTK 4 dans le même processus) : StatusNotifierItem + com.canonical.dbusmenu écrits à la main,
-  enregistrés auprès de org.kde.StatusNotifierWatcher (extension AppIndicator de Zorin) ; pas de
+  enregistrés auprès de org.kde.StatusNotifierWatcher (chez Tof : extension « AppIndicator and
+  KStatusNotifierItem Support » d'Ubuntu, ubuntu/gnome-shell-extension-appindicator — il a quitté
+  celle de Zorin, trop boguée) ; pas de
   barre : rien ne s'affiche, rien ne casse. IconThemePath = data/icons (icône symbolique) ; menu
   (titre en cours, Afficher, Lire / Pause, Suivant, Précédent, Quitter) republié par LayoutUpdated
   à chaque événement.
+
+## Listes de lecture et webradios
+
+- `backend/playlists.py`, repris du module d'Odysseus (`backend/playlist.py`) : lecture .m3u / .m3u8 /
+  .xspf / .pls (relatifs, absolus, file://, chemins Windows « \\ », vieux .m3u en cp1252, XSPF à
+  adresses relatives encodées), écriture .m3u / .m3u8 / .xspf en chemins RELATIFS (la liste suit la
+  musique sur une clé), #EXTINF / champs XSPF tirés des étiquettes déjà lues (pas de ffprobe).
+  Écriture sûre : copie cachée `.ithaca-*.tmp` + fsync + `os.replace` + fsync du dossier, droits
+  gardés. Compléter = contenu gardé tel quel, doublons par chemin réel. Extension ajoutée par nous
+  (« Ma liste » → « .m3u ») : jamais d'écrasement (`free_name`) — la fenêtre n'a confirmé que l'autre nom.
+- Ouvrir une liste = l'ouvrir comme un dossier (`song.expand` la déplie) ; morceau absent compté
+  « ignoré ». Enregistrer : menu (« Enregistrer la file… », « Ajouter la file à une liste… ») et bouton
+  de la sélection ; `MainWindow.write_playlist` / `append_to_playlist` (sans dialogue, testés).
+- Webradios (choix de Tof) : `Song.stream` (path = adresse), jamais analysées (un flux ne finit pas),
+  nom de la station = titre de la liste, sinon nom du serveur, retenu dans queue.json (`titles`).
+  Titre en cours : étiquette TAG (ICY) → `Song.now_playing`, affiché en grand, station en dessous
+  (`window.artist_line`) ; « En direct », ni forme d'onde ni avance. Testé avec un MP3 servi en HTTP.
 
 ## Tests
 
 Le `python3` du bac à sable n'a pas `gi` : utiliser `python3.12`.
 
 ```sh
-python3.12 -m unittest discover -s tests            # moteur (vrai GStreamer, sortie factice)
+python3.12 -m unittest discover -s tests            # moteur, listes, webradio (vrai GStreamer, sortie factice)
 dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_mpris.py"   # MPRIS
 dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_tray.py"    # icône, Ctrl+C
 xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par « Aucune erreur. »

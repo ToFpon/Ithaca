@@ -103,6 +103,12 @@ class PlaylistView(Gtk.Box):
                                      css_classes=["destructive-action"])
         self.remove_btn.connect("clicked", lambda *_: self.remove_selected())
         self.action_bar.pack_end(self.remove_btn)
+        save_menu = Gio.Menu()
+        save_menu.append(tr("Enregistrer comme liste de lecture…"), "win.save-selection")
+        save_menu.append(tr("Ajouter à une liste de lecture…"), "win.append-selection")
+        self.save_btn = Gtk.MenuButton(icon_name="document-save-symbolic", menu_model=save_menu,
+                                       tooltip_text=tr("Liste de lecture"), direction=Gtk.ArrowType.UP)
+        self.action_bar.pack_end(self.save_btn)
         tv.add_bottom_bar(self.action_bar)
         self.append(tv)
         self.vexpand = True
@@ -175,7 +181,8 @@ class PlaylistView(Gtk.Box):
         box._item = item
         song = item.song
         box._title.set_label(shown(song.display_title))
-        box._artist.set_label(shown(song.artist or tr("Artiste inconnu")))
+        from .window import artist_line
+        box._artist.set_label(shown(artist_line(song)))
         box.set_tooltip_text(shown(" — ".join(x for x in (song.display_title, song.artist, song.album) if x)))
         tex = texture(song.cover, THUMB * 2) if song.cover else None
         if tex is not None:
@@ -244,6 +251,7 @@ class PlaylistView(Gtk.Box):
         n = len(self.selected_songs())
         self.selected_label.set_label(ntr("{0} morceau sélectionné", "{0} morceaux sélectionnés", n).format(n))
         self.remove_btn.set_sensitive(n > 0)
+        self.save_btn.set_sensitive(n > 0)
 
     def set_selection_mode(self, on: bool):
         self.selection_mode = on

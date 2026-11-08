@@ -171,6 +171,7 @@ class PlayQueue:
     # -- persistance ---------------------------------------------------------------------
     def save(self, position: float = 0.0, path: str = QUEUE_FILE):
         data = {"version": 1, "songs": [s.path for s in self.original],
+                "titles": {s.path: s.title for s in self.original if s.stream and s.title},
                 "order": [self.original.index(s) for s in self.items] if self.shuffled else None,
                 "current": self.current.path if self.current else "", "position": position,
                 "repeat": self.repeat, "shuffled": self.shuffled}
@@ -193,7 +194,7 @@ def load_saved(path: str = QUEUE_FILE) -> Optional[dict]:
         return None
     if not isinstance(data, dict) or not data.get("songs"):
         return None
-    data["songs"] = [p for p in data["songs"] if isinstance(p, str) and os.path.isfile(p)]
+    data["songs"] = [p for p in data["songs"] if isinstance(p, str) and ("://" in p or os.path.isfile(p))]
     return data if data["songs"] else None
 
 

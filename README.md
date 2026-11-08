@@ -6,10 +6,14 @@ thème GTK du système et utilise GStreamer de la distribution.
 
 - Pas de bibliothèque à gérer : on ouvre des morceaux ou des dossiers (bouton, glisser-déposer,
   « Ouvrir avec » depuis le gestionnaire de fichiers) ; la file est retenue entre deux lancements.
+- Listes de lecture .m3u, .m3u8, .xspf (et .pls) : ouvertes comme un dossier, file ou sélection
+  enregistrée en liste (chemins relatifs : la liste suit la musique), ajout à une liste existante ;
+  webradios des listes lues en direct, avec le titre annoncé par la station.
 - Grande pochette, barre de progression en forme d'onde, aléatoire, répétition (file, morceau),
   recherche dans la file, enchaînement sans blanc entre les morceaux.
 - ReplayGain (album ou morceau), contrôle depuis le panneau de GNOME / Zorin, l'écran verrouillé et
-  les touches multimédia (MPRIS), lecture en arrière-plan, pas de mise en veille pendant la lecture.
+  les touches multimédia (MPRIS), lecture en arrière-plan avec icône dans la barre système (extension
+  AppIndicator) et notification, pas de mise en veille pendant la lecture.
 - Couleurs du thème du système, ou, en option, teintées d'après la pochette comme Amberol.
 - Interface en français, anglais et allemand.
 

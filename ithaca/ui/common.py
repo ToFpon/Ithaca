@@ -181,6 +181,24 @@ def choose_files(parent: Gtk.Widget, title: str, initial: str, callback: Callabl
     else:
         dlg.open(parent.get_root(), None, done)
 
+def choose_save(parent: Gtk.Widget, title: str, initial_path: str, callback: Callable[[str], None]):
+    dlg = Gtk.FileDialog(title=title, modal=True)
+    if initial_path:
+        folder = os.path.dirname(initial_path)
+        if os.path.isdir(folder):
+            dlg.set_initial_folder(Gio.File.new_for_path(folder))
+        dlg.set_initial_name(os.path.basename(initial_path))
+
+    def done(d, res):
+        try:
+            f = d.save_finish(res)
+        except GLib.Error:
+            return
+        if f and f.get_path():
+            callback(f.get_path())
+    dlg.save(parent.get_root(), None, done)
+
+
 def _default_app(f: Gio.File) -> Optional[Gio.AppInfo]:
     try:
         info = f.query_info("standard::content-type,standard::fast-content-type",

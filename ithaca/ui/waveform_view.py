@@ -29,6 +29,7 @@ class WaveformView(Gtk.Widget):
         self.duration = 0.0
         self.position = 0.0
         self.peaks: list[float] = []
+        self.song_path = ""                 # morceau affiché (la fenêtre ne recalcule qu'au changement)
         self._hover = -1.0              # fraction survolée, -1 : aucune
         self._drag_from = 0.0
         click = Gtk.GestureClick()

@@ -33,6 +33,7 @@ class Controller:
         self.player.on_song_started = self._on_song_started
         self.player.on_ended = self._on_ended
         self.player.on_error = self._on_error
+        self.player.on_stream_title = lambda song: self._emit("song")
         self.queue_file = queue_file
         self.loading = 0
         self._errors = 0
@@ -97,11 +98,15 @@ class Controller:
 
         def done(_n, _skipped):
             self.loading -= 1
+            for song in read:                       # nom des webradios, retenu avec la file
+                if song.stream and data.get("titles", {}).get(song.path):
+                    song.title = data["titles"][song.path]
             restore(self.queue, data, read)
             settings["shuffle"] = self.queue.shuffled
             settings["repeat"] = self.queue.repeat
             if self.queue.current is not None:
-                self.player.load(self.queue.current, play=False, position=float(data.get("position") or 0))
+                position = 0.0 if self.queue.current.stream else float(data.get("position") or 0)
+                self.player.load(self.queue.current, play=False, position=position)
                 self._prepare_next()
             self._emit("loading")
             if on_done:

@@ -30,6 +30,14 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
 - Lancer sans installer : `bin/ithaca` (ou `python3 -m ithaca`). `install.sh` installe dans ~/.local
   (code dans `~/.local/lib/ithaca`, jamais dans `~/.local/share/ithaca` qui contient la file ;
   `--uninstall` n'y touche pas).
+- Commandes (pour que Tof n'ait pas à valider chaque commande ; conseil de l'agent d'Odysseus) :
+  fichiers écrits et modifiés avec les outils Edit / Write, jamais par redirection shell (`cat >`,
+  `echo >>`, heredoc). Une seule action git par commande, avec `git -C /chemin/du/depot` : le commit,
+  puis chaque push séparément ; jamais `cd … && git …`, jamais d'option `git -c` (identité réglée une
+  fois par `git config user.name` / `user.email` dans le dépôt). Message de commit long : écrit dans un
+  fichier avec Write (bloc-notes de la session), puis `git -C … commit -F fichier`. Pas de commandes
+  enchaînées par `&&` / `;` / `|` quand une commande simple suffit. Une demande revient quand même : lire
+  la commande exacte qu'elle cite (presque toujours un enchaînement ou une redirection).
 
 ## Publication (comme Odysseus)
 

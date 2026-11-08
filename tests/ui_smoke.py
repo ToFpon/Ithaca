@@ -185,6 +185,25 @@ def commandes(win):
     win._on_key(None, Gdk.KEY_space, 0, 0)
     yield pump(0.3)
     check(not c().playing, "Espace : pause")
+    # bouton cliqué juste avant (il garde le focus) : Espace reste lecture / pause, il ne « reclique »
+    # pas le bouton (retour de Tof)
+    pos = c().queue.pos
+    for btn in (win.next_btn, win.shuffle_btn):
+        btn.grab_focus()
+        shuffle = win.shuffle_btn.get_active()
+        check(win._on_key(None, Gdk.KEY_space, 0, 0), "Espace gardé par le lecteur, bouton au focus")
+        yield Wait(3, until=lambda: c().playing)
+        check(c().playing and c().queue.pos == pos, "Espace sur un bouton au focus : lecture, même morceau")
+        check(win.shuffle_btn.get_active() == shuffle, "Espace ne bascule pas l'aléatoire")
+        win._on_key(None, Gdk.KEY_space, 0, 0)
+        yield pump(0.3)
+        check(not c().playing, "Espace sur un bouton au focus : pause")
+    win.playlist.search_btn.set_active(True)
+    yield pump(0.2)
+    win.playlist.search_entry.grab_focus()
+    check(not win._on_key(None, Gdk.KEY_space, 0, 0), "Espace dans la recherche : un espace, pas la lecture")
+    win.playlist.search_btn.set_active(False)
+    yield pump(0.2)
 
 
 @step

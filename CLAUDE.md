@@ -214,6 +214,10 @@ avant de toucher à ces sujets.
   focus. `MainWindow._on_key` (contrôleur en capture) les rend à `Gtk.Text` par `move-cursor` ;
   testé dans ui_smoke (recherche de la file). Tout nouveau raccourci sur une touche d'édition doit
   y passer.
+- Espace = lecture / pause partout, même si un bouton a le focus (`_on_key`, en capture) : un bouton
+  cliqué garde le focus et Espace le « recliquait » (suivant, aléatoire…), retour de Tof. Exceptions :
+  champs de texte, menus ouverts (ancêtre Gtk.Popover), cases du mode sélection. Testé dans ui_smoke et
+  avec un vrai clic + vraie touche (xdotool sous openbox).
 
 - `css_classes=[…]` au constructeur d'une fenêtre REMPLACE ses classes (« background »…) : texte
   blanc sur fond blanc. Toujours `add_css_class` pour une fenêtre.

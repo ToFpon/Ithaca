@@ -505,8 +505,11 @@ class MainWindow(Adw.ApplicationWindow):
         if move is not None and isinstance(focus, Gtk.Text):
             focus.emit("move-cursor", *move)
             return True
-        if keyval == Gdk.KEY_space and not mods and not isinstance(focus, TEXT_WIDGETS) \
-                and not isinstance(focus, (Gtk.Button,)):
+        # Espace = lecture / pause partout, même quand un bouton a le focus : sinon Espace « cliquait »
+        # le dernier bouton utilisé (suivant, aléatoire…), retour de Tof. Restent à Espace : les champs
+        # (taper un espace), les menus ouverts, les cases du mode sélection.
+        if keyval == Gdk.KEY_space and not mods and not isinstance(focus, TEXT_WIDGETS + (Gtk.CheckButton,)) \
+                and (focus is None or focus.get_ancestor(Gtk.Popover) is None):
             self.c.toggle()
             return True
         return False

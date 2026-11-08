@@ -7,28 +7,60 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ithaca/app.py:29
+#: ithaca/app.py:30
 msgid "Afficher la version"
 msgstr ""
 
-#: ithaca/app.py:169
+#: ithaca/app.py:197
 msgid "Basé sur"
 msgstr ""
 
-#: ithaca/app.py:170
+#: ithaca/app.py:198
 msgid "Moteurs"
 msgstr ""
 
-#: ithaca/app.py:133
+#: ithaca/app.py:111
+msgid "Ithaca continue de jouer"
+msgstr ""
+
+#: ithaca/app.py:116
+msgid "Afficher"
+msgstr ""
+
+#: ithaca/app.py:117 ithaca/backend/tray.py:175 ithaca/ui/window.py:214 ithaca/ui/window.py:271
+msgid "Quitter"
+msgstr ""
+
+#: ithaca/app.py:161
 msgid "Lecture de musique"
 msgstr ""
 
-#: ithaca/app.py:164
+#: ithaca/app.py:192
 msgid "Un petit lecteur de musique pour GNOME, qui joue votre musique et rien d'autre."
 msgstr ""
 
-#: ithaca/app.py:169
+#: ithaca/app.py:197
 msgid "Amberol, d'Emmanuele Bassi https://gitlab.gnome.org/World/amberol"
+msgstr ""
+
+#: ithaca/backend/tray.py:169
+msgid "Afficher Ithaca"
+msgstr ""
+
+#: ithaca/backend/tray.py:172 ithaca/ui/window.py:150 ithaca/ui/window.py:262
+msgid "Morceau suivant"
+msgstr ""
+
+#: ithaca/backend/tray.py:173 ithaca/ui/window.py:144 ithaca/ui/window.py:263
+msgid "Morceau précédent"
+msgstr ""
+
+#: ithaca/backend/tray.py:170 ithaca/ui/window.py:451
+msgid "Pause"
+msgstr ""
+
+#: ithaca/backend/tray.py:170 ithaca/ui/playlist_view.py:279 ithaca/ui/window.py:451
+msgid "Lire"
 msgstr ""
 
 #: ithaca/features.py:25
@@ -101,10 +133,6 @@ msgstr ""
 msgid "En cours de lecture"
 msgstr ""
 
-#: ithaca/ui/playlist_view.py:279 ithaca/ui/window.py:436
-msgid "Lire"
-msgstr ""
-
 #: ithaca/ui/playlist_view.py:279
 msgid "Afficher dans le dossier"
 msgstr ""
@@ -113,7 +141,7 @@ msgstr ""
 msgid "File de lecture"
 msgstr ""
 
-#: ithaca/ui/playlist_view.py:178 ithaca/ui/window.py:410
+#: ithaca/ui/playlist_view.py:178 ithaca/ui/window.py:425
 msgid "Artiste inconnu"
 msgstr ""
 
@@ -225,10 +253,6 @@ msgstr ""
 msgid "À propos d'Ithaca"
 msgstr ""
 
-#: ithaca/ui/window.py:214 ithaca/ui/window.py:271
-msgid "Quitter"
-msgstr ""
-
 #: ithaca/ui/window.py:49
 msgid "Déposez pour ajouter à la file"
 msgstr ""
@@ -241,19 +265,11 @@ msgstr ""
 msgid "Restaurer la file"
 msgstr ""
 
-#: ithaca/ui/window.py:144 ithaca/ui/window.py:263
-msgid "Morceau précédent"
-msgstr ""
-
 #: ithaca/ui/window.py:147 ithaca/ui/window.py:262
 msgid "Lecture / pause"
 msgstr ""
 
-#: ithaca/ui/window.py:150 ithaca/ui/window.py:262
-msgid "Morceau suivant"
-msgstr ""
-
-#: ithaca/ui/window.py:158 ithaca/ui/window.py:461 ithaca/ui/window.py:265
+#: ithaca/ui/window.py:158 ithaca/ui/window.py:476 ithaca/ui/window.py:265
 msgid "Couper le son"
 msgstr ""
 
@@ -269,11 +285,7 @@ msgstr ""
 msgid "Menu principal"
 msgstr ""
 
-#: ithaca/ui/window.py:436
-msgid "Pause"
-msgstr ""
-
-#: ithaca/ui/window.py:461
+#: ithaca/ui/window.py:476
 msgid "Rétablir le son"
 msgstr ""
 
@@ -281,15 +293,15 @@ msgstr ""
 msgid "Aucun morceau lisible"
 msgstr ""
 
-#: ithaca/ui/window.py:449
+#: ithaca/ui/window.py:464
 msgid "Répétition : désactivée"
 msgstr ""
 
-#: ithaca/ui/window.py:450
+#: ithaca/ui/window.py:465
 msgid "Répétition : toute la file"
 msgstr ""
 
-#: ithaca/ui/window.py:451
+#: ithaca/ui/window.py:466
 msgid "Répétition : ce morceau"
 msgstr ""
 
@@ -323,6 +335,6 @@ msgid_plural "{0} fichiers ignorés (illisibles)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:378
+#: ithaca/ui/window.py:393
 msgid "Lecture impossible : {0}"
 msgstr ""

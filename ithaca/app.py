@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import signal
 import sys
 
 import gi
@@ -31,6 +32,7 @@ class IthacaApp(Adw.Application):
         self.controller = None
         self.window = None
         self.mpris = None
+        self.tray = None
         self._inhibit = 0
         self._held = False
 
@@ -49,7 +51,11 @@ class IthacaApp(Adw.Application):
 
         from .backend.controller import Controller
         self.controller = Controller(self._queue_file)
-        for name, cb, accels in (("preferences", self._prefs, ["<Control>comma"]),
+        # Ctrl+C dans le terminal, kill, fermeture de session : on quitte proprement (file enregistrée)
+        for sig in (signal.SIGINT, signal.SIGTERM, signal.SIGHUP):
+            GLib.unix_signal_add(GLib.PRIORITY_DEFAULT, sig, lambda: (self._quit(), False)[1])
+        for name, cb, accels in (("show-window", self.present, []),
+                                 ("preferences", self._prefs, ["<Control>comma"]),
                                  ("about", self._about, []),
                                  ("quit", self._quit, ["<Control>q"])):
             a = Gio.SimpleAction.new(name, None)
@@ -61,6 +67,8 @@ class IthacaApp(Adw.Application):
         settings.connect(self._on_setting)
 
     def do_shutdown(self):
+        if self.tray is not None:
+            self.tray.hide()
         if self.mpris is not None:
             self.mpris.stop()
         if self.controller is not None:
@@ -80,6 +88,9 @@ class IthacaApp(Adw.Application):
         win = self._main_window()
         win.set_visible(True)
         win.present()
+        if self.tray is not None:
+            self.tray.hide()
+        self.withdraw_notification("background")
         if self._held:
             self._held = False
             self.release()
@@ -91,6 +102,21 @@ class IthacaApp(Adw.Application):
         if not self._held:
             self._held = True
             self.hold()
+        # pour revenir ou quitter : icône dans la barre système et notification (choix de Tof)
+        if self.get_dbus_connection() is not None:
+            if self.tray is None:
+                from .backend.tray import Tray
+                self.tray = Tray(self.controller, self.present, self._quit)
+            self.tray.show()
+            n = Gio.Notification.new(tr("Ithaca continue de jouer"))
+            song = self.controller.song
+            if song is not None:
+                from .ui.common import shown
+                n.set_body(shown(" — ".join(x for x in (song.display_title, song.artist) if x)))
+            n.add_button(tr("Afficher"), "app.show-window")
+            n.add_button(tr("Quitter"), "app.quit")
+            n.set_default_action("app.show-window")
+            self.send_notification("background", n)
 
     def do_activate(self):
         self.present()
@@ -118,6 +144,8 @@ class IthacaApp(Adw.Application):
         return 0
 
     def _quit(self):
+        if self.get_dbus_connection() is not None:
+            self.withdraw_notification("background")
         if self.window is not None:
             self.window.destroy()
         if self._held:

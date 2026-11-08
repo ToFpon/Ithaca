@@ -11,29 +11,61 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ithaca/app.py:29
+#: ithaca/app.py:30
 msgid "Afficher la version"
 msgstr "Show the version"
 
-#: ithaca/app.py:169
+#: ithaca/app.py:197
 msgid "Basé sur"
 msgstr "Based on"
 
-#: ithaca/app.py:170
+#: ithaca/app.py:198
 msgid "Moteurs"
 msgstr "Engines"
 
-#: ithaca/app.py:133
+#: ithaca/app.py:111
+msgid "Ithaca continue de jouer"
+msgstr "Ithaca keeps playing"
+
+#: ithaca/app.py:116
+msgid "Afficher"
+msgstr "Show"
+
+#: ithaca/app.py:117 ithaca/backend/tray.py:175 ithaca/ui/window.py:214 ithaca/ui/window.py:271
+msgid "Quitter"
+msgstr "Quit"
+
+#: ithaca/app.py:161
 msgid "Lecture de musique"
 msgstr "Playing music"
 
-#: ithaca/app.py:164
+#: ithaca/app.py:192
 msgid "Un petit lecteur de musique pour GNOME, qui joue votre musique et rien d'autre."
 msgstr "A small music player for GNOME that plays your music, and nothing else."
 
-#: ithaca/app.py:169
+#: ithaca/app.py:197
 msgid "Amberol, d'Emmanuele Bassi https://gitlab.gnome.org/World/amberol"
 msgstr "Amberol, by Emmanuele Bassi https://gitlab.gnome.org/World/amberol"
+
+#: ithaca/backend/tray.py:169
+msgid "Afficher Ithaca"
+msgstr "Show Ithaca"
+
+#: ithaca/backend/tray.py:172 ithaca/ui/window.py:150 ithaca/ui/window.py:262
+msgid "Morceau suivant"
+msgstr "Next Song"
+
+#: ithaca/backend/tray.py:173 ithaca/ui/window.py:144 ithaca/ui/window.py:263
+msgid "Morceau précédent"
+msgstr "Previous Song"
+
+#: ithaca/backend/tray.py:170 ithaca/ui/window.py:451
+msgid "Pause"
+msgstr "Pause"
+
+#: ithaca/backend/tray.py:170 ithaca/ui/playlist_view.py:279 ithaca/ui/window.py:451
+msgid "Lire"
+msgstr "Play"
 
 #: ithaca/features.py:25
 msgid "Barre en forme d'onde"
@@ -105,10 +137,6 @@ msgstr "Remove from Playlist"
 msgid "En cours de lecture"
 msgstr "Now playing"
 
-#: ithaca/ui/playlist_view.py:279 ithaca/ui/window.py:436
-msgid "Lire"
-msgstr "Play"
-
 #: ithaca/ui/playlist_view.py:279
 msgid "Afficher dans le dossier"
 msgstr "Show in Folder"
@@ -117,7 +145,7 @@ msgstr "Show in Folder"
 msgid "File de lecture"
 msgstr "Playlist"
 
-#: ithaca/ui/playlist_view.py:178 ithaca/ui/window.py:410
+#: ithaca/ui/playlist_view.py:178 ithaca/ui/window.py:425
 msgid "Artiste inconnu"
 msgstr "Unknown artist"
 
@@ -229,10 +257,6 @@ msgstr "Keyboard Shortcuts"
 msgid "À propos d'Ithaca"
 msgstr "About Ithaca"
 
-#: ithaca/ui/window.py:214 ithaca/ui/window.py:271
-msgid "Quitter"
-msgstr "Quit"
-
 #: ithaca/ui/window.py:49
 msgid "Déposez pour ajouter à la file"
 msgstr "Drop to Add to the Playlist"
@@ -245,19 +269,11 @@ msgstr "Choose songs or a folder, or drag them from your file manager into the w
 msgid "Restaurer la file"
 msgstr "Restore Playlist"
 
-#: ithaca/ui/window.py:144 ithaca/ui/window.py:263
-msgid "Morceau précédent"
-msgstr "Previous Song"
-
 #: ithaca/ui/window.py:147 ithaca/ui/window.py:262
 msgid "Lecture / pause"
 msgstr "Play / Pause"
 
-#: ithaca/ui/window.py:150 ithaca/ui/window.py:262
-msgid "Morceau suivant"
-msgstr "Next Song"
-
-#: ithaca/ui/window.py:158 ithaca/ui/window.py:461 ithaca/ui/window.py:265
+#: ithaca/ui/window.py:158 ithaca/ui/window.py:476 ithaca/ui/window.py:265
 msgid "Couper le son"
 msgstr "Mute"
 
@@ -273,11 +289,7 @@ msgstr "Shuffle"
 msgid "Menu principal"
 msgstr "Main Menu"
 
-#: ithaca/ui/window.py:436
-msgid "Pause"
-msgstr "Pause"
-
-#: ithaca/ui/window.py:461
+#: ithaca/ui/window.py:476
 msgid "Rétablir le son"
 msgstr "Unmute"
 
@@ -285,15 +297,15 @@ msgstr "Unmute"
 msgid "Aucun morceau lisible"
 msgstr "No playable songs"
 
-#: ithaca/ui/window.py:449
+#: ithaca/ui/window.py:464
 msgid "Répétition : désactivée"
 msgstr "Repeat: off"
 
-#: ithaca/ui/window.py:450
+#: ithaca/ui/window.py:465
 msgid "Répétition : toute la file"
 msgstr "Repeat: whole playlist"
 
-#: ithaca/ui/window.py:451
+#: ithaca/ui/window.py:466
 msgid "Répétition : ce morceau"
 msgstr "Repeat: this song"
 
@@ -327,6 +339,6 @@ msgid_plural "{0} fichiers ignorés (illisibles)"
 msgstr[0] "{0} file skipped (unreadable)"
 msgstr[1] "{0} files skipped (unreadable)"
 
-#: ithaca/ui/window.py:378
+#: ithaca/ui/window.py:393
 msgid "Lecture impossible : {0}"
 msgstr "Unable to play: {0}"

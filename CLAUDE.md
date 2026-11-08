@@ -76,7 +76,17 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   3 couleurs, fournisseur CSS remplacé à chaque pochette).
 - `app.py` : instance unique (GApplication), `HANDLES_OPEN` + ligne de commande (ajouter et lire),
   pas de mise en veille pendant la lecture (`inhibit` SUSPEND), arrière-plan : fenêtre masquée +
-  `hold()`, MPRIS Raise ou un nouveau lancement la font revenir.
+  `hold()`, MPRIS Raise ou un nouveau lancement la font revenir. Pour en sortir (choix de Tof, le
+  contrôle média de GNOME n'a pas de « Quitter ») : icône dans la barre système + notification
+  « Ithaca continue de jouer » (Afficher / Quitter), retirées quand la fenêtre revient.
+  SIGINT / SIGTERM / SIGHUP : `GLib.unix_signal_add` → `_quit` (file enregistrée, pas de trace
+  KeyboardInterrupt ; Ctrl+C dans le terminal).
+- `backend/tray.py` : icône AppIndicator sans libayatana-appindicator (GTK 3, incompatible avec
+  GTK 4 dans le même processus) : StatusNotifierItem + com.canonical.dbusmenu écrits à la main,
+  enregistrés auprès de org.kde.StatusNotifierWatcher (extension AppIndicator de Zorin) ; pas de
+  barre : rien ne s'affiche, rien ne casse. IconThemePath = data/icons (icône symbolique) ; menu
+  (titre en cours, Afficher, Lire / Pause, Suivant, Précédent, Quitter) republié par LayoutUpdated
+  à chaque événement.
 
 ## Tests
 
@@ -85,6 +95,7 @@ Le `python3` du bac à sable n'a pas `gi` : utiliser `python3.12`.
 ```sh
 python3.12 -m unittest discover -s tests            # moteur (vrai GStreamer, sortie factice)
 dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_mpris.py"   # MPRIS
+dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_tray.py"    # icône, Ctrl+C
 xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par « Aucune erreur. »
 LANGUAGE=en xvfb-run -a python3.12 tests/ui_smoke.py
 LANGUAGE=de xvfb-run -a python3.12 tests/ui_smoke.py
@@ -94,6 +105,10 @@ python3 -m pyflakes ithaca tests tools
 `tests/media.py` fabrique la musique de test avec ffmpeg (étiquettes, pochette intégrée ou
 `cover.jpg`, ReplayGain, fichier sans étiquette, faux MP3). Sortie `fakesink sync=true` : la lecture
 prend le temps réel, d'où des morceaux de 1 à 2 s. Le sinus de ffmpeg est à -18 dB (crête 0,125).
+`test_tray.py` : fausse barre (StatusNotifierWatcher) et vrai Ctrl+C sur un Ithaca lancé par
+xvfb-run — viser le processus Python par `^[^ ]*python…` (la ligne de commande de xvfb-run contient
+aussi « bin/ithaca » : c'est lui qui recevait le signal) ; les modules de test importés
+(test_backend) redéfinissent les dossiers XDG à l'import : lire le chemin réellement transmis.
 Tests MPRIS : proxys clients en `DO_NOT_LOAD_PROPERTIES` et appels asynchrones (un appel synchrone
 vers son propre service, dans le même fil, attend jusqu'au délai).
 

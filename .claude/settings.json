@@ -2,10 +2,15 @@
   "permissions": {
     "allow": [
       "Bash(git status*)", "Bash(git diff*)", "Bash(git log*)", "Bash(git add *)",
-      "Bash(git commit *)", "Bash(git checkout *)", "Bash(git switch *)", "Bash(git branch *)",
-      "Bash(git fetch *)", "Bash(git pull *)", "Bash(git push -u origin *)",
-      "Bash(python3 *)", "Bash(xvfb-run *)", "Bash(7z *)",
-      "Bash(cp *)", "Bash(mv *)", "Bash(mkdir *)", "Bash(ls *)"
+      "Bash(git commit *)", "Bash(git fetch *)", "Bash(git pull *)",
+      "Bash(git push -u origin *)", "Bash(git push origin *)", "Bash(git ls-remote *)",
+      "Bash(git -C * status*)", "Bash(git -C * diff*)", "Bash(git -C * log*)",
+      "Bash(git -C * add *)", "Bash(git -C * commit *)", "Bash(git -C * fetch *)",
+      "Bash(git -C * pull *)", "Bash(git -C * push -u origin *)", "Bash(git -C * push origin *)",
+      "Bash(python3 *)", "Bash(python3.12 *)", "Bash(xvfb-run *)", "Bash(dbus-run-session *)",
+      "Bash(msgfmt *)", "Bash(msgcmp *)", "Bash(appstreamcli *)", "Bash(lintian *)",
+      "Bash(cp *)", "Bash(mv *)", "Bash(mkdir *)", "Bash(ls *)", "Bash(grep *)",
+      "Bash(head *)", "Bash(tail *)", "Bash(wc *)"
     ]
   }
 }

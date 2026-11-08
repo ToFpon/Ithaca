@@ -26,7 +26,7 @@ TEXT_WIDGETS = (Gtk.Text, Gtk.TextView, Gtk.Entry, Gtk.SearchEntry)
 MIN_WIDTH = 360                       # largeur minimale de la fenêtre
 SIDEBAR_MAX, SIDEBAR_FRACTION = 360, 0.4
 COLLAPSE_SP = 560                     # en dessous, la file passe par-dessus le lecteur (Adw.Breakpoint)
-COMPACT_WIDTH = 430                   # file masquée : le lecteur seul, comme la capture « compact » du site
+COMPACT_WIDTH = 370                   # file masquée : le lecteur seul, comme la capture « compact » du site
 
 
 def width_with_playlist(content: int) -> int:

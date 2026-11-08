@@ -53,3 +53,7 @@ echo "Envoyé ($SERIES). Launchpad les construit en quelques minutes : https://l
 
 echo "Le .deb pour GitHub (Releases) est publié par l'Action dès le commit « Version X » : rien à faire ici."
 
+
+# Site de présentation (pages perso Free, FTP) : envoyé à chaque publication pour ne pas l'oublier.
+# Un échec n'annule rien de ce qui précède (le PPA est déjà parti).
+tools/site.sh || echo "Le site pourra être envoyé plus tard : tools/site.sh"

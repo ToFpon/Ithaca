@@ -47,6 +47,15 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   dpkg-buildpackage (binaire et source), lintian sans remarque, appstreamcli validate (seule note
   pédante : majuscules de l'identifiant, comme Odysseus), installé puis lancé (le `/usr/bin/python3`
   du bac à sable est un 3.13 sans gi : lancer le même lanceur avec python3.12).
+- Site de présentation (`site/index.html`, anglais, tons violets pour se distinguer du bleu d'Odysseus,
+  même gabarit) : en ligne sur https://tofmicro.pages-perso.free.fr/Ithaca/, envoyé par FTP à la fin de
+  `tools/ppa.sh` via `tools/site.sh` (copie de celui d'Odysseus : lftp, identifiants dans ~/.netrc de
+  Tof, `--transfer-all`, jamais de suppression ; `--essai` montre sans envoyer). Version dans la pastille
+  de la barre et l'accroche (« v1.0 », « Version 1.0 ») : à tenir à jour. « Copy » ne copie que les deux
+  commandes d'installation. Captures de `site/img/` en anglais et en sombre (sauf `light.png`) :
+  `LANGUAGE=en … tools/screenshot.py site/img/NOM.png --delay=6000 --dark --size=1000x680 [options]` —
+  dark, light (sans `--dark`), cover-colors (`--recolor`), search (`--search=pen`), selection, features
+  (`--prefs=features`), welcome (`--empty`), compact (`--size=380x720`) ; `icon.svg` = icône couleur.
 
 ## Choix de Tof (comme Amberol)
 
@@ -103,7 +112,11 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   enregistrés auprès de org.kde.StatusNotifierWatcher (chez Tof : extension « AppIndicator and
   KStatusNotifierItem Support » d'Ubuntu, ubuntu/gnome-shell-extension-appindicator — il a quitté
   celle de Zorin, trop boguée) ; pas de
-  barre : rien ne s'affiche, rien ne casse. IconThemePath = data/icons (icône symbolique) ; menu
+  barre : rien ne s'affiche, rien ne casse. Icône `io.github.ithaca.Ithaca-symbolic` : installée
+  (paquet, install.sh) → IconThemePath vide, la barre la prend dans le thème du système et la recolore ;
+  lancé sans installer → IconThemePath = data/icons, qui DOIT garder `hicolor/index.theme` (l'extension
+  cherche avec St.IconTheme, logique de GTK 3 : sans index.theme rien n'est trouvé, icône d'attente
+  « ••• » vue chez Tof ; GTK 4 la trouvait quand même, d'où le test `test_icon_resolvable`) ; menu
   (titre en cours, Afficher, Lire / Pause, Suivant, Précédent, Quitter) republié par LayoutUpdated
   à chaque événement.
 

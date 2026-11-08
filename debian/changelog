@@ -1,3 +1,13 @@
+ithaca (1.0.2~noble1) noble; urgency=medium
+
+  * Masquer la file de lecture (F9, boutons) met la fenêtre au format
+    compact, le lecteur seul ; la réafficher rend la largeur d'avant.
+  * Bouton de la file dans la barre de titre.
+  * Titre trop long : il défile lentement, avec un fondu sur les bords.
+  * Barre système : nouvelle icône en couleur, lisible en petit.
+
+ -- Tof <nourpon@gmail.com>  Sun, 08 Nov 2026 23:00:00 +0000
+
 ithaca (1.0.1~noble1) noble; urgency=medium
 
   * Barre système : l'icône d'Ithaca s'affiche avec l'extension

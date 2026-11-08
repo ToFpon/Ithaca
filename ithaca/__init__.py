@@ -2,4 +2,4 @@
 
 APP_ID = "io.github.ithaca.Ithaca"
 APP_NAME = "Ithaca"
-VERSION = "1.0.1"
+VERSION = "1.0.2"

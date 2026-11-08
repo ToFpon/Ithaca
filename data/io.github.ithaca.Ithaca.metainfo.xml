@@ -73,6 +73,16 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.0.2" date="2026-11-08">
+      <description>
+        <ul>
+          <li>Hiding the play queue (F9, buttons) shrinks the window to a compact player; showing it again restores the previous width</li>
+          <li>Play queue button in the header bar</li>
+          <li>Long song titles scroll slowly, with faded edges</li>
+          <li>New colorful tray icon, readable at small sizes</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.1" date="2026-11-08">
       <description>
         <ul>

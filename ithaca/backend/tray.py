@@ -22,16 +22,18 @@ MENU_PATH = "/MenuBar"
 WATCHER = "org.kde.StatusNotifierWatcher"
 ICONS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                          "data", "icons")
-ICON_NAME = APP_ID + "-symbolic"
+# Icône EN COULEUR (disque violet, triangle « lecture ») : la symbolique (note sur des vagues) était
+# illisible à 16 px, et une icône symbolique est recolorée d'une seule teinte (adieu le violet).
+ICON_NAME = APP_ID + "-tray"
 
 
 def icon_theme_path() -> str:
     """Dossier d'icônes à annoncer : vide si l'icône est installée dans le thème du système (paquet,
-    install.sh), la barre la cherche alors comme les autres et la recolore ; sinon data/icons
-    (lancé sans installer). Sans index.theme dans ce dossier, l'extension AppIndicator ne trouvait
-    rien et montrait son icône d'attente (« ••• »)."""
+    install.sh), la barre la cherche alors comme les autres ; sinon data/icons (lancé sans installer).
+    Sans index.theme dans ce dossier, l'extension AppIndicator ne trouvait rien et montrait son icône
+    d'attente (« ••• »)."""
     for base in [GLib.get_user_data_dir(), *GLib.get_system_data_dirs()]:
-        if os.path.exists(os.path.join(base, "icons", "hicolor", "symbolic", "apps", ICON_NAME + ".svg")):
+        if os.path.exists(os.path.join(base, "icons", "hicolor", "scalable", "apps", ICON_NAME + ".svg")):
             return ""
     return ICONS_DIR
 

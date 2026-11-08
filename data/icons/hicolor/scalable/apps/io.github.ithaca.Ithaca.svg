@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffbe6f"/>
+      <stop offset="1" stop-color="#e66100"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3584e4"/>
+      <stop offset="1" stop-color="#1a5fb4"/>
+    </linearGradient>
+    <clipPath id="disc"><circle cx="64" cy="62" r="54"/></clipPath>
+  </defs>
+  <circle cx="64" cy="68" r="54" fill="#16508f"/>
+  <g clip-path="url(#disc)">
+    <rect x="0" y="0" width="128" height="128" fill="url(#sky)"/>
+    <circle cx="64" cy="70" r="22" fill="#f8e45c"/>
+    <path d="M0 74 q10 -6 21 0 t21 0 t21 0 t21 0 t22 0 t22 0 V128 H0 Z" fill="url(#sea)"/>
+    <path d="M0 90 q10 -5 21 0 t21 0 t21 0 t21 0 t22 0 t22 0" fill="none" stroke="#99c1f1" stroke-width="3" opacity="0.7"/>
+  </g>
+  <circle cx="64" cy="62" r="54" fill="none" stroke="#ffffff" stroke-opacity="0.25" stroke-width="2"/>
+  <path d="M74 20 v40 a10 9 0 1 1 -6 -8.2 V26 l-20 5 v34 a10 9 0 1 1 -6 -8.2 V26 z" fill="#ffffff"
+        stroke="#1a5fb4" stroke-width="2.5" stroke-linejoin="round"/>
+</svg>

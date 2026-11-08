@@ -1,0 +1,114 @@
+# Ithaca — notes de travail
+
+Lecteur de musique GTK4 / libadwaita en Python, équivalent d'Amberol (`World/amberol` sur
+gitlab.gnome.org, GPL-3.0, Rust) sans Flatpak, avec GStreamer de la distribution. Amberol exige
+GTK 4.16 (Zorin : 4.14) et des variables CSS (`var(--…)`) absentes de GTK 4.14 : Ithaca est une
+réécriture, pas un portage. Ossature reprise d'Odysseus (`ToFpon/Odysseus` : i18n, réglages,
+fonctionnalités, vrais dialogues, tests). Le dépôt hébergeait avant un gestionnaire de
+téléchargements (abandonné, historique repris de zéro à la demande de Tof).
+
+## Règles
+
+- Répondre à Tof en français, tutoiement, avis francs. Messages de commit en français.
+- Cible : Zorin OS 18.1 (Ubuntu 24.04, GNOME 46, X11, GTK 4.14, libadwaita 1.5, GStreamer 1.24,
+  Python 3.12). Pas d'API plus récente (pas d'Adw.Spinner, Adw.Dialog, Adw.AlertDialog…). Paquets
+  apt seulement.
+- Suivre le thème GTK du système : `data/base.css` ne fait que de la mise en page, aucune couleur fixe
+  (seulement des teintes tirées du thème : `@accent_bg_color`, `alpha(currentColor, …)`). Seule
+  exception, facultative et coupée par défaut : la recoloration d'après la pochette (`recolor`).
+- Dialogues : de vraies fenêtres comme Nautilus 46 — `common.AlertDialog` (Adw.MessageDialog),
+  `common.DialogWindow`, `Adw.PreferencesWindow`, `Adw.AboutWindow`. Jamais Adw.Dialog / Adw.AlertDialog.
+- Chaque fonctionnalité facultative est déclarée dans `ithaca/features.py` (waveform, mpris,
+  background, recolor) et reste désactivable sans redémarrage (`features.enabled(id)` au moment de
+  l'usage, réglage `features` suivi en direct par la fenêtre et l'application).
+- Tout texte visible passe par `tr()` / `ntr()` (jamais `_`). Après modification :
+  `python3 tools/update-pot.py`, compléter `data/locale/en.po` et `de.po`, puis
+  `msgfmt -c --statistics` et `msgcmp` (aucune chaîne non traduite, placeholders identiques).
+  Un même texte français ne doit pas porter deux sens (« Lecture » = Playback ; le bouton dit « Lire »).
+- Jamais `GLib.idle_add(widget.grab_focus)` (rappel sans fin) : `common.focus_later(widget)`. Toute
+  fonction passée à `idle_add` / `timeout_add` renvoie False (sauf répétition voulue).
+- Lancer sans installer : `bin/ithaca` (ou `python3 -m ithaca`). `install.sh` installe dans ~/.local
+  (code dans `~/.local/lib/ithaca`, jamais dans `~/.local/share/ithaca` qui contient la file ;
+  `--uninstall` n'y touche pas).
+
+## Choix de Tof (comme Amberol)
+
+- Pas de bibliothèque : fichiers et dossiers ouverts (boutons, glisser-déposer, « Ouvrir avec »,
+  ligne de commande) ; file retenue, proposée par « Restaurer la file » sur la page d'accueil.
+- Barre en forme d'onde, MPRIS + touches multimédia, ReplayGain (album / morceau / désactivé),
+  lecture en arrière-plan. Thème système par défaut, recoloration d'après la pochette en option.
+
+## Architecture
+
+- `backend/song.py` : étiquettes par `GstPbutils.Discoverer` (~30 ms par fichier, dans un fil :
+  `load_paths`, paquets de 50 renvoyés à la boucle GLib). Étiquettes fusionnées de tous les flux
+  (`get_tags` du DiscovererInfo est déprécié). Pochette intégrée écrite une fois dans
+  `~/.cache/ithaca/covers/<sha1 des octets>` (un fichier par album), sinon image du dossier
+  (`cover`, `folder`, `front`… puis image seule). `Song.cover` est toujours un chemin : il sert aussi
+  à MPRIS (`mpris:artUrl`). Dossiers parcourus en ordre naturel (`GLib.utf8_collate_key_for_filename`).
+- `backend/playqueue.py` : logique pure. `original` (ordre d'ajout) et `items` (ordre de lecture =
+  affichage) ; mélanger met le morceau courant en tête et tire le reste ; un morceau n'est qu'une
+  fois dans la file. Répétition : consecutive (s'arrête), all, one. Retirer le morceau courant : le
+  suivant prend sa place. `queue.json` : chemins, ordre mélangé, morceau courant, position.
+- `backend/player.py` : playbin, drapeau vidéo coupé (une pochette intégrée à un MP3 est un flux
+  vidéo : playbin ouvrait une fenêtre). Sans blanc : `about-to-finish` (fil de GStreamer) donne
+  l'adresse de `next_song`, préparée d'avance dans la boucle GLib ; le changement effectif arrive par
+  STREAM_START. ReplayGain = élément `volume` en audio-filter réglé par nous (gain des étiquettes,
+  crête respectée, repli album ↔ morceau), changeable en direct sans couper le son. Volume cubique
+  (`GstAudio.StreamVolume.convert_volume`). `ITHACA_AUDIO_SINK` remplace la sortie (tests).
+- `backend/controller.py` : file + lecteur, événements song / state / position / queue / modes /
+  volume / loading / error / ended. « Précédent » après 3 s : retour au début. Fichier illisible :
+  message et morceau suivant (arrêt si tout est illisible). Enregistrement différé de 0,7 s, et
+  toutes les 5 s pendant la lecture (position).
+- `backend/waveform.py` : `uridecodebin ! audioconvert ! level` sans synchronisation, une crête par
+  250 ms, cache `~/.cache/ithaca/waveforms/<sha1 chemin|taille|date>.json` ; un calcul à la fois.
+- `backend/mpris.py` : org.mpris.MediaPlayer2(.Player) sur `org.mpris.MediaPlayer2.ithaca` ; les
+  propriétés passent par les fonctions get / set de `register_object` (elles marchent en Python,
+  contrairement à ce que laissait penser Odysseus) ; PropertiesChanged à chaque événement, Seeked
+  sur un saut. Démarré / arrêté en direct (`features` « mpris »), seulement avec un bus de session.
+- `ui/window.py` : disposition d'Amberol (Stack accueil / lecteur, OverlaySplitView avec la file en
+  panneau, replié sous 560 sp ; pochette réduite à 180 px sous 680 sp de haut). `ui/waveform_view.py`
+  : Gtk.Widget dessiné (`do_snapshot`, couleur d'accent / texte estompé du thème), clic, glisser,
+  ← / →. `ui/playlist_view.py` : Gtk.ListView (seules les lignes visibles existent), recherche sans
+  accents (`unicodedata`, les écritures non latines restent intactes), mode sélection.
+  `ui/cover.py` : pochettes carrées (recadrées au centre, Gtk.Image à taille fixe — un Gtk.Picture
+  prenait la taille naturelle de l'image), cache de textures, recoloration (découpage médian,
+  3 couleurs, fournisseur CSS remplacé à chaque pochette).
+- `app.py` : instance unique (GApplication), `HANDLES_OPEN` + ligne de commande (ajouter et lire),
+  pas de mise en veille pendant la lecture (`inhibit` SUSPEND), arrière-plan : fenêtre masquée +
+  `hold()`, MPRIS Raise ou un nouveau lancement la font revenir.
+
+## Tests
+
+Le `python3` du bac à sable n'a pas `gi` : utiliser `python3.12`.
+
+```sh
+python3.12 -m unittest discover -s tests            # moteur (vrai GStreamer, sortie factice)
+dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_mpris.py"   # MPRIS
+xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par « Aucune erreur. »
+LANGUAGE=en xvfb-run -a python3.12 tests/ui_smoke.py
+LANGUAGE=de xvfb-run -a python3.12 tests/ui_smoke.py
+python3 -m pyflakes ithaca tests tools
+```
+
+`tests/media.py` fabrique la musique de test avec ffmpeg (étiquettes, pochette intégrée ou
+`cover.jpg`, ReplayGain, fichier sans étiquette, faux MP3). Sortie `fakesink sync=true` : la lecture
+prend le temps réel, d'où des morceaux de 1 à 2 s. Le sinus de ffmpeg est à -18 dB (crête 0,125).
+Tests MPRIS : proxys clients en `DO_NOT_LOAD_PROPERTIES` et appels asynchrones (un appel synchrone
+vers son propre service, dans le même fil, attend jusqu'au délai).
+
+Captures (Gtk.WidgetPaintable, configuration jetable, album d'exemple généré) :
+`xvfb-run -a python3.12 tools/screenshot.py SORTIE.png [--empty] [--dark] [--recolor] [--size=LxH]
+[--prefs=PAGE] [--hidden-list] [--delay=ms]`.
+
+## Pièges connus
+
+- `css_classes=[…]` au constructeur d'une fenêtre REMPLACE ses classes (« background »…) : texte
+  blanc sur fond blanc. Toujours `add_css_class` pour une fenêtre.
+- Textes venus de l'extérieur (noms de fichiers, étiquettes) : la description d'`Adw.StatusPage` et le
+  titre d'`Adw.Toast` sont du balisage Pango → `GLib.markup_escape_text` / `toast.set_use_markup(False)`
+  (`common.toast` le fait).
+- Menus contextuels (`common.popup_menu`) : un seul Gtk.PopoverMenu par widget, gardé et réutilisé,
+  jamais détruit à la fermeture (plantage de GTK 4.14 sinon, vu dans Odysseus).
+- Nom du processus : `app._process_name` (prctl PR_SET_NAME) → « ithaca » dans ps / killall.
+  WM_CLASS : `GLib.set_prgname(APP_ID)`.

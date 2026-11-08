@@ -1,0 +1,50 @@
+/* Ithaca — mise en page, reprise d'Amberol. Aucune couleur fixe : tout vient du thème GTK actif
+   (la recoloration d'après la pochette, facultative, est posée à part par ui/cover.py). */
+
+button.large { min-width: 48px; min-height: 48px; }
+.main-box { padding: 6px; margin: 0 12px; }
+
+/* Pochette */
+.cover-view { margin-bottom: 12px; }
+.cover-view image.cover,
+.cover-view image.cover-placeholder {
+  border-radius: 12px;
+  margin: 6px;
+  box-shadow: 0 1px 6px alpha(black, 0.3), 0 2px 12px alpha(black, 0.15), 0 6px 32px alpha(black, 0.1);
+}
+
+/* Titre, artiste, album (tailles d'Amberol) */
+.song-details { padding: 8px 0 12px 0; }
+.song-details .song-title { font-size: 15pt; font-weight: 800; padding: 0 12px; }
+.song-details label { min-height: 1.5em; }
+
+/* Forme d'onde */
+.waveform { margin-bottom: 4px; }
+.numeric { font-feature-settings: "tnum"; }
+
+/* Commandes */
+.playback-control { padding-bottom: 12px; }
+.playback-control button.active-mode { background-color: alpha(@accent_bg_color, 0.25); }
+.volume scale trough highlight { min-height: 8px; }
+.volume scale { margin: 0 6px; }
+
+/* File de lecture */
+.playlist-pane { background-color: alpha(currentColor, 0.03); }
+listview.playlist { background: transparent; }
+listview.playlist > row { border-radius: 8px; margin: 1px 6px; }
+.song-row { padding: 6px 0; }
+.song-row .song-title { font-weight: 700; font-size: 0.9em; }
+.song-row .song-artist { font-size: 0.85em; }
+.song-row.current .song-title { color: @accent_color; }
+image.small-cover { border-radius: 4px; min-width: 40px; min-height: 40px; }
+
+/* Déposer des fichiers */
+.drop-hint {
+  background-color: alpha(@accent_bg_color, 0.5);
+  color: @accent_fg_color;
+  border-radius: 12px;
+  margin: 12px;
+}
+
+/* Recoloration (fonctionnalité facultative) : le fond reste celui du thème sous les dégradés */
+.ithaca-window.recolored { background-color: @window_bg_color; }

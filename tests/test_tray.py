@@ -83,6 +83,25 @@ class TrayTest(unittest.TestCase):
         rev, (root, props, children) = self.call(self.menu, "GetLayout", GLib.Variant("(iias)", (0, -1, [])))
         return {i: p.get("label", p.get("type")) for i, p, _c in children}
 
+    def test_icon_resolvable(self):
+        """L'icône doit se trouver comme la cherche l'extension AppIndicator (St.IconTheme, logique de
+        GTK 3) : chemin vide = thème du système, sinon un dossier de thème AVEC index.theme."""
+        name = self.call(self.item, "org.freedesktop.DBus.Properties.Get",
+                         GLib.Variant("(ss)", ("org.kde.StatusNotifierItem", "IconName")))[0]
+        path = self.call(self.item, "org.freedesktop.DBus.Properties.Get",
+                         GLib.Variant("(ss)", ("org.kde.StatusNotifierItem", "IconThemePath")))[0]
+        self.assertEqual(name, tray_mod.ICON_NAME)
+        if path:
+            index = os.path.join(path, "hicolor", "index.theme")
+            self.assertTrue(os.path.exists(index), "sans index.theme, la barre montre « ••• »")
+            keys = GLib.KeyFile()
+            keys.load_from_file(index, GLib.KeyFileFlags.NONE)
+            for d in keys.get_string("Icon Theme", "Directories").split(","):   # virgules (spécification)
+                if os.path.exists(os.path.join(path, "hicolor", d, name + ".svg")):
+                    break
+            else:
+                self.fail("icône absente des dossiers déclarés")
+
     def test_menu_and_actions(self):
         self.assertIn(self.t.name, self.registered)
         labels = self.labels()

@@ -22,6 +22,18 @@ MENU_PATH = "/MenuBar"
 WATCHER = "org.kde.StatusNotifierWatcher"
 ICONS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                          "data", "icons")
+ICON_NAME = APP_ID + "-symbolic"
+
+
+def icon_theme_path() -> str:
+    """Dossier d'icônes à annoncer : vide si l'icône est installée dans le thème du système (paquet,
+    install.sh), la barre la cherche alors comme les autres et la recolore ; sinon data/icons
+    (lancé sans installer). Sans index.theme dans ce dossier, l'extension AppIndicator ne trouvait
+    rien et montrait son icône d'attente (« ••• »)."""
+    for base in [GLib.get_user_data_dir(), *GLib.get_system_data_dirs()]:
+        if os.path.exists(os.path.join(base, "icons", "hicolor", "symbolic", "apps", ICON_NAME + ".svg")):
+            return ""
+    return ICONS_DIR
 
 ITEM_XML = """<node><interface name="org.kde.StatusNotifierItem">
   <property name="Category" type="s" access="read"/><property name="Id" type="s" access="read"/>
@@ -139,8 +151,8 @@ class Tray:
         values = {
             "Category": GLib.Variant("s", "ApplicationStatus"), "Id": GLib.Variant("s", "ithaca"),
             "Title": GLib.Variant("s", APP_NAME), "Status": GLib.Variant("s", "Active"),
-            "IconName": GLib.Variant("s", APP_ID + "-symbolic"),
-            "IconThemePath": GLib.Variant("s", ICONS_DIR),
+            "IconName": GLib.Variant("s", ICON_NAME),
+            "IconThemePath": GLib.Variant("s", icon_theme_path()),
             "AttentionIconName": GLib.Variant("s", ""), "OverlayIconName": GLib.Variant("s", ""),
             "ToolTip": self._tooltip(), "ItemIsMenu": GLib.Variant("b", False),
             "Menu": GLib.Variant("o", MENU_PATH), "WindowId": GLib.Variant("i", 0),
@@ -182,7 +194,8 @@ class Tray:
 
     def _on_menu_get(self, _conn, _sender, _path, _iface, prop):
         return {"Version": GLib.Variant("u", 3), "TextDirection": GLib.Variant("s", "ltr"),
-                "Status": GLib.Variant("s", "normal"), "IconThemePath": GLib.Variant("as", [ICONS_DIR])}.get(prop)
+                "Status": GLib.Variant("s", "normal"),
+                "IconThemePath": GLib.Variant("as", [d for d in [icon_theme_path()] if d])}.get(prop)
 
     def _on_menu_call(self, _conn, _sender, _path, _iface, method, params, inv):
         if method == "GetLayout":

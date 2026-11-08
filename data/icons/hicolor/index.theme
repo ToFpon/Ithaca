@@ -1,0 +1,18 @@
+[Icon Theme]
+Name=Hicolor
+Comment=Icônes d'Ithaca, lancé sans installation (barre système : IconThemePath)
+Directories=scalable/apps,symbolic/apps
+
+[scalable/apps]
+Context=Applications
+Size=128
+MinSize=8
+MaxSize=512
+Type=Scalable
+
+[symbolic/apps]
+Context=Applications
+Size=16
+MinSize=8
+MaxSize=512
+Type=Scalable

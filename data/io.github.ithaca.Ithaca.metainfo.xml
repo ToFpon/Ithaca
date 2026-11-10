@@ -73,6 +73,13 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.2.1" date="2026-11-10">
+      <description>
+        <ul>
+          <li>The tray icon is the application icon; with a shell set to symbolic icons, a music note</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.2.0" date="2026-11-10">
       <description>
         <ul>

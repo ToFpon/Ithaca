@@ -1,3 +1,10 @@
+ithaca (1.2.1~noble1) noble; urgency=medium
+
+  * Barre système : l'icône de l'application ; avec un shell réglé en
+    icônes symboliques, une note de musique (aussi sur la page d'accueil).
+
+ -- Tof <nourpon@gmail.com>  Tue, 10 Nov 2026 20:00:00 +0000
+
 ithaca (1.2.0~noble1) noble; urgency=medium
 
   * Préférences → Lecture : volume maximal (100 ou 150 %, son amplifié

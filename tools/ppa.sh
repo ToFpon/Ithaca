@@ -4,6 +4,8 @@
 # entrée renommée « X~resolute1 » (le paquet est le même : Python, architecture « all »).
 #   tools/ppa.sh           construit les paquets source, les signe et les envoie sur ppa:nourpon/ithaca
 #   tools/ppa.sh --build   construit et signe seulement (rien n'est envoyé)
+#   tools/ppa.sh --only noble   reconstruit et renvoie cette série seulement, sans le site (envoi
+#                          refusé par Launchpad, une « erreur 500 » chez eux : même version, rien à changer)
 #
 # Une fois : sudo apt install devscripts debhelper dh-python dput lintian
 #            + une clé GPG enregistrée sur Launchpad, pour l'adresse du changelog.
@@ -14,6 +16,14 @@
 set -e
 PPA="ppa:nourpon/ithaca"
 SERIES="noble resolute"            # la première est celle du changelog
+FIRST=${SERIES%% *}
+ONLY=""
+if [ "$1" = "--only" ]; then
+    case " $SERIES " in
+        *" $2 "*) ONLY="$2" ;;
+        *) echo "Série inconnue : « $2 » (au choix : $SERIES)."; exit 1 ;;
+    esac
+fi
 cd "$(dirname "$0")/.."
 if [ -n "$(git status --porcelain)" ]; then
     echo "Des modifications ne sont pas commitées : le paquet doit correspondre au dépôt."
@@ -25,13 +35,13 @@ if [ "$DIST" = "UNRELEASED" ]; then
     echo "debian/changelog est encore en UNRELEASED : terminer l'entrée avec « dch -r »."
     exit 1
 fi
-FIRST=${SERIES%% *}
 if [ "$DIST" != "$FIRST" ]; then
     echo "debian/changelog vise « $DIST » : la première entrée doit viser « $FIRST »."
     exit 1
 fi
+TARGETS="${ONLY:-$SERIES}"
 OUT=$(mktemp -d)
-for S in $SERIES; do
+for S in $TARGETS; do
     V=$(echo "$VERSION" | sed "s/~$FIRST/~$S/")
     DIR="$OUT/$S/ithaca-$V"
     mkdir -p "$DIR"
@@ -45,11 +55,14 @@ if [ "$1" = "--build" ]; then
     echo "Paquets source signés dans $OUT (rien n'a été envoyé)."
     exit 0
 fi
-for S in $SERIES; do
+for S in $TARGETS; do
     V=$(echo "$VERSION" | sed "s/~$FIRST/~$S/")
     dput "$PPA" "$OUT/$S/ithaca_${V}_source.changes"
 done
-echo "Envoyé ($SERIES). Launchpad les construit en quelques minutes : https://launchpad.net/~nourpon/+archive/ubuntu/ithaca/+packages"
+echo "Envoyé ($TARGETS). Launchpad les construit en quelques minutes : https://launchpad.net/~nourpon/+archive/ubuntu/ithaca/+packages"
+if [ -n "$ONLY" ]; then
+    exit 0                         # renvoi d'une seule série : le site est déjà parti avec l'envoi complet
+fi
 
 echo "Le .deb pour GitHub (Releases) est publié par l'Action dès le commit « Version X » : rien à faire ici."
 

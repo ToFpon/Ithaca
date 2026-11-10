@@ -103,7 +103,10 @@ see `CLAUDE.md`.
 ### License
 
 GPL-3.0-or-later. Inspired by [Amberol](https://gitlab.gnome.org/World/amberol) by Emmanuele Bassi, rewritten in
-Python; foundations shared with [Odysseus](https://github.com/ToFpon/Odysseus).
+Python; foundations shared with [Odysseus](https://github.com/ToFpon/Odysseus). Symbolic music note icon from the
+[kora](https://github.com/bikass/kora) icon theme by bikass (GPL-3.0).
+
+Thanks to [Ponce-De-Leon](https://forum.zorin.com/u/Ponce-De-Leon/) for testing.
 
 ---
 
@@ -195,4 +198,7 @@ GStreamer et de la musique fabriquée par ffmpeg — voir `CLAUDE.md`.
 ### Licence
 
 GPL-3.0 ou ultérieure. Inspiré d'[Amberol](https://gitlab.gnome.org/World/amberol) d'Emmanuele Bassi, réécrit en
-Python ; socle commun avec [Odysseus](https://github.com/ToFpon/Odysseus).
+Python ; socle commun avec [Odysseus](https://github.com/ToFpon/Odysseus). Note de musique de l'icône symbolique
+tirée du thème d'icônes [kora](https://github.com/bikass/kora) de bikass (GPL-3.0).
+
+Merci à [Ponce-De-Leon](https://forum.zorin.com/u/Ponce-De-Leon/) pour ses tests.

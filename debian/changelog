@@ -2,6 +2,8 @@ ithaca (1.2.1~noble1) noble; urgency=medium
 
   * Barre système : l'icône de l'application ; avec un shell réglé en
     icônes symboliques, une note de musique (aussi sur la page d'accueil).
+  * À propos : crédit de l'icône (thème kora, de bikass) et remerciements
+    à Ponce-De-Leon pour ses tests.
 
  -- Tof <nourpon@gmail.com>  Tue, 10 Nov 2026 20:00:00 +0000
 

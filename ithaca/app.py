@@ -195,7 +195,12 @@ class IthacaApp(Adw.Application):
                                 issue_url="https://github.com/ToFpon/Ithaca/issues",
                                 license_type=Gtk.License.GPL_3_0)
         about.add_credit_section(tr("Basé sur"), [tr("Amberol, d'Emmanuele Bassi https://gitlab.gnome.org/World/amberol")])
+        # note de musique de l'icône symbolique : thème d'icônes kora (GPL-3.0)
+        about.add_credit_section(tr("Icône symbolique"), [tr("kora, de bikass https://github.com/bikass/kora")])
         about.add_acknowledgement_section(tr("Moteurs"), ["GStreamer"])
+        # « Nom adresse » : libadwaita en fait un lien
+        about.add_acknowledgement_section(tr("Remerciements"),
+                                          ["Ponce-De-Leon https://forum.zorin.com/u/Ponce-De-Leon/"])
         about.present()
 
 

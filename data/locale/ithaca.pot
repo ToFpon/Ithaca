@@ -15,8 +15,16 @@ msgstr ""
 msgid "Basé sur"
 msgstr ""
 
-#: ithaca/app.py:198
+#: ithaca/app.py:199
+msgid "Icône symbolique"
+msgstr ""
+
+#: ithaca/app.py:200
 msgid "Moteurs"
+msgstr ""
+
+#: ithaca/app.py:202
+msgid "Remerciements"
 msgstr ""
 
 #: ithaca/app.py:111
@@ -27,7 +35,7 @@ msgstr ""
 msgid "Afficher"
 msgstr ""
 
-#: ithaca/app.py:117 ithaca/backend/tray.py:190 ithaca/ui/window.py:262 ithaca/ui/window.py:327
+#: ithaca/app.py:117 ithaca/backend/tray.py:193 ithaca/ui/window.py:262 ithaca/ui/window.py:327
 msgid "Quitter"
 msgstr ""
 
@@ -43,23 +51,27 @@ msgstr ""
 msgid "Amberol, d'Emmanuele Bassi https://gitlab.gnome.org/World/amberol"
 msgstr ""
 
-#: ithaca/backend/tray.py:184
+#: ithaca/app.py:199
+msgid "kora, de bikass https://github.com/bikass/kora"
+msgstr ""
+
+#: ithaca/backend/tray.py:187
 msgid "Afficher Ithaca"
 msgstr ""
 
-#: ithaca/backend/tray.py:187 ithaca/ui/window.py:190 ithaca/ui/window.py:317
+#: ithaca/backend/tray.py:190 ithaca/ui/window.py:190 ithaca/ui/window.py:317
 msgid "Morceau suivant"
 msgstr ""
 
-#: ithaca/backend/tray.py:188 ithaca/ui/window.py:184 ithaca/ui/window.py:318
+#: ithaca/backend/tray.py:191 ithaca/ui/window.py:184 ithaca/ui/window.py:318
 msgid "Morceau précédent"
 msgstr ""
 
-#: ithaca/backend/tray.py:185 ithaca/ui/window.py:616
+#: ithaca/backend/tray.py:188 ithaca/ui/window.py:616
 msgid "Pause"
 msgstr ""
 
-#: ithaca/backend/tray.py:185 ithaca/ui/playlist_view.py:312 ithaca/ui/window.py:616
+#: ithaca/backend/tray.py:188 ithaca/ui/playlist_view.py:312 ithaca/ui/window.py:616
 msgid "Lire"
 msgstr ""
 

@@ -481,6 +481,18 @@ def titre_defilant(win):
 
 
 @step
+def a_propos(win):
+    """Fenêtre « À propos » : crédits (Amberol, icône kora) et remerciements (Ponce-De-Leon)."""
+    app._about()
+    yield pump(0.4)
+    about = [w for w in Gtk.Window.list_toplevels() if isinstance(w, Adw.AboutWindow) and w.get_visible()]
+    check(len(about) == 1, "« À propos » s'ouvre")
+    for w in about:
+        w.close()
+    yield pump(0.2)
+
+
+@step
 def reglages_lecture(win):
     """Volume maximal (150 % : amplifié), saut avec ← / → (libellés des raccourcis compris), cran de
     molette — repris de Nausicaa."""

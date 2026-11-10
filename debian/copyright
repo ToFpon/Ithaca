@@ -8,6 +8,12 @@ Copyright: 2026 Tof <nourpon@gmail.com>
 License: GPL-3+
 Comment: Inspired by Amberol (GPL-3.0-or-later, Emmanuele Bassi), rewritten in Python.
 
+Files: data/icons/hicolor/symbolic/apps/io.github.ithaca.Ithaca-symbolic.svg
+Copyright: bikass (kora icon theme, https://github.com/bikass/kora)
+License: GPL-3
+Comment: Music note (emblem-music-symbolic) from the kora icon theme; its
+ KDE color stylesheet was removed so that GTK and GNOME Shell can recolor it.
+
 Files: data/io.github.ithaca.Ithaca.metainfo.xml
 Copyright: 2026 Tof <nourpon@gmail.com>
 License: CC0-1.0
@@ -22,6 +28,19 @@ License: GPL-3+
  it under the terms of the GNU General Public License as published by
  the Free Software Foundation, either version 3 of the License, or
  (at your option) any later version.
+ .
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+ .
+ On Debian systems, the complete text of the GNU General Public
+ License version 3 can be found in "/usr/share/common-licenses/GPL-3".
+
+License: GPL-3
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, version 3 of the License.
  .
  This program is distributed in the hope that it will be useful,
  but WITHOUT ANY WARRANTY; without even the implied warranty of

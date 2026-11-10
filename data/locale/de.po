@@ -19,9 +19,17 @@ msgstr "Version anzeigen"
 msgid "Basé sur"
 msgstr "Basiert auf"
 
-#: ithaca/app.py:198
+#: ithaca/app.py:199
+msgid "Icône symbolique"
+msgstr "Symbolisches Symbol"
+
+#: ithaca/app.py:200
 msgid "Moteurs"
 msgstr "Engines"
+
+#: ithaca/app.py:202
+msgid "Remerciements"
+msgstr "Danksagungen"
 
 #: ithaca/app.py:111
 msgid "Ithaca continue de jouer"
@@ -31,7 +39,7 @@ msgstr "Ithaca spielt weiter"
 msgid "Afficher"
 msgstr "Anzeigen"
 
-#: ithaca/app.py:117 ithaca/backend/tray.py:190 ithaca/ui/window.py:262
+#: ithaca/app.py:117 ithaca/backend/tray.py:193 ithaca/ui/window.py:262
 #: ithaca/ui/window.py:327
 msgid "Quitter"
 msgstr "Beenden"
@@ -51,23 +59,27 @@ msgstr ""
 msgid "Amberol, d'Emmanuele Bassi https://gitlab.gnome.org/World/amberol"
 msgstr "Amberol von Emmanuele Bassi https://gitlab.gnome.org/World/amberol"
 
-#: ithaca/backend/tray.py:184
+#: ithaca/app.py:199
+msgid "kora, de bikass https://github.com/bikass/kora"
+msgstr "kora, von bikass https://github.com/bikass/kora"
+
+#: ithaca/backend/tray.py:187
 msgid "Afficher Ithaca"
 msgstr "Ithaca anzeigen"
 
-#: ithaca/backend/tray.py:187 ithaca/ui/window.py:190 ithaca/ui/window.py:317
+#: ithaca/backend/tray.py:190 ithaca/ui/window.py:190 ithaca/ui/window.py:317
 msgid "Morceau suivant"
 msgstr "Nächster Titel"
 
-#: ithaca/backend/tray.py:188 ithaca/ui/window.py:184 ithaca/ui/window.py:318
+#: ithaca/backend/tray.py:191 ithaca/ui/window.py:184 ithaca/ui/window.py:318
 msgid "Morceau précédent"
 msgstr "Vorheriger Titel"
 
-#: ithaca/backend/tray.py:185 ithaca/ui/window.py:616
+#: ithaca/backend/tray.py:188 ithaca/ui/window.py:616
 msgid "Pause"
 msgstr "Pause"
 
-#: ithaca/backend/tray.py:185 ithaca/ui/playlist_view.py:312
+#: ithaca/backend/tray.py:188 ithaca/ui/playlist_view.py:312
 #: ithaca/ui/window.py:616
 msgid "Lire"
 msgstr "Abspielen"
@@ -243,7 +255,9 @@ msgstr "Maximale Lautstärke"
 msgid ""
 "Au-delà de 100 %, le son est amplifié (comme VLC) : utile pour un "
 "enregistrement trop faible"
-msgstr "Über 100 % wird der Ton verstärkt (wie bei VLC): nützlich für eine zu leise Aufnahme"
+msgstr ""
+"Über 100 % wird der Ton verstärkt (wie bei VLC): nützlich für eine zu leise "
+"Aufnahme"
 
 #: ithaca/ui/preferences.py:56
 msgid "Saut avec ← / →"

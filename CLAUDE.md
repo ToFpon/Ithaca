@@ -157,8 +157,10 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   barre : rien ne s'affiche, rien ne casse. Icône = celle de l'application (`io.github.ithaca.Ithaca`,
   choix de Tof après un essai d'icône violette dédiée, abandonné) ; shell réglé en icônes symboliques
   (`-st-icon-style: symbolic` dans gnome-shell.css) → l'extension prend d'elle-même
-  `io.github.ithaca.Ithaca-symbolic` = note de musique (fournie par Tof, emblem-music-symbolic,
-  couleur simple — sa feuille de style KDE retirée), aussi sur la page d'accueil. Les deux installées
+  `io.github.ithaca.Ithaca-symbolic` = note de musique (emblem-music-symbolic du thème d'icônes
+  kora de bikass, GPL-3.0 : crédité dans debian/copyright, le README et « À propos » ; couleur
+  simple — sa feuille de style KDE retirée), aussi sur la page d'accueil. « À propos » remercie aussi
+  Ponce-De-Leon (https://forum.zorin.com/u/Ponce-De-Leon/), le testeur de Tof. Les deux installées
   (paquet, install.sh, qui retire l'ancienne `-tray`) → IconThemePath vide, la barre les prend dans le
   thème du système ;
   lancé sans installer → IconThemePath = data/icons, qui DOIT garder `hicolor/index.theme` (l'extension

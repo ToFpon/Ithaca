@@ -146,6 +146,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.waveform = WaveformView()
         self.waveform.set_size_request(256, -1)
         self.waveform.connect("seek", lambda _w, seconds: self.c.seek(seconds))
+        self.waveform.step = float(settings["seek_step"])
         wave_box.append(self.waveform)
         times = Gtk.CenterBox()
         self.elapsed = Gtk.Label(label="0:00", css_classes=["caption", "numeric", "dim-label"])
@@ -200,6 +201,12 @@ class MainWindow(Adw.ApplicationWindow):
         self.volume_scale.set_hexpand(True)
         self.volume_scale.set_draw_value(False)
         self.volume_scale.connect("value-changed", self._on_volume_changed)
+        # molette : « Cran de molette » des Préférences (le pas de Gtk.Scale ne se règle pas ainsi)
+        wheel = Gtk.EventControllerScroll(flags=Gtk.EventControllerScrollFlags.VERTICAL
+                                          | Gtk.EventControllerScrollFlags.DISCRETE,
+                                          propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        wheel.connect("scroll", self._on_volume_wheel)
+        volume.add_controller(wheel)
         volume.append(self.mute_btn)
         volume.append(self.volume_scale)
         volume.append(Gtk.Image(icon_name="audio-volume-high-symbolic", margin_end=10))
@@ -270,8 +277,9 @@ class MainWindow(Adw.ApplicationWindow):
             "append-selection": lambda: self.append_playlist(self.playlist.selected_songs()),
             "search": self._toggle_search, "toggle-playlist": self._toggle_playlist,
             "mute": lambda: self.c.set_muted(not settings["muted"]),
-            "seek-forward": lambda: self.c.seek(min(self.c.player.duration(), self.c.player.position() + 10)),
-            "seek-backward": lambda: self.c.seek(max(0.0, self.c.player.position() - 10)),
+            "seek-forward": lambda: self.c.seek(min(self.c.player.duration(),
+                                                    self.c.player.position() + settings["seek_step"])),
+            "seek-backward": lambda: self.c.seek(max(0.0, self.c.player.position() - settings["seek_step"])),
         }
         for name, cb in simple.items():
             a = Gio.SimpleAction.new(name, None)
@@ -300,14 +308,17 @@ class MainWindow(Adw.ApplicationWindow):
         self._install_help()
 
     def _install_help(self):
-        """Fenêtre des raccourcis clavier (Gtk.ShortcutsWindow de GTK 4.14), avec ? et Ctrl+?."""
+        """Fenêtre des raccourcis clavier (Gtk.ShortcutsWindow de GTK 4.14), avec ? et Ctrl+?.
+        Reconstruite quand « Saut avec ← / → » change (la durée est dans le libellé)."""
         win = Gtk.ShortcutsWindow(modal=True, transient_for=self)
         section = Gtk.ShortcutsSection(section_name="main", visible=True)
+        n = settings["seek_step"]
         for title, items in (
                 (tr("Lecture"), ((tr("Lecture / pause"), "space"), (tr("Morceau suivant"), "<Control>Right"),
                                  (tr("Morceau précédent"), "<Control>Left"),
-                                 (tr("Avancer de 10 secondes"), "<Shift>Right"),
-                                 (tr("Reculer de 10 secondes"), "<Shift>Left"), (tr("Couper le son"), "<Control>m"))),
+                                 (ntr("Avancer de {0} seconde", "Avancer de {0} secondes", n).format(n), "<Shift>Right"),
+                                 (ntr("Reculer de {0} seconde", "Reculer de {0} secondes", n).format(n), "<Shift>Left"),
+                                 (tr("Couper le son"), "<Control>m"))),
                 (tr("File de lecture"), ((tr("Ajouter des morceaux"), "<Control>o"),
                                          (tr("Ajouter un dossier"), "<Control><Shift>o"),
                                          (tr("Rechercher dans la file"), "<Control>f"),
@@ -622,6 +633,15 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _sync_volume(self):
         muted = settings["muted"]
+        upper = self.c.max_volume()
+        adj = self.volume_scale.get_adjustment()
+        if abs(adj.get_upper() - upper) > 0.001:          # « Volume maximal » changé
+            self._dragging_volume = True
+            adj.set_upper(upper)
+            self.volume_scale.clear_marks()
+            if upper > 1.0:
+                self.volume_scale.add_mark(1.0, Gtk.PositionType.BOTTOM, None)   # repère des 100 %
+            self._dragging_volume = False
         if abs(self.volume_scale.get_value() - settings["volume"]) > 0.001:
             self._dragging_volume = True
             self.volume_scale.set_value(settings["volume"])
@@ -633,6 +653,12 @@ class MainWindow(Adw.ApplicationWindow):
         if not self._dragging_volume:
             self.c.set_muted(False)
             self.c.set_volume(scale.get_value())
+
+    def _on_volume_wheel(self, _ctrl, _dx, dy):
+        if dy:
+            step = settings["wheel_step"]
+            self.c.change_volume(-step if dy > 0 else step)
+        return True                                       # pas aussi la molette de Gtk.Scale
 
     def _on_playlist_toggled(self, button):
         if self.split.get_show_sidebar() != button.get_active():
@@ -667,6 +693,9 @@ class MainWindow(Adw.ApplicationWindow):
                 self.waveform.set_peaks(None)
         elif key == "replaygain":
             self.lookup_action("replaygain").set_state(GLib.Variant.new_string(value))
+        elif key == "seek_step":
+            self.waveform.step = float(value)
+            self._install_help()                          # libellés « Avancer de N secondes »
 
     # -- fermeture ------------------------------------------------------------------------------
     def _on_close_request(self, *_):

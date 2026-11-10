@@ -17,7 +17,10 @@ DEFAULTS: dict[str, Any] = {
     "theme": "system",              # system, light, dark
     "language": "system",           # system, fr, en, de (appliqué au prochain démarrage)
     # Lecture
-    "volume": 1.0,                  # 0..1 (échelle cubique, comme GNOME)
+    "volume": 1.0,                  # 0..volume_max / 100 (échelle cubique, comme GNOME)
+    "volume_max": 100,              # 100 ou 150 % (au-delà de 100 : amplifié, comme VLC)
+    "seek_step": 10,                # Maj+← / → et ← / → sur la forme d'onde (secondes)
+    "wheel_step": 5,                # un cran de molette sur le volume (%)
     "muted": False,
     "repeat": "consecutive",        # consecutive (s'arrête à la fin), all, one
     "shuffle": False,

@@ -1,6 +1,6 @@
 """Barre de progression en forme d'onde (comme Amberol). Couleurs du thème : partie jouée en
 couleur d'accentuation, reste en couleur du texte estompée. Clic ou glisser pour se déplacer,
-← / → au clavier (5 s). Sans forme d'onde (pas encore calculée, ou fonctionnalité coupée) : une
+← / → au clavier (durée réglable dans les Préférences). Sans forme d'onde (pas encore calculée, ou fonctionnalité coupée) : une
 rangée de petites barres régulières, qui sert de barre de progression ordinaire."""
 
 from __future__ import annotations
@@ -28,6 +28,7 @@ class WaveformView(Gtk.Widget):
         self.set_accessible_role(Gtk.AccessibleRole.SLIDER)
         self.duration = 0.0
         self.position = 0.0
+        self.step = STEP              # ← / → : « Saut avec ← / → » des Préférences (posé par la fenêtre)
         self.peaks: list[float] = []
         self.song_path = ""                 # morceau affiché (la fenêtre ne recalcule qu'au changement)
         self._hover = -1.0              # fraction survolée, -1 : aucune
@@ -146,7 +147,7 @@ class WaveformView(Gtk.Widget):
 
     def _on_key(self, _ctrl, keyval, _code, _state):
         if keyval in (Gdk.KEY_Left, Gdk.KEY_Right) and self.duration > 0:
-            delta = STEP if keyval == Gdk.KEY_Right else -STEP
+            delta = self.step if keyval == Gdk.KEY_Right else -self.step
             target = max(0.0, min(self.duration, self.position + delta))
             self.set_position(target)
             self.emit("seek", target)

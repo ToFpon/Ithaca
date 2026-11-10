@@ -170,7 +170,8 @@ class Tray:
             from ..settings import settings
             delta, orientation = params.unpack()
             if orientation == "vertical":
-                self.c.set_volume(settings["volume"] + (0.05 if delta < 0 else -0.05))
+                step = settings["wheel_step"]                 # « Cran de molette » des Préférences
+                self.c.change_volume(step if delta < 0 else -step)
         inv.return_value(None)
 
     # -- menu ---------------------------------------------------------------------------------

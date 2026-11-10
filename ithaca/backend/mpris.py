@@ -157,7 +157,7 @@ class Mpris:
         v = value.unpack()
         if prop == "Volume":
             self.c.set_muted(False)
-            self.c.set_volume(max(0.0, min(1.0, float(v))))
+            self.c.set_volume(max(0.0, float(v)))         # jusqu'à 1,5 avec « Volume maximal » 150 %
         elif prop == "Shuffle":
             self.c.set_shuffled(bool(v))
         elif prop == "LoopStatus":

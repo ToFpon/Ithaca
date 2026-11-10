@@ -30,6 +30,7 @@ PLAY_FLAG_AUDIO = 1 << 1
 PLAY_FLAG_SOFT_VOLUME = 1 << 4
 TICK_MS = 200
 PREAMP_DB = 0.0
+MAX_VOLUME = 1.5             # curseur cubique : 150 % au plus (« Volume maximal »)
 
 
 def replaygain_factor(song: Optional[Song], mode: str) -> float:
@@ -133,10 +134,11 @@ class Player:
         return self.song.duration if self.song else 0.0
 
     def set_volume(self, cubic: float, muted: bool = False):
-        """Volume du curseur (échelle cubique, comme GNOME) → linéaire pour playbin."""
+        """Volume du curseur (échelle cubique, comme GNOME) → linéaire pour playbin. Jusqu'à 1,5
+        (« Volume maximal » 150 %) : le son est alors amplifié, comme VLC."""
         linear = GstAudio.StreamVolume.convert_volume(GstAudio.StreamVolumeFormat.CUBIC,
                                                       GstAudio.StreamVolumeFormat.LINEAR,
-                                                      max(0.0, min(1.0, cubic)))
+                                                      max(0.0, min(MAX_VOLUME, cubic)))
         self.playbin.set_property("volume", linear)
         self.playbin.set_property("mute", muted)
 

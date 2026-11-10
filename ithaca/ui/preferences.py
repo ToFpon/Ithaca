@@ -9,7 +9,7 @@ gi.require_version("Adw", "1")
 from gi.repository import Adw, Gtk  # noqa: E402
 
 from .. import features  # noqa: E402
-from ..i18n import LANGUAGE_NAMES, tr  # noqa: E402
+from ..i18n import LANGUAGE_NAMES, ntr, tr  # noqa: E402
 from ..settings import settings  # noqa: E402
 from .common import combo_row  # noqa: E402
 
@@ -49,6 +49,15 @@ class PreferencesWindow(Adw.PreferencesWindow):
         play.add(_choice(tr("ReplayGain"), "replaygain", [tr("Album"), tr("Morceau"), tr("Désactivé")],
                          ["album", "track", "off"],
                          tr("Volume homogène d'un morceau à l'autre, d'après les étiquettes des fichiers")))
+        # repris de Nausicaa (demande de Tof)
+        play.add(_choice(tr("Volume maximal"), "volume_max", ["100 %", "150 %"], [100, 150],
+                         tr("Au-delà de 100 %, le son est amplifié (comme VLC) : utile pour un "
+                            "enregistrement trop faible")))
+        play.add(_choice(tr("Saut avec ← / →"), "seek_step",
+                         [ntr("{0} seconde", "{0} secondes", n).format(n) for n in (5, 10, 30)], [5, 10, 30],
+                         tr("Maj+← / → dans la fenêtre, ← / → sur la barre en forme d'onde")))
+        play.add(_choice(tr("Cran de molette"), "wheel_step", ["2 %", "5 %", "10 %"], [2, 5, 10],
+                         tr("Volume ajouté ou retiré à chaque cran de la molette")))
         page.add(play)
         return page
 

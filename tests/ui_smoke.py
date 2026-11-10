@@ -481,6 +481,56 @@ def titre_defilant(win):
 
 
 @step
+def reglages_lecture(win):
+    """Volume maximal (150 % : amplifié), saut avec ← / → (libellés des raccourcis compris), cran de
+    molette — repris de Nausicaa."""
+    from ithaca.settings import settings
+
+    def shortcut_titles():
+        out, todo = [], [win.get_help_overlay()]
+        while todo:
+            w = todo.pop()
+            if isinstance(w, Gtk.ShortcutsShortcut):
+                out.append(w.get_property("title"))
+            child = w.get_first_child()
+            while child is not None:
+                todo.append(child)
+                child = child.get_next_sibling()
+        return out
+    saved = {k: settings[k] for k in ("volume", "volume_max", "seek_step", "wheel_step", "muted")}
+    try:
+        settings["volume_max"] = 150
+        yield pump(0.2)
+        check(abs(win.volume_scale.get_adjustment().get_upper() - 1.5) < 1e-6, "150 % : curseur jusqu'à 1,5")
+        c().set_volume(1.4)
+        yield pump(0.2)
+        check(abs(settings["volume"] - 1.4) < 1e-6, "150 % : volume au-delà de 100 % accepté")
+        check(c().player.playbin.get_property("volume") > 1.0, "150 % : son amplifié (linéaire > 1)")
+        settings["volume_max"] = 100
+        yield pump(0.2)
+        check(abs(settings["volume"] - 1.0) < 1e-6, "retour à 100 % : volume ramené à 100 %")
+        check(abs(win.volume_scale.get_adjustment().get_upper() - 1.0) < 1e-6, "retour à 100 % : curseur jusqu'à 1")
+        settings["wheel_step"] = 10
+        win._on_volume_wheel(None, 0, 1)
+        yield pump(0.1)
+        check(abs(settings["volume"] - 0.9) < 1e-6, "molette : -10 %")
+        win._on_volume_wheel(None, 0, -1)
+        yield pump(0.1)
+        check(abs(settings["volume"] - 1.0) < 1e-6, "molette : +10 %, jamais au-delà du maximum")
+        settings["seek_step"] = 30
+        yield pump(0.2)
+        check(win.waveform.step == 30, "saut : flèches de la forme d'onde")
+        from ithaca.i18n import ntr
+        titles = shortcut_titles()
+        expected = ntr("Avancer de {0} seconde", "Avancer de {0} secondes", 30).format(30)
+        check(expected in titles and "30" in expected, f"raccourcis : libellé suivi ({expected})")
+    finally:
+        for k, v in saved.items():
+            settings[k] = v
+        yield pump(0.2)
+
+
+@step
 def reordonner(win):
     """Glisser dans la file : le morceau change de place, le morceau courant reste le même, le
     suivant est recalculé, la liste n'est pas reconstruite (pas de saut)."""

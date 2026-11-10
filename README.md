@@ -85,7 +85,7 @@ If Ithaca is already running, the files are sent to it.
 
 | Space | Play / pause | Ctrl+← / Ctrl+→ | Previous / next song |
 |---|---|---|---|
-| Shift+← / Shift+→ | Back / forward 10 seconds | Ctrl+M | Mute |
+| Shift+← / Shift+→ | Back / forward 10 seconds (set in Preferences) | Ctrl+M | Mute |
 | Ctrl+O | Add songs | Ctrl+Shift+O | Add a folder |
 | Ctrl+F | Search the queue | F9 | Show the queue |
 | Ctrl+, | Preferences | Ctrl+Q | Quit |
@@ -177,7 +177,7 @@ Si Ithaca est déjà ouvert, les fichiers lui sont envoyés.
 
 | Espace | Lecture / pause | Ctrl+← / Ctrl+→ | Morceau précédent / suivant |
 |---|---|---|---|
-| Maj+← / Maj+→ | Reculer / avancer de 10 secondes | Ctrl+M | Couper le son |
+| Maj+← / Maj+→ | Reculer / avancer de 10 secondes (réglable dans les Préférences) | Ctrl+M | Couper le son |
 | Ctrl+O | Ajouter des morceaux | Ctrl+Maj+O | Ajouter un dossier |
 | Ctrl+F | Rechercher dans la file | F9 | Afficher la file |
 | Ctrl+, | Préférences | Ctrl+Q | Quitter |

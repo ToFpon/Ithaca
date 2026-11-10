@@ -239,6 +239,14 @@ avant de toucher à ces sujets.
   focus. `MainWindow._on_key` (contrôleur en capture) les rend à `Gtk.Text` par `move-cursor` ;
   testé dans ui_smoke (recherche de la file). Tout nouveau raccourci sur une touche d'édition doit
   y passer.
+- Préférences → Lecture, repris de Nausicaa (demande de Tof) : « Volume maximal » (`volume_max` 100 /
+  150 : curseur cubique jusqu'à 1,5, son amplifié comme VLC, repère des 100 % ; repasser à 100 %
+  ramène le volume — `Controller.max_volume`, `Player.MAX_VOLUME`, MPRIS accepte > 1), « Saut avec
+  ← / → » (`seek_step` 5 / 10 / 30 s, 10 par défaut : Maj+← / → et flèches de la forme d'onde ;
+  fenêtre des raccourcis RECONSTRUITE au changement, libellés « Avancer de N secondes » en `ntr`),
+  « Cran de molette » (`wheel_step` 2 / 5 / 10 % : molette sur le curseur du volume par un
+  EventControllerScroll en capture — le pas de Gtk.Scale ne se règle pas —, et sur l'icône de la barre
+  système). Testé : `reglages_lecture` d'ui_smoke.
 - Espace = lecture / pause partout, même si un bouton a le focus (`_on_key`, en capture) : un bouton
   cliqué garde le focus et Espace le « recliquait » (suivant, aléatoire…), retour de Tof. Exceptions :
   champs de texte, menus ouverts (ancêtre Gtk.Popover), cases du mode sélection. Testé dans ui_smoke et

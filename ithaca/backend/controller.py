@@ -203,14 +203,26 @@ class Controller:
         return mode
 
     def set_volume(self, cubic: float):
-        settings["volume"] = round(max(0.0, min(1.0, cubic)), 3)
+        """0..max_volume() (1,5 avec « Volume maximal » à 150 %)."""
+        settings["volume"] = round(max(0.0, min(self.max_volume(), cubic)), 3)
+
+    @staticmethod
+    def max_volume() -> float:
+        return 1.5 if settings["volume_max"] == 150 else 1.0
+
+    def change_volume(self, percent: float):
+        """Molette, menu de l'icône : ± percent % (le son revient s'il était coupé)."""
+        self.set_muted(False)
+        self.set_volume(settings["volume"] + percent / 100)
 
     def set_muted(self, muted: bool):
         settings["muted"] = muted
 
     # -- réactions --------------------------------------------------------------------------
     def _on_setting(self, key, value):
-        if key in ("volume", "muted"):
+        if key == "volume_max" and settings["volume"] > self.max_volume():
+            settings["volume"] = self.max_volume()        # 150 → 100 % : le son redescend à 100 %
+        if key in ("volume", "muted", "volume_max"):
             self.player.set_volume(settings["volume"], settings["muted"])
             self._emit("volume")
         elif key == "replaygain":

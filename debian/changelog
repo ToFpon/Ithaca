@@ -1,3 +1,13 @@
+ithaca (1.2.0~noble1) noble; urgency=medium
+
+  * Préférences → Lecture : volume maximal (100 ou 150 %, son amplifié
+    comme VLC), saut avec ← / → (5, 10 ou 30 secondes, libellés des
+    raccourcis compris), cran de molette (2, 5 ou 10 %).
+  * Comprend la 1.1.0, restée bloquée pour Ubuntu 24.04 (erreur de
+    Launchpad) : logos des webradios, glisser-déposer dans la file.
+
+ -- Tof <nourpon@gmail.com>  Tue, 10 Nov 2026 18:00:00 +0000
+
 ithaca (1.1.0~noble1) noble; urgency=medium
 
   * Webradios : logo de la station, donné par la liste (tvg-logo, image

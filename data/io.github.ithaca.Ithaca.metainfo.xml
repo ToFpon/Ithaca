@@ -73,6 +73,14 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.2.0" date="2026-11-10">
+      <description>
+        <ul>
+          <li>Maximum volume of 100 % or 150 % (amplified above 100 %, like VLC)</li>
+          <li>Choose the jump of the arrow keys (5, 10 or 30 seconds) and the volume step of the mouse wheel</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.1.0" date="2026-11-10">
       <description>
         <ul>

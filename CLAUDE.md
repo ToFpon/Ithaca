@@ -120,7 +120,16 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   fond dans le xvfb-run avant le test. `ui/waveform_view.py`
   : Gtk.Widget dessiné (`do_snapshot`, couleur d'accent / texte estompé du thème), clic, glisser,
   ← / →. `ui/playlist_view.py` : Gtk.ListView (seules les lignes visibles existent), recherche sans
-  accents (`unicodedata`, les écritures non latines restent intactes), mode sélection.
+  accents (`unicodedata`, les écritures non latines restent intactes), mode sélection. Glisser pour
+  réordonner (demande de Tof) : Gtk.DragSource / DropTarget sur chaque ligne, contenu = CHAÎNE
+  « ithaca-song:<id> » (sous X11 même un glisser interne passe par XDND, types MIME seulement),
+  ligne d'insertion `.drop-above` / `.drop-below` (couleur d'accent), défilement près des bords
+  (DropControllerMotion sur le ScrolledWindow), pas en mode sélection. `move_song` déplace la ligne
+  dans le Gio.ListStore puis `Controller.move` ; `refresh` ne reconstruit plus la liste si l'ordre est
+  déjà le bon (la reconstruire ramenait en haut). PIÈGE : un Gtk.WindowHandle autour de TOUTE la
+  fenêtre s'emparait du geste (la fenêtre bougeait, rien n'était déposé) ; il n'entoure plus que le
+  lecteur et la page d'accueil. Testé : `reordonner` d'ui_smoke, et `tests/ui_drag.py` (vrai glisser à
+  la souris par xdotool, joué depuis un autre fil : la boucle GTK doit traiter les mouvements).
   `ui/marquee.py` (demande de Tof) : titre du lecteur en texte défilant s'il ne tient pas — Gtk.Widget
   qui porte un Gtk.Label (largeur minimale 0 : un titre long n'élargit jamais la fenêtre), pause 2 s,
   aller à 30 px/s, pause, retour (`scroll_offset`), tick callback seulement quand le texte déborde,
@@ -170,6 +179,19 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   Titre en cours : étiquette TAG (ICY) → `Song.now_playing`, affiché en grand, station en dessous
   (`window.artist_line`) ; « En direct », ni forme d'onde ni avance. Testé avec un MP3 servi en HTTP.
   Validé chez Tof avec de vraies webradios en .m3u, ainsi que l'ouverture et l'enregistrement des listes.
+- Logos des webradios (`backend/logos.py`, demande de Tof) : `tvg-logo="…"` des #EXTINF
+  (`playlists.parse_extinf` : titre après la première virgule HORS guillemets, un attribut peut en
+  contenir), `<image>` des .xspf → `Song.logo` ; à défaut le site annoncé par le flux : en-tête
+  « icy-url », que souphttpsrc range dans l'étiquette `location` (pas `homepage`) → `Song.site`, et
+  son icône (`apple-touch-icon` puis `icon` de la page, puis /favicon.ico ; 48 px au moins, un favicon
+  de 16 px serait flou). Un fil (`logos.fetcher`, une demande à la fois, 3 Mo et 10 s au plus),
+  image contrôlée (GdkPixbuf), posée au centre d'un carré OPAQUE (`squared_png` : couleur de son bord,
+  blanc si transparente — texte sombre illisible sur thème sombre ; la pochette est recadrée en carré,
+  un logo large aurait été rogné), PNG dans ~/.cache/ithaca/logos/<sha1 adresse>.png. Arrivée →
+  `Song.cover` + événement « cover » (fenêtre, vignette de la file, MPRIS). logo / site retenus dans
+  queue.json (`logos`, `sites`) : au retour, pris du cache sans réseau ; réécrits à l'enregistrement
+  d'une liste (tvg-logo, <image> avant <album> comme le veut XSPF). Testé : `LogoTest`,
+  `StreamLogoTest` (logo de la liste, icône du site par icy-url, page HTML refusée).
 
 ## Tests
 
@@ -182,6 +204,7 @@ dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_tray.py"  
 xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par « Aucune erreur. »
 LANGUAGE=en xvfb-run -a python3.12 tests/ui_smoke.py
 LANGUAGE=de xvfb-run -a python3.12 tests/ui_smoke.py
+xvfb-run -a -s "-screen 0 1400x1000x24" python3.12 tests/ui_drag.py   # vrai glisser dans la file (xdotool)
 python3 -m pyflakes ithaca tests tools
 ```
 

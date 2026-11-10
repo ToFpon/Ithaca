@@ -49,6 +49,8 @@ class Song:
     track_peak: Optional[float] = None
     album_peak: Optional[float] = None
     now_playing: str = ""          # flux : titre en cours annoncé par la station (étiquette ICY)
+    logo: str = ""                 # flux : adresse du logo donnée par la liste (tvg-logo, <image>)
+    site: str = ""                 # flux : site de la station annoncé par le flux (« icy-url »)
 
     @property
     def stream(self) -> bool:
@@ -183,9 +185,10 @@ def read_song(path: str, discoverer=None) -> Optional[Song]:
     return song
 
 
-def expand(paths: list[str], titles: Optional[dict] = None) -> list[str]:
+def expand(paths: list[str], titles: Optional[dict] = None, logos: Optional[dict] = None) -> list[str]:
     """Fichiers audio des chemins donnés (dossiers parcourus, ordre naturel des noms ; listes de
-    lecture dépliées, leurs flux compris). titles : reçoit le titre donné par la liste aux flux."""
+    lecture dépliées, leurs flux compris). titles / logos : reçoivent le titre et le logo donnés par la
+    liste aux flux."""
     from . import playlists
     out = []
     for p in paths:
@@ -196,6 +199,8 @@ def expand(paths: list[str], titles: Optional[dict] = None) -> list[str]:
                 if playlists.is_stream(e.location):
                     if titles is not None and e.title:
                         titles.setdefault(e.location, e.title)
+                    if logos is not None and e.logo:
+                        logos.setdefault(e.location, e.logo)
                     out.append(e.location)
                 elif os.path.isdir(e.location):
                     out += expand([e.location])
@@ -221,16 +226,21 @@ def load_paths(paths: list[str], on_songs: Callable[[list[Song]], None],
         GLib.idle_add(lambda: (fn(*args), False)[1])
 
     def work():
+        from .logos import cached
         from .playlists import title_for_stream
         d = GstPbutils.Discoverer.new(5 * Gst.SECOND)
         batch, read, skipped = [], 0, 0
         titles: dict = {}
-        for path in expand(paths, titles):
+        logos: dict = {}
+        for path in expand(paths, titles, logos):
             if cancel is not None and cancel.is_set():
                 return
             if "://" in path:
-                # flux : pas d'analyse (une webradio ne finit jamais), nom donné par la liste
-                song = Song(path, title=title_for_stream(path, titles.get(path, "")))
+                # flux : pas d'analyse (une webradio ne finit jamais), nom et logo donnés par la liste ;
+                # logo pas encore téléchargé : demandé ensuite par le contrôleur (Controller._want_logo)
+                logo = logos.get(path, "")
+                song = Song(path, title=title_for_stream(path, titles.get(path, "")), logo=logo,
+                            cover=cached(logo))
             else:
                 song = read_song(path, d) if os.path.isfile(path) else None
             if song is None:

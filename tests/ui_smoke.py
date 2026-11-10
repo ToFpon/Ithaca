@@ -481,6 +481,52 @@ def titre_defilant(win):
 
 
 @step
+def reordonner(win):
+    """Glisser dans la file : le morceau change de place, le morceau courant reste le même, le
+    suivant est recalculé, la liste n'est pas reconstruite (pas de saut)."""
+    if len(c().queue) < 3:
+        win.add_paths([LIB["album_a"]], play=False)
+        yield Wait(10, until=lambda: len(c().queue) >= 3)
+    pv = win.playlist
+    before = list(c().queue.items)
+    current = c().song
+    first_item = pv.store.get_item(0)
+    check(pv.move_song(before[0], before[2], after=True), "glisser : déposé après le 3e")
+    yield pump(0.3)
+    expected = before[1:3] + [before[0]] + before[3:]
+    check(c().queue.items == expected, "glisser : nouvel ordre de la file")
+    check([pv.store.get_item(i).song for i in range(pv.store.get_n_items())] == expected, "liste dans le même ordre")
+    check(pv.store.get_item(2) is first_item, "ligne déplacée, pas reconstruite")
+    check(c().song is current, "morceau en cours inchangé")
+    nxt = c().queue.next_index()
+    check(c().player.next_song is (c().queue.items[nxt] if nxt is not None else None), "suivant recalculé")
+    check(pv.move_song(before[0], before[1], after=False), "glisser : remis en tête")
+    yield pump(0.3)
+    check(c().queue.items == before, "ordre d'origine retrouvé")
+    check(not pv.move_song(before[0], before[0], after=True), "déposé sur lui-même : rien")
+    pv.set_selection_mode(True)
+    check(pv._on_drag_prepare(type("S", (), {"get_widget": lambda s: pv._rows[0]})(), 0, 0) is None,
+          "mode sélection : pas de glisser")
+    pv.set_selection_mode(False)
+    # logo d'une webradio arrivé après coup : la pochette du lecteur suit
+    song = c().song
+    if song is not None:
+        logo = os.path.join(TMP, "logo-test.png")
+        from gi.repository import GdkPixbuf
+        pix = GdkPixbuf.Pixbuf.new(GdkPixbuf.Colorspace.RGB, False, 8, 64, 64)
+        pix.fill(0x8844ccff)
+        pix.savev(logo, "png", [], [])
+        old = song.cover
+        song.cover = logo
+        c()._emit("cover", song)
+        yield pump(0.2)
+        check(win.cover.path == logo, "logo arrivé : pochette du lecteur mise à jour")
+        song.cover = old
+        c()._emit("cover", song)
+        yield pump(0.2)
+
+
+@step
 def selection(win):
     win.playlist.set_selection_mode(True)
     yield pump(0.2)

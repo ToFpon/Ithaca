@@ -80,6 +80,7 @@ class Player:
         self.on_ended: Callable[[], None] = lambda: None
         self.on_error: Callable[[Optional[Song], str], None] = lambda song, msg: None
         self.on_stream_title: Callable[[Song], None] = lambda song: None
+        self.on_stream_site: Callable[[Song, str], None] = lambda song, site: None
 
     # -- commandes ------------------------------------------------------------------------
     def load(self, song: Song, play: bool = True, position: float = 0.0):
@@ -186,11 +187,20 @@ class Player:
                 self._apply_replaygain()
                 self.on_song_started(self.song)
         elif t == Gst.MessageType.TAG and self.song is not None and self.song.stream:
-            # webradio : la station annonce le morceau en cours (étiquette ICY « title »)
-            ok, title = msg.parse_tag().get_string(Gst.TAG_TITLE)
+            # webradio : la station annonce le morceau en cours (étiquette ICY « title ») et parfois son
+            # site (en-tête « icy-url » : souphttpsrc le range dans l'étiquette location) : son icône
+            # sert de logo
+            tags = msg.parse_tag()
+            ok, title = tags.get_string(Gst.TAG_TITLE)
             if ok and title and title.strip() != self.song.now_playing:
                 self.song.now_playing = title.strip()
                 self.on_stream_title(self.song)
+            for tag in (Gst.TAG_HOMEPAGE, Gst.TAG_LOCATION):
+                ok, site = tags.get_string(tag)
+                site = site.strip() if ok and site else ""
+                if site and site != self.song.path and site != self.song.site and "." in site:
+                    self.on_stream_site(self.song, site)
+                    break
         elif t == Gst.MessageType.ASYNC_DONE:
             if self._seek_after_load is not None:
                 pos, self._seek_after_load = self._seek_after_load, None

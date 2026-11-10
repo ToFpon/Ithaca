@@ -31,6 +31,27 @@ class Entry:
     location: str               # chemin local absolu, ou adresse de flux
     title: str = ""             # titre donné par la liste (#EXTINF, <title>, TitleN)
     duration: float = 0.0
+    logo: str = ""              # logo d'une webradio (tvg-logo="…" des #EXTINF, <image> des .xspf)
+
+
+def parse_extinf(rest: str) -> tuple[float, dict, str]:
+    """« -1 tvg-logo="…" group-title="Rock, Pop",Nom » → (durée, attributs, titre). Le titre suit la
+    première virgule HORS guillemets : un attribut peut contenir une virgule."""
+    quoted, cut = False, len(rest)
+    for i, ch in enumerate(rest):
+        if ch == '"':
+            quoted = not quoted
+        elif ch == "," and not quoted:
+            cut = i
+            break
+    head, title = rest[:cut], rest[cut + 1:]
+    attrs = {k.lower(): v.strip() for k, v in re.findall(r'([A-Za-z][\w-]*)="([^"]*)"', head)}
+    first = head.split()[0] if head.split() else ""
+    try:
+        duration = max(0.0, float(first))
+    except ValueError:
+        duration = 0.0
+    return duration, attrs, title.strip()
 
 
 def is_playlist(path: str) -> bool:
@@ -81,25 +102,21 @@ def parse(path: str) -> list[Entry]:
 
 
 def _parse_m3u(text: str, folder: str) -> list[Entry]:
-    out, title, duration = [], "", 0.0
+    out, title, duration, logo = [], "", 0.0, ""
     for line in text.splitlines():
         line = line.strip()
         if not line:
             continue
         if line.upper().startswith("#EXTINF:"):
-            head, _, title = line[8:].partition(",")
-            try:
-                duration = max(0.0, float(head.split()[0])) if head.strip() else 0.0
-            except ValueError:
-                duration = 0.0
-            title = title.strip()
+            duration, attrs, title = parse_extinf(line[8:])
+            logo = attrs.get("tvg-logo", "")
             continue
         if line.startswith("#"):
             continue
         location = _resolve(line, folder)
         if location:
-            out.append(Entry(location, title, duration))
-        title, duration = "", 0.0
+            out.append(Entry(location, title, duration, logo if is_stream(logo) else ""))
+        title, duration, logo = "", 0.0, ""
     return out
 
 
@@ -148,7 +165,9 @@ def _parse_xspf(path: str, folder: str) -> list[Entry]:
             duration = int(track.findtext(q("duration"), default="0", namespaces=ns)) / 1000
         except ValueError:
             duration = 0.0
-        out.append(Entry(location, f"{creator} - {title}" if creator and title else title, duration))
+        image = track.findtext(q("image"), default="", namespaces=ns).strip()
+        out.append(Entry(location, f"{creator} - {title}" if creator and title else title, duration,
+                         image if is_stream(image) else ""))
     return out
 
 
@@ -167,7 +186,9 @@ def _m3u_lines(songs, folder: str) -> list[str]:
     out = []
     for s in songs:
         seconds = int(round(s.duration)) if s.duration else -1
-        out += [f"#EXTINF:{seconds},{_label(s)}", _entry_path(s.path, folder)]
+        logo = getattr(s, "logo", "")
+        attrs = f' tvg-logo="{logo}"' if logo and '"' not in logo else ""     # logo de la webradio gardé
+        out += [f"#EXTINF:{seconds}{attrs},{_label(s)}", _entry_path(s.path, folder)]
     return out
 
 
@@ -179,6 +200,8 @@ def _xspf_track(s, folder: str) -> ET.Element:
         ET.SubElement(t, "title").text = s.title or s.display_title
     if s.artist:
         ET.SubElement(t, "creator").text = s.artist
+    if getattr(s, "logo", ""):                       # ordre de la spécification : image avant album
+        ET.SubElement(t, "image").text = s.logo
     if s.album:
         ET.SubElement(t, "album").text = s.album
     if s.duration:

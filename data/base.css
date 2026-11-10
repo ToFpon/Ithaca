@@ -36,6 +36,10 @@ listview.playlist > row { border-radius: 8px; margin: 1px 6px; }
 .song-row .song-title { font-weight: 700; font-size: 0.9em; }
 .song-row .song-artist { font-size: 0.85em; }
 .song-row.current .song-title { color: @accent_color; }
+/* Glisser pour réordonner : ligne d'insertion à la couleur d'accent du thème */
+.song-row.drop-above { box-shadow: inset 0 2px @accent_bg_color; }
+.song-row.drop-below { box-shadow: inset 0 -2px @accent_bg_color; }
+.song-row.dragging { opacity: 0.4; }
 image.small-cover { border-radius: 4px; min-width: 40px; min-height: 40px; }
 
 /* Déposer des fichiers */

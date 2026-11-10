@@ -10,7 +10,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gio, GLib, GObject, Gtk, Pango  # noqa: E402
+from gi.repository import Adw, Gdk, Gio, GLib, GObject, Gtk, Pango  # noqa: E402
 
 from .. import format as fmt  # noqa: E402
 from ..i18n import ntr, tr  # noqa: E402
@@ -18,6 +18,7 @@ from .common import popup_menu, shown  # noqa: E402
 from .cover import texture  # noqa: E402
 
 THUMB = 40
+DRAG_PREFIX = "ithaca-song:"        # contenu d'un glisser dans la file (voir _on_drag_prepare)
 
 
 def fold(text: str) -> str:
@@ -87,6 +88,7 @@ class PlaylistView(Gtk.Box):
         self.view.connect("activate", self._on_activate)
         self.stack = Gtk.Stack()
         scroller = Gtk.ScrolledWindow(hscrollbar_policy=Gtk.PolicyType.NEVER, vexpand=True, child=self.view)
+        self._setup_autoscroll(scroller)
         self.stack.add_named(scroller, "list")
         self.no_result = Adw.StatusPage(icon_name="edit-find-symbolic", title=tr("Aucun résultat"),
                                         css_classes=["compact"])
@@ -121,9 +123,11 @@ class PlaylistView(Gtk.Box):
 
     # -- modèle -----------------------------------------------------------------------------
     def refresh(self):
-        items = [SongItem(s) for s in self.c.queue.items]
-        self.store.splice(0, self.store.get_n_items(), items)
-        n = len(items)
+        current = [self.store.get_item(i).song for i in range(self.store.get_n_items())]
+        if current != self.c.queue.items:
+            # pas après un glisser : la liste est déjà dans le bon ordre (la reconstruire ramenait en haut)
+            self.store.splice(0, self.store.get_n_items(), [SongItem(s) for s in self.c.queue.items])
+        n = self.store.get_n_items()
         self.subtitle.set_label(ntr("{0} morceau", "{0} morceaux", n).format(n) + " · " +
                                 fmt.long_duration(self.c.queue.total_duration()) if n else "")
         self._sync_selected()
@@ -147,6 +151,10 @@ class PlaylistView(Gtk.Box):
         elif event == "song":
             self._sync_playing()
             self.scroll_to_current()
+        elif event == "cover":                            # logo d'une webradio arrivé
+            for box in self._rows:
+                if box._item is not None and box._item.song is args[0]:
+                    self._set_thumb(box, args[0])
 
     # -- lignes -------------------------------------------------------------------------------
     def _setup(self, _factory, li):
@@ -171,6 +179,20 @@ class PlaylistView(Gtk.Box):
         click = Gtk.GestureClick(button=3)
         click.connect("pressed", self._on_right_click)
         box.add_controller(click)
+        # glisser pour réordonner la file : la ligne glissée part, une ligne d'insertion (couleur
+        # d'accent) montre où elle tombera
+        drag = Gtk.DragSource(actions=Gdk.DragAction.MOVE)
+        drag.connect("prepare", self._on_drag_prepare)
+        drag.connect("drag-begin", self._on_drag_begin)
+        drag.connect("drag-end", self._on_drag_end)
+        box.add_controller(drag)
+        # contenu = une chaîne « ithaca-song:<id> » : sous X11, même un glisser dans la fenêtre passe
+        # par XDND, qui ne transporte que des types MIME — un SongItem (GType Python) n'arrivait jamais
+        drop = Gtk.DropTarget.new(GObject.TYPE_STRING, Gdk.DragAction.MOVE)
+        drop.connect("motion", self._on_drop_motion)
+        drop.connect("leave", lambda t: self._mark_drop(t.get_widget(), None))
+        drop.connect("drop", self._on_drop)
+        box.add_controller(drop)
         box._item = None
         li.set_child(box)
         self._rows.append(box)
@@ -184,15 +206,18 @@ class PlaylistView(Gtk.Box):
         from .window import artist_line
         box._artist.set_label(shown(artist_line(song)))
         box.set_tooltip_text(shown(" — ".join(x for x in (song.display_title, song.artist, song.album) if x)))
+        self._set_thumb(box, song)
+        box._check.set_visible(self.selection_mode)
+        box._check.set_active(item.selected)
+        self._sync_row(box)
+
+    def _set_thumb(self, box, song):
         tex = texture(song.cover, THUMB * 2) if song.cover else None
         if tex is not None:
             box._picture.set_from_paintable(tex)
             box._cover.set_visible_child_name("cover")
         else:
             box._cover.set_visible_child_name("none")
-        box._check.set_visible(self.selection_mode)
-        box._check.set_active(item.selected)
-        self._sync_row(box)
 
     def _unbind(self, _factory, li):
         li.get_child()._item = None
@@ -291,5 +316,108 @@ class PlaylistView(Gtk.Box):
             menu.append_item(it)
         popup_menu(box, menu, x, y)
 
+    # -- glisser pour réordonner ------------------------------------------------------------------
+    def _on_drag_prepare(self, source, _x, _y):
+        box = source.get_widget()
+        if box._item is None or self.selection_mode:
+            return None                                   # mode sélection : les cases, pas le glisser
+        return Gdk.ContentProvider.new_for_value(f"{DRAG_PREFIX}{id(box._item.song)}")
+
+    def _on_drag_begin(self, source, _drag):
+        box = source.get_widget()
+        source.set_icon(Gtk.WidgetPaintable.new(box), box.get_width() // 2, box.get_height() // 2)
+        box.add_css_class("dragging")
+        self._dragging = True
+
+    def _on_drag_end(self, source, _drag, _delete):
+        source.get_widget().remove_css_class("dragging")
+        self._dragging = False
+        self._stop_autoscroll()
+
+    @staticmethod
+    def _drop_after(box, y) -> bool:
+        return y > box.get_height() / 2
+
+    def _mark_drop(self, box, after):
+        box.remove_css_class("drop-above")
+        box.remove_css_class("drop-below")
+        if after is not None:
+            box.add_css_class("drop-below" if after else "drop-above")
+
+    def _on_drop_motion(self, target, _x, y):
+        box = target.get_widget()
+        if box._item is None or self.selection_mode:
+            return 0
+        self._mark_drop(box, self._drop_after(box, y))
+        return Gdk.DragAction.MOVE
+
+    def _dragged_song(self, value):
+        """Morceau désigné par le contenu glissé ; None pour un texte venu d'ailleurs."""
+        if not isinstance(value, str) or not value.startswith(DRAG_PREFIX):
+            return None
+        ident = value[len(DRAG_PREFIX):]
+        return next((s for s in self.c.queue.items if str(id(s)) == ident), None)
+
+    def _on_drop(self, target, value, _x, y):
+        box = target.get_widget()
+        self._mark_drop(box, None)
+        song = self._dragged_song(value)
+        if box._item is None or song is None:
+            return False
+        return self.move_song(song, box._item.song, self._drop_after(box, y))
+
+    def move_song(self, song, target, after: bool) -> bool:
+        """Pose `song` juste avant (ou après) `target` dans la file. La ligne est déplacée dans la
+        liste elle-même (pas de reconstruction : la vue ne saute pas), puis dans la file."""
+        items = self.c.queue.items
+        if song is target or song not in items or target not in items:
+            return False
+        src = items.index(song)
+        dest = items.index(target) + (1 if after else 0)
+        if src < dest:
+            dest -= 1
+        if dest == src:
+            return False
+        item = next((self.store.get_item(i) for i in range(self.store.get_n_items())
+                     if self.store.get_item(i).song is song), None) or SongItem(song)
+        self.store.remove(src)
+        self.store.insert(dest, item)
+        self.c.move(song, dest)
+        self._sync_playing()
+        return True
+
+    def _setup_autoscroll(self, scroller):
+        """Près du haut ou du bas de la liste pendant un glisser : elle défile (GTK ne le fait pas)."""
+        self._scroller = scroller
+        self._dragging = False
+        self._scroll_step = 0
+        self._scroll_timer = 0
+        motion = Gtk.DropControllerMotion()
+        motion.connect("motion", self._on_list_motion)
+        motion.connect("leave", lambda *_: self._stop_autoscroll())
+        scroller.add_controller(motion)
+
+    def _on_list_motion(self, _ctrl, _x, y):
+        height, edge = self._scroller.get_height(), 48
+        step = -1 if y < edge else (1 if y > height - edge else 0)
+        if step and not self._scroll_timer:
+            self._scroll_timer = GLib.timeout_add(30, self._autoscroll)
+        self._scroll_step = step
+
+    def _autoscroll(self):
+        if not self._scroll_step:
+            self._scroll_timer = 0
+            return False                                  # plus près d'un bord : on s'arrête
+        adj = self._scroller.get_vadjustment()
+        adj.set_value(adj.get_value() + self._scroll_step * 12)
+        return True                                       # répétition voulue tant qu'on reste au bord
+
+    def _stop_autoscroll(self):
+        self._scroll_step = 0
+        if self._scroll_timer:
+            GLib.source_remove(self._scroll_timer)
+            self._scroll_timer = 0
+
     def close(self):
+        self._stop_autoscroll()
         self.c.disconnect(self._listener)

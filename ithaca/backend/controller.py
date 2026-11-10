@@ -1,7 +1,8 @@
 """Le lecteur et sa file ensemble (boucle GLib, sans GTK : testable seul).
 
 Événements envoyés aux écouteurs : song (morceau courant changé), state (lecture / pause),
-position, queue (contenu ou ordre de la file), modes (aléatoire, répétition), error.
+position, queue (contenu ou ordre de la file), modes (aléatoire, répétition), error, cover (logo
+d'une webradio arrivé : song en argument).
 """
 
 from __future__ import annotations
@@ -10,6 +11,7 @@ from typing import Callable, Optional
 
 from gi.repository import GLib
 
+from .logos import cached, fetcher
 from .player import Player
 from .playqueue import PlayQueue, load_saved, restore
 from .song import Song, load_paths
@@ -34,6 +36,7 @@ class Controller:
         self.player.on_ended = self._on_ended
         self.player.on_error = self._on_error
         self.player.on_stream_title = lambda song: self._emit("song")
+        self.player.on_stream_site = self._on_stream_site
         self.queue_file = queue_file
         self.loading = 0
         self._errors = 0
@@ -71,6 +74,8 @@ class Controller:
 
         def got(songs):
             new = self.queue.add(songs)
+            for s in new:
+                self._want_logo(s)
             if new and state["first"] is None:
                 state["first"] = new[0]
                 if play or (self.queue.current is None and not self.player.playing):
@@ -98,10 +103,17 @@ class Controller:
 
         def done(_n, _skipped):
             self.loading -= 1
-            for song in read:                       # nom des webradios, retenu avec la file
-                if song.stream and data.get("titles", {}).get(song.path):
-                    song.title = data["titles"][song.path]
+            for song in read:                       # nom, logo et site des webradios, retenus avec la file
+                if not song.stream:
+                    continue
+                for key, attr in (("titles", "title"), ("logos", "logo"), ("sites", "site")):
+                    value = (data.get(key) or {}).get(song.path)
+                    if isinstance(value, str) and value:
+                        setattr(song, attr, value)
+                song.cover = song.cover or cached(song.logo) or cached(song.site)
             restore(self.queue, data, read)
+            for song in read:
+                self._want_logo(song)
             settings["shuffle"] = self.queue.shuffled
             settings["repeat"] = self.queue.repeat
             if self.queue.current is not None:
@@ -171,6 +183,11 @@ class Controller:
                 self.player.stop()
         self.save_soon()
 
+    def move(self, song: Song, index: int):
+        """Déplace un morceau dans la file (glisser dans la liste) ; le suivant est recalculé."""
+        if song in self.queue.items:
+            self.queue.move(song, index)
+
     def clear(self):
         self.player.stop()
         self.queue.clear()
@@ -209,6 +226,34 @@ class Controller:
         elif what == "modes":
             self._prepare_next()
             self._emit("modes")
+
+    # -- logos des webradios ------------------------------------------------------------------
+    def _want_logo(self, song: Song):
+        """Webradio sans logo : celui de la liste, à défaut (ou s'il est introuvable) l'icône du site."""
+        if not song.stream or song.cover:
+            return
+        if song.logo:
+            fetcher.request("logo", song.logo, lambda path: self._got_logo(song, path),
+                            lambda: self._want_site_icon(song))
+        else:
+            self._want_site_icon(song)
+
+    def _want_site_icon(self, song: Song):
+        if song.site and not song.cover:
+            fetcher.request("site", song.site, lambda path: self._got_logo(song, path))
+
+    def _got_logo(self, song: Song, path: str):
+        if song.cover == path or song not in self.queue.original:
+            return
+        song.cover = path
+        self._emit("cover", song)
+
+    def _on_stream_site(self, song: Song, site: str):
+        """Le flux annonce le site de la station (« icy-url ») : retenu, et son icône sert de logo."""
+        song.site = site
+        self.save_soon()
+        if not song.cover and (not song.logo or not fetcher.busy("logo", song.logo)):
+            self._want_site_icon(song)
 
     def _prepare_next(self):
         """Morceau suivant donné d'avance au lecteur, pour l'enchaîner sans blanc."""

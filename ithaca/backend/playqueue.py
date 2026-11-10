@@ -172,6 +172,8 @@ class PlayQueue:
     def save(self, position: float = 0.0, path: str = QUEUE_FILE):
         data = {"version": 1, "songs": [s.path for s in self.original],
                 "titles": {s.path: s.title for s in self.original if s.stream and s.title},
+                "logos": {s.path: s.logo for s in self.original if s.stream and s.logo},
+                "sites": {s.path: s.site for s in self.original if s.stream and s.site},
                 "order": [self.original.index(s) for s in self.items] if self.shuffled else None,
                 "current": self.current.path if self.current else "", "position": position,
                 "repeat": self.repeat, "shuffled": self.shuffled}

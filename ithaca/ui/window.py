@@ -74,8 +74,10 @@ class MainWindow(Adw.ApplicationWindow):
                                         css_classes=["drop-hint"], visible=False, can_target=False)
         overlay.add_overlay(self.drop_hint)
         self.toast_overlay.set_child(overlay)
-        handle = Gtk.WindowHandle(child=self.toast_overlay)
-        self.set_content(handle)
+        # Pas de Gtk.WindowHandle autour de toute la fenêtre : il s'emparait du glisser d'une ligne de
+        # la file (déplacement de la fenêtre au lieu de réordonner). Il n'entoure que le lecteur et la
+        # page d'accueil (_build_main / _build_empty) ; les barres de titre déplacent aussi la fenêtre.
+        self.set_content(self.toast_overlay)
 
         # Fenêtre étroite : la file passe par-dessus le lecteur — seulement si elle est affichée. Une
         # file masquée ne « replie » pas la vue : sinon replier la fenêtre avec la file (F9) changeait de
@@ -122,7 +124,7 @@ class MainWindow(Adw.ApplicationWindow):
         box.append(Gtk.Button(label=tr("Ajouter un dossier"), css_classes=["pill"], action_name="win.add-folder"))
         box.append(Gtk.Button(label=tr("Ajouter des morceaux"), css_classes=["pill"], action_name="win.add-songs"))
         page.set_child(box)
-        tv.set_content(Adw.Clamp(maximum_size=450, child=page, vexpand=True))
+        tv.set_content(Gtk.WindowHandle(child=Adw.Clamp(maximum_size=450, child=page, vexpand=True)))
         return tv
 
     def _build_main(self) -> Gtk.Widget:
@@ -165,7 +167,7 @@ class MainWindow(Adw.ApplicationWindow):
             details.append(w)
         box.append(details)
         box.append(self._build_controls())
-        content.set_content(box)
+        content.set_content(Gtk.WindowHandle(child=box))       # tirer le lecteur déplace la fenêtre
         self.split.set_content(content)
 
         self.playlist = PlaylistView(self.c)
@@ -520,6 +522,9 @@ class MainWindow(Adw.ApplicationWindow):
             self._sync_position(args[0])
         elif event == "song":
             self._sync_song()
+        elif event == "cover":                            # logo d'une webradio arrivé
+            if args and args[0] is self.c.song:
+                self._sync_song()
         elif event == "state":
             self._sync_state()
         elif event in ("queue", "loading"):

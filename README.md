@@ -33,11 +33,12 @@ accent color), or, if you wish, tints the window after the album cover like Ambe
 - **Large cover art** (embedded in the file, or `cover.jpg` / `folder.png`… from the folder), **waveform
   progress bar** (click or drag to seek, ← / → keys), title, artist, album.
 - **Gapless playback**, shuffle, repeat (playlist or song), **search in the queue** (accents ignored),
-  selection mode to remove songs.
+  selection mode to remove songs, drag and drop to reorder the queue.
 - **Playlists**: `.m3u`, `.m3u8`, `.xspf` and `.pls` open like folders; save the queue or a selection as a
   playlist (relative paths: the playlist still works when copied with the music to a USB stick), or add songs
   to an existing playlist without duplicates. Existing playlists are never overwritten by accident.
-- **Web radios** from playlists, played live, with the song title announced by the station.
+- **Web radios** from playlists, played live, with the song title announced by the station and its logo
+  (`tvg-logo` from the playlist, or the station's website icon).
 - **ReplayGain** (album or song), applied live without interrupting the music, never clipping.
 - **System controls (MPRIS)**: GNOME panel, lock screen and keyboard media keys.
 - **Background playback**: closing the window while playing keeps the music going, with a tray icon (via the
@@ -123,11 +124,12 @@ d'après la pochette comme Amberol.
 - **Grande pochette** (intégrée au fichier, ou `cover.jpg` / `folder.png`… du dossier), **barre de progression
   en forme d'onde** (clic ou glisser pour avancer, touches ← / →), titre, artiste, album.
 - **Enchaînement sans blanc**, aléatoire, répétition (file ou morceau), **recherche dans la file** (accents
-  ignorés), mode sélection pour retirer des morceaux.
+  ignorés), mode sélection pour retirer des morceaux, glisser-déposer pour réordonner la file.
 - **Listes de lecture** : `.m3u`, `.m3u8`, `.xspf` et `.pls` s'ouvrent comme des dossiers ; enregistrer la file
   ou une sélection en liste (chemins relatifs : copiée avec la musique sur une clé, elle marche toujours), ou
   compléter une liste existante sans doublon. Une liste existante n'est jamais écrasée par mégarde.
-- **Webradios** des listes, lues en direct, avec le titre annoncé par la station.
+- **Webradios** des listes, lues en direct, avec le titre annoncé par la station et son logo
+  (`tvg-logo` de la liste, ou l'icône du site de la station).
 - **ReplayGain** (album ou morceau), appliqué en direct sans couper la musique, sans jamais saturer.
 - **Contrôle depuis le système (MPRIS)** : panneau de GNOME, écran verrouillé et touches multimédia du clavier.
 - **Lecture en arrière-plan** : fermer la fenêtre pendant la lecture laisse la musique jouer, avec une icône dans

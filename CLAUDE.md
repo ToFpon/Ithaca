@@ -154,10 +154,12 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   enregistrés auprès de org.kde.StatusNotifierWatcher (chez Tof : extension « AppIndicator and
   KStatusNotifierItem Support » d'Ubuntu, ubuntu/gnome-shell-extension-appindicator — il a quitté
   celle de Zorin, trop boguée) ; pas de
-  barre : rien ne s'affiche, rien ne casse. Icône `io.github.ithaca.Ithaca-tray` (scalable/apps), EN
-  COULEUR, choix de Tof : disque violet + triangle « lecture » violet → rose, dans l'esprit du site ; la
-  symbolique (note sur des vagues) était illisible à 16 px, et une icône symbolique est recolorée d'une
-  seule teinte par GNOME. Installée (paquet, install.sh) → IconThemePath vide, la barre la prend dans le
+  barre : rien ne s'affiche, rien ne casse. Icône = celle de l'application (`io.github.ithaca.Ithaca`,
+  choix de Tof après un essai d'icône violette dédiée, abandonné) ; shell réglé en icônes symboliques
+  (`-st-icon-style: symbolic` dans gnome-shell.css) → l'extension prend d'elle-même
+  `io.github.ithaca.Ithaca-symbolic` = note de musique (fournie par Tof, emblem-music-symbolic,
+  couleur simple — sa feuille de style KDE retirée), aussi sur la page d'accueil. Les deux installées
+  (paquet, install.sh, qui retire l'ancienne `-tray`) → IconThemePath vide, la barre les prend dans le
   thème du système ;
   lancé sans installer → IconThemePath = data/icons, qui DOIT garder `hicolor/index.theme` (l'extension
   cherche avec St.IconTheme, logique de GTK 3 : sans index.theme rien n'est trouvé, icône d'attente

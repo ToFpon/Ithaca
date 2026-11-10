@@ -96,11 +96,11 @@ class TrayTest(unittest.TestCase):
             self.assertTrue(os.path.exists(index), "sans index.theme, la barre montre « ••• »")
             keys = GLib.KeyFile()
             keys.load_from_file(index, GLib.KeyFileFlags.NONE)
-            for d in keys.get_string("Icon Theme", "Directories").split(","):   # virgules (spécification)
-                if os.path.exists(os.path.join(path, "hicolor", d, name + ".svg")):
-                    break
-            else:
-                self.fail("icône absente des dossiers déclarés")
+            dirs = keys.get_string("Icon Theme", "Directories").split(",")    # virgules (spécification)
+            # l'icône de l'application, et sa variante symbolique (note) pour un shell en icônes symboliques
+            for variant in (name, name + "-symbolic"):
+                self.assertTrue(any(os.path.exists(os.path.join(path, "hicolor", d, variant + ".svg")) for d in dirs),
+                                f"{variant} absente des dossiers déclarés")
 
     def test_menu_and_actions(self):
         self.assertIn(self.t.name, self.registered)

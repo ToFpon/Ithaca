@@ -64,7 +64,7 @@ Name=$APP_ID
 Exec=$PREFIX/bin/ithaca --gapplication-service
 SERVICE
 cp "$SRC/data/icons/hicolor/scalable/apps/$APP_ID.svg" "$SHARE/icons/hicolor/scalable/apps/"
-cp "$SRC/data/icons/hicolor/scalable/apps/$APP_ID-tray.svg" "$SHARE/icons/hicolor/scalable/apps/"
+rm -f "$SHARE/icons/hicolor/scalable/apps/$APP_ID-tray.svg"     # ancienne icône de la barre (≤ 1.2)
 cp "$SRC/data/icons/hicolor/symbolic/apps/$APP_ID-symbolic.svg" "$SHARE/icons/hicolor/symbolic/apps/"
 update-desktop-database "$SHARE/applications" 2>/dev/null || true
 gtk-update-icon-cache -f -t "$SHARE/icons/hicolor" 2>/dev/null || true

@@ -3,5 +3,4 @@ debian/io.github.ithaca.Ithaca.service usr/share/dbus-1/services
 data/io.github.ithaca.Ithaca.desktop usr/share/applications
 data/io.github.ithaca.Ithaca.metainfo.xml usr/share/metainfo
 data/icons/hicolor/scalable/apps/io.github.ithaca.Ithaca.svg usr/share/icons/hicolor/scalable/apps
-data/icons/hicolor/scalable/apps/io.github.ithaca.Ithaca-tray.svg usr/share/icons/hicolor/scalable/apps
 data/icons/hicolor/symbolic/apps/io.github.ithaca.Ithaca-symbolic.svg usr/share/icons/hicolor/symbolic/apps

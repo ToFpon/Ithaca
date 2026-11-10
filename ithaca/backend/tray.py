@@ -22,9 +22,10 @@ MENU_PATH = "/MenuBar"
 WATCHER = "org.kde.StatusNotifierWatcher"
 ICONS_DIR = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))),
                          "data", "icons")
-# Icône EN COULEUR (disque violet, triangle « lecture ») : la symbolique (note sur des vagues) était
-# illisible à 16 px, et une icône symbolique est recolorée d'une seule teinte (adieu le violet).
-ICON_NAME = APP_ID + "-tray"
+# L'icône de l'application (choix de Tof). Thème du shell en icônes symboliques
+# (`-st-icon-style: symbolic` dans gnome-shell.css) : l'extension cherche alors d'elle-même
+# « io.github.ithaca.Ithaca-symbolic », la note de musique. Selon la configuration, l'une ou l'autre.
+ICON_NAME = APP_ID
 
 
 def icon_theme_path() -> str:
@@ -33,8 +34,10 @@ def icon_theme_path() -> str:
     Sans index.theme dans ce dossier, l'extension AppIndicator ne trouvait rien et montrait son icône
     d'attente (« ••• »)."""
     for base in [GLib.get_user_data_dir(), *GLib.get_system_data_dirs()]:
-        if os.path.exists(os.path.join(base, "icons", "hicolor", "scalable", "apps", ICON_NAME + ".svg")):
-            return ""
+        icons = os.path.join(base, "icons", "hicolor")
+        if os.path.exists(os.path.join(icons, "scalable", "apps", ICON_NAME + ".svg")) and \
+                os.path.exists(os.path.join(icons, "symbolic", "apps", ICON_NAME + "-symbolic.svg")):
+            return ""                                 # les deux variantes installées dans le thème
     return ICONS_DIR
 
 ITEM_XML = """<node><interface name="org.kde.StatusNotifierItem">

@@ -45,7 +45,8 @@ accent color), or, if you wish, tints the window after the album cover like Ambe
   [AppIndicator extension](https://github.com/ubuntu/gnome-shell-extension-appindicator)) and a notification
   to show the window again or quit. No automatic suspend while music is playing.
 - Each optional feature (waveform, system controls, background playback, cover colors) can be switched off
-  in **Preferences → Features**, without restarting.
+  in **Preferences → Features**, without restarting. The playlist opens on the left or on the right, as you
+  prefer (**Preferences → General**).
 
 ### Installation
 
@@ -139,7 +140,8 @@ d'après la pochette comme Amberol.
   la barre système (par l'[extension AppIndicator](https://github.com/ubuntu/gnome-shell-extension-appindicator))
   et une notification pour revenir ou quitter. Pas de mise en veille automatique pendant la lecture.
 - Chaque fonctionnalité facultative (forme d'onde, contrôle depuis le système, arrière-plan, couleurs de la
-  pochette) se coupe dans **Préférences → Fonctionnalités**, sans redémarrer.
+  pochette) se coupe dans **Préférences → Fonctionnalités**, sans redémarrer. La file s'ouvre à gauche ou à
+  droite, au choix (**Préférences → Général**).
 
 ### Installation
 

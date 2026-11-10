@@ -25,7 +25,8 @@ import gi  # noqa: E402
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gdk, Gio, GLib, Gtk  # noqa: E402
+gi.require_version("Graphene", "1.0")
+from gi.repository import Adw, Gdk, Gio, GLib, Graphene, Gtk  # noqa: E402
 
 errors = []
 
@@ -539,6 +540,33 @@ def reglages_lecture(win):
     finally:
         for k, v in saved.items():
             settings[k] = v
+        yield pump(0.2)
+
+
+@step
+def cote_de_la_file(win):
+    """File à droite ou à gauche (gauchers / droitiers), appliqué tout de suite ; le bouton de la barre
+    de titre et la flèche de fermeture suivent."""
+    from ithaca.settings import settings
+    win.set_playlist_shown(True)
+    yield Wait(2, until=lambda: win.split.get_show_sidebar())
+
+    def btn_on_right():
+        ok, p = win.sidebar_btn.compute_point(win, Graphene.Point().init(0, 0))
+        return ok and p.x > win.get_width() / 2
+    try:
+        settings["playlist_side"] = "end"
+        yield pump(0.6)
+        check(win.split.get_sidebar_position() == Gtk.PackType.END, "file à droite")
+        check(win.sidebar_btn.get_icon_name() == "sidebar-show-right-symbolic"
+              and win.playlist.back_btn.get_icon_name() == "go-next-symbolic", "icônes tournées vers la droite")
+        check(btn_on_right(), "bouton de la file du côté de la file")
+        settings["playlist_side"] = "start"
+        yield pump(0.6)
+        check(win.split.get_sidebar_position() == Gtk.PackType.START and not btn_on_right()
+              and win.sidebar_btn.get_icon_name() == "sidebar-show-symbolic", "retour à gauche")
+    finally:
+        settings["playlist_side"] = "start"
         yield pump(0.2)
 
 

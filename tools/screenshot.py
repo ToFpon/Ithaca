@@ -5,7 +5,7 @@
 
 Options : --empty (page d'accueil) --dark --recolor --size=LxH --prefs=page --delay=ms --hidden-list
           --search=texte (recherche dans la file) --selection (mode sélection, un morceau sur deux)
-          --title=texte (titre long, capturé en plein défilement)
+          --title=texte (titre long, capturé en plein défilement) --right (file à droite)
 Musique d'exemple générée par ffmpeg, sortie son factice, configuration jetable.
 """
 import os
@@ -109,6 +109,9 @@ def on_ready(win):
         Adw.StyleManager.get_default().set_color_scheme(Adw.ColorScheme.FORCE_DARK)
     if "recolor" in opts:
         features.set_enabled("recolor", True)
+    if "right" in opts:                 # file de lecture à droite (Préférences → Apparence)
+        from ithaca.settings import settings
+        settings["playlist_side"] = "end"
     w, _, h = opts.get("size", "860x700").partition("x")
     win.set_default_size(int(w), int(h))
     if "hidden-list" in opts:

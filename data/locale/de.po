@@ -39,8 +39,8 @@ msgstr "Ithaca spielt weiter"
 msgid "Afficher"
 msgstr "Anzeigen"
 
-#: ithaca/app.py:117 ithaca/backend/tray.py:193 ithaca/ui/window.py:262
-#: ithaca/ui/window.py:327
+#: ithaca/app.py:117 ithaca/backend/tray.py:193 ithaca/ui/window.py:264
+#: ithaca/ui/window.py:329
 msgid "Quitter"
 msgstr "Beenden"
 
@@ -67,20 +67,20 @@ msgstr "kora, von bikass https://github.com/bikass/kora"
 msgid "Afficher Ithaca"
 msgstr "Ithaca anzeigen"
 
-#: ithaca/backend/tray.py:190 ithaca/ui/window.py:190 ithaca/ui/window.py:317
+#: ithaca/backend/tray.py:190 ithaca/ui/window.py:192 ithaca/ui/window.py:319
 msgid "Morceau suivant"
 msgstr "Nächster Titel"
 
-#: ithaca/backend/tray.py:191 ithaca/ui/window.py:184 ithaca/ui/window.py:318
+#: ithaca/backend/tray.py:191 ithaca/ui/window.py:186 ithaca/ui/window.py:320
 msgid "Morceau précédent"
 msgstr "Vorheriger Titel"
 
-#: ithaca/backend/tray.py:188 ithaca/ui/window.py:616
+#: ithaca/backend/tray.py:188 ithaca/ui/window.py:634
 msgid "Pause"
 msgstr "Pause"
 
-#: ithaca/backend/tray.py:188 ithaca/ui/playlist_view.py:312
-#: ithaca/ui/window.py:616
+#: ithaca/backend/tray.py:188 ithaca/ui/playlist_view.py:314
+#: ithaca/ui/window.py:634
 msgid "Lire"
 msgstr "Abspielen"
 
@@ -105,7 +105,7 @@ msgid ""
 "Panneau de GNOME, écran verrouillé et touches multimédia du clavier (MPRIS)"
 msgstr "GNOME-Leiste, Sperrbildschirm und Medientasten der Tastatur (MPRIS)"
 
-#: ithaca/features.py:31 ithaca/ui/window.py:250
+#: ithaca/features.py:31 ithaca/ui/window.py:252
 msgid "Lecture en arrière-plan"
 msgstr "Wiedergabe im Hintergrund"
 
@@ -115,7 +115,7 @@ msgstr ""
 "Das Schließen des Fensters während der Wiedergabe lässt die Musik "
 "weiterlaufen"
 
-#: ithaca/features.py:34 ithaca/ui/window.py:249
+#: ithaca/features.py:34 ithaca/ui/window.py:251
 msgid "Couleurs de la pochette"
 msgstr "Farben des Covers"
 
@@ -133,65 +133,66 @@ msgid_plural "{0} minutes"
 msgstr[0] "{0} Minute"
 msgstr[1] "{0} Minuten"
 
-#: ithaca/ui/playlist_view.py:109
+#: ithaca/ui/playlist_view.py:111
 msgid "Enregistrer comme liste de lecture…"
 msgstr "Als Wiedergabeliste speichern…"
 
-#: ithaca/ui/playlist_view.py:110
+#: ithaca/ui/playlist_view.py:112
 msgid "Ajouter à une liste de lecture…"
 msgstr "Zu einer Wiedergabeliste hinzufügen…"
 
-#: ithaca/ui/playlist_view.py:52 ithaca/ui/window.py:324
+#: ithaca/ui/playlist_view.py:54 ithaca/ui/window.py:326
 msgid "Rechercher dans la file"
 msgstr "In der Wiedergabeliste suchen"
 
-#: ithaca/ui/playlist_view.py:59
+#: ithaca/ui/playlist_view.py:61
 msgid "Fermer la file"
 msgstr "Wiedergabeliste schließen"
 
-#: ithaca/ui/playlist_view.py:63
+#: ithaca/ui/playlist_view.py:65
 msgid "Sélectionner des morceaux"
 msgstr "Titel auswählen"
 
-#: ithaca/ui/playlist_view.py:69
+#: ithaca/ui/playlist_view.py:71
 msgid "Rechercher un morceau"
 msgstr "Titel suchen"
 
-#: ithaca/ui/playlist_view.py:93
+#: ithaca/ui/playlist_view.py:95
 msgid "Aucun résultat"
 msgstr "Keine Ergebnisse"
 
-#: ithaca/ui/playlist_view.py:99
+#: ithaca/ui/playlist_view.py:101
 msgid "Tout sélectionner"
 msgstr "Alle auswählen"
 
-#: ithaca/ui/playlist_view.py:104 ithaca/ui/playlist_view.py:313
+#: ithaca/ui/playlist_view.py:106 ithaca/ui/playlist_view.py:315
 msgid "Retirer de la file"
 msgstr "Aus der Wiedergabeliste entfernen"
 
-#: ithaca/ui/playlist_view.py:112 ithaca/ui/window.py:426
+#: ithaca/ui/playlist_view.py:114 ithaca/ui/window.py:444
 msgid "Liste de lecture"
 msgstr "Wiedergabeliste"
 
-#: ithaca/ui/playlist_view.py:176
+#: ithaca/ui/playlist_view.py:178
 msgid "En cours de lecture"
 msgstr "Wird abgespielt"
 
-#: ithaca/ui/playlist_view.py:312
+#: ithaca/ui/playlist_view.py:314
 msgid "Afficher dans le dossier"
 msgstr "Im Ordner anzeigen"
 
-#: ithaca/ui/playlist_view.py:55 ithaca/ui/window.py:322
+#: ithaca/ui/playlist_view.py:57 ithaca/ui/preferences.py:48
+#: ithaca/ui/window.py:324
 msgid "File de lecture"
 msgstr "Wiedergabeliste"
 
-#: ithaca/ui/playlist_view.py:277
+#: ithaca/ui/playlist_view.py:279
 msgid "{0} morceau sélectionné"
 msgid_plural "{0} morceaux sélectionnés"
 msgstr[0] "{0} Titel ausgewählt"
 msgstr[1] "{0} Titel ausgewählt"
 
-#: ithaca/ui/playlist_view.py:131
+#: ithaca/ui/playlist_view.py:133
 msgid "{0} morceau"
 msgid_plural "{0} morceaux"
 msgstr[0] "{0} Titel"
@@ -201,11 +202,11 @@ msgstr[1] "{0} Titel"
 msgid "Style"
 msgstr "Stil"
 
-#: ithaca/ui/preferences.py:33 ithaca/ui/window.py:259 ithaca/ui/window.py:326
+#: ithaca/ui/preferences.py:33 ithaca/ui/window.py:261 ithaca/ui/window.py:328
 msgid "Préférences"
 msgstr "Einstellungen"
 
-#: ithaca/ui/preferences.py:38 ithaca/ui/window.py:326
+#: ithaca/ui/preferences.py:38 ithaca/ui/window.py:328
 msgid "Général"
 msgstr "Allgemein"
 
@@ -233,25 +234,29 @@ msgstr "Sprache"
 msgid "Appliquée au prochain démarrage"
 msgstr "Wird beim nächsten Start übernommen"
 
-#: ithaca/ui/preferences.py:48 ithaca/ui/window.py:317
+#: ithaca/ui/preferences.py:49
+msgid "Côté de la fenêtre où s'ouvre la file (F9)"
+msgstr "Fensterseite, auf der sich die Wiedergabeliste öffnet (F9)"
+
+#: ithaca/ui/preferences.py:51 ithaca/ui/window.py:319
 msgid "Lecture"
 msgstr "Wiedergabe"
 
-#: ithaca/ui/preferences.py:49 ithaca/ui/window.py:256
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:258
 msgid "ReplayGain"
 msgstr "ReplayGain"
 
-#: ithaca/ui/preferences.py:51
+#: ithaca/ui/preferences.py:54
 msgid ""
 "Volume homogène d'un morceau à l'autre, d'après les étiquettes des fichiers"
 msgstr ""
 "Gleichmäßige Lautstärke von Titel zu Titel, anhand der Tags der Dateien"
 
-#: ithaca/ui/preferences.py:53
+#: ithaca/ui/preferences.py:56
 msgid "Volume maximal"
 msgstr "Maximale Lautstärke"
 
-#: ithaca/ui/preferences.py:54
+#: ithaca/ui/preferences.py:57
 msgid ""
 "Au-delà de 100 %, le son est amplifié (comme VLC) : utile pour un "
 "enregistrement trop faible"
@@ -259,46 +264,54 @@ msgstr ""
 "Über 100 % wird der Ton verstärkt (wie bei VLC): nützlich für eine zu leise "
 "Aufnahme"
 
-#: ithaca/ui/preferences.py:56
+#: ithaca/ui/preferences.py:59
 msgid "Saut avec ← / →"
 msgstr "Sprung mit ← / →"
 
-#: ithaca/ui/preferences.py:58
+#: ithaca/ui/preferences.py:61
 msgid "Maj+← / → dans la fenêtre, ← / → sur la barre en forme d'onde"
 msgstr "Umschalt+← / → im Fenster, ← / → auf der Wellenform-Leiste"
 
-#: ithaca/ui/preferences.py:59
+#: ithaca/ui/preferences.py:62
 msgid "Cran de molette"
 msgstr "Mausrad-Schritt"
 
-#: ithaca/ui/preferences.py:60
+#: ithaca/ui/preferences.py:63
 msgid "Volume ajouté ou retiré à chaque cran de la molette"
 msgstr "Lautstärke, die bei jedem Mausrad-Schritt hinzukommt oder wegfällt"
 
-#: ithaca/ui/preferences.py:65
+#: ithaca/ui/preferences.py:68
 msgid "Fonctionnalités"
 msgstr "Funktionen"
 
-#: ithaca/ui/preferences.py:67
+#: ithaca/ui/preferences.py:70
 msgid ""
 "Chaque fonctionnalité s'active ou se coupe tout de suite, sans redémarrer "
 "Ithaca"
 msgstr ""
 "Jede Funktion wird sofort ein- oder ausgeschaltet, ohne Ithaca neu zu starten"
 
-#: ithaca/ui/preferences.py:49 ithaca/ui/window.py:252
+#: ithaca/ui/preferences.py:48
+msgid "À gauche"
+msgstr "Links"
+
+#: ithaca/ui/preferences.py:48
+msgid "À droite"
+msgstr "Rechts"
+
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:254
 msgid "Album"
 msgstr "Album"
 
-#: ithaca/ui/preferences.py:49 ithaca/ui/window.py:252
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:254
 msgid "Morceau"
 msgstr "Titel"
 
-#: ithaca/ui/preferences.py:49 ithaca/ui/window.py:252
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:254
 msgid "Désactivé"
 msgstr "Deaktiviert"
 
-#: ithaca/ui/preferences.py:57
+#: ithaca/ui/preferences.py:60
 msgid "{0} seconde"
 msgid_plural "{0} secondes"
 msgstr[0] "{0} Sekunde"
@@ -312,49 +325,49 @@ msgstr "Unbekannter Interpret"
 msgid "Webradio"
 msgstr "Webradio"
 
-#: ithaca/ui/window.py:238
+#: ithaca/ui/window.py:240
 msgid "Copier le titre"
 msgstr "Titel kopieren"
 
-#: ithaca/ui/window.py:239
+#: ithaca/ui/window.py:241
 msgid "Ouvrir le dossier"
 msgstr "Ordner öffnen"
 
-#: ithaca/ui/window.py:242 ithaca/ui/window.py:414 ithaca/ui/window.py:125
-#: ithaca/ui/window.py:322
+#: ithaca/ui/window.py:244 ithaca/ui/window.py:432 ithaca/ui/window.py:125
+#: ithaca/ui/window.py:324
 msgid "Ajouter des morceaux"
 msgstr "Titel hinzufügen"
 
-#: ithaca/ui/window.py:243 ithaca/ui/window.py:472 ithaca/ui/window.py:124
-#: ithaca/ui/window.py:323
+#: ithaca/ui/window.py:245 ithaca/ui/window.py:490 ithaca/ui/window.py:124
+#: ithaca/ui/window.py:325
 msgid "Ajouter un dossier"
 msgstr "Ordner hinzufügen"
 
-#: ithaca/ui/window.py:244
+#: ithaca/ui/window.py:246
 msgid "Enregistrer la file…"
 msgstr "Warteschlange speichern…"
 
-#: ithaca/ui/window.py:245
+#: ithaca/ui/window.py:247
 msgid "Ajouter la file à une liste…"
 msgstr "Warteschlange zu einer Liste hinzufügen…"
 
-#: ithaca/ui/window.py:246
+#: ithaca/ui/window.py:248
 msgid "Vider la file"
 msgstr "Wiedergabeliste leeren"
 
-#: ithaca/ui/window.py:260 ithaca/ui/window.py:326
+#: ithaca/ui/window.py:262 ithaca/ui/window.py:328
 msgid "Raccourcis clavier"
 msgstr "Tastenkürzel"
 
-#: ithaca/ui/window.py:261
+#: ithaca/ui/window.py:263
 msgid "À propos d'Ithaca"
 msgstr "Info zu Ithaca"
 
-#: ithaca/ui/window.py:425
+#: ithaca/ui/window.py:443
 msgid "Enregistrer la liste de lecture"
 msgstr "Wiedergabeliste speichern"
 
-#: ithaca/ui/window.py:446
+#: ithaca/ui/window.py:464
 msgid "Ajouter à une liste de lecture"
 msgstr "Zu einer Wiedergabeliste hinzufügen"
 
@@ -374,120 +387,120 @@ msgstr ""
 msgid "Restaurer la file"
 msgstr "Wiedergabeliste wiederherstellen"
 
-#: ithaca/ui/window.py:135 ithaca/ui/window.py:218 ithaca/ui/window.py:325
+#: ithaca/ui/window.py:137 ithaca/ui/window.py:220 ithaca/ui/window.py:327
 msgid "Afficher la file"
 msgstr "Wiedergabeliste anzeigen"
 
-#: ithaca/ui/window.py:187 ithaca/ui/window.py:317
+#: ithaca/ui/window.py:189 ithaca/ui/window.py:319
 msgid "Lecture / pause"
 msgstr "Wiedergabe / Pause"
 
-#: ithaca/ui/window.py:198 ithaca/ui/window.py:650 ithaca/ui/window.py:321
+#: ithaca/ui/window.py:200 ithaca/ui/window.py:668 ithaca/ui/window.py:323
 msgid "Couper le son"
 msgstr "Stummschalten"
 
-#: ithaca/ui/window.py:221
+#: ithaca/ui/window.py:223
 msgid "Lecture aléatoire"
 msgstr "Zufallswiedergabe"
 
-#: ithaca/ui/window.py:266
+#: ithaca/ui/window.py:268
 msgid "Menu principal"
 msgstr "Hauptmenü"
 
-#: ithaca/ui/window.py:606
+#: ithaca/ui/window.py:624
 msgid "En direct"
 msgstr "Live"
 
-#: ithaca/ui/window.py:650
+#: ithaca/ui/window.py:668
 msgid "Rétablir le son"
 msgstr "Ton einschalten"
 
-#: ithaca/ui/window.py:435
+#: ithaca/ui/window.py:453
 msgid "Impossible d'enregistrer la liste"
 msgstr "Die Wiedergabeliste kann nicht gespeichert werden"
 
-#: ithaca/ui/window.py:437
+#: ithaca/ui/window.py:455
 msgid "Liste enregistrée : {0}"
 msgstr "Wiedergabeliste gespeichert: {0}"
 
-#: ithaca/ui/window.py:459
+#: ithaca/ui/window.py:477
 msgid "Impossible de compléter la liste"
 msgstr "Die Wiedergabeliste kann nicht ergänzt werden"
 
-#: ithaca/ui/window.py:463
+#: ithaca/ui/window.py:481
 msgid "{0} morceau ajouté à « {1} »"
 msgid_plural "{0} morceaux ajoutés à « {1} »"
 msgstr[0] "{0} Titel zu „{1}“ hinzugefügt"
 msgstr[1] "{0} Titel zu „{1}“ hinzugefügt"
 
-#: ithaca/ui/window.py:467
+#: ithaca/ui/window.py:485
 msgid "Tout est déjà dans « {0} »"
 msgstr "Alles ist bereits in „{0}“"
 
-#: ithaca/ui/window.py:477
+#: ithaca/ui/window.py:495
 msgid "Aucun morceau lisible"
 msgstr "Keine abspielbaren Titel"
 
-#: ithaca/ui/window.py:629
+#: ithaca/ui/window.py:647
 msgid "Répétition : désactivée"
 msgstr "Wiederholen: aus"
 
-#: ithaca/ui/window.py:630
+#: ithaca/ui/window.py:648
 msgid "Répétition : toute la file"
 msgstr "Wiederholen: ganze Wiedergabeliste"
 
-#: ithaca/ui/window.py:631
+#: ithaca/ui/window.py:649
 msgid "Répétition : ce morceau"
 msgstr "Wiederholen: dieser Titel"
 
-#: ithaca/ui/window.py:348
+#: ithaca/ui/window.py:350
 msgid "« {0} » copié"
 msgstr "„{0}“ kopiert"
 
-#: ithaca/ui/window.py:415
+#: ithaca/ui/window.py:433
 msgid "Musique et listes de lecture"
 msgstr "Musik und Wiedergabelisten"
 
-#: ithaca/ui/window.py:416 ithaca/ui/window.py:448
+#: ithaca/ui/window.py:434 ithaca/ui/window.py:466
 msgid "Listes de lecture"
 msgstr "Wiedergabelisten"
 
-#: ithaca/ui/window.py:417
+#: ithaca/ui/window.py:435
 msgid "Tous les fichiers"
 msgstr "Alle Dateien"
 
-#: ithaca/ui/window.py:453
+#: ithaca/ui/window.py:471
 msgid "Format non pris en charge : {0}"
 msgstr "Nicht unterstütztes Format: {0}"
 
-#: ithaca/ui/window.py:465
+#: ithaca/ui/window.py:483
 msgid "({0} déjà présent)"
 msgid_plural "({0} déjà présents)"
 msgstr[0] "({0} bereits vorhanden)"
 msgstr[1] "({0} bereits vorhanden)"
 
-#: ithaca/ui/window.py:482
+#: ithaca/ui/window.py:500
 msgid "Aucun morceau trouvé"
 msgstr "Keine Titel gefunden"
 
-#: ithaca/ui/window.py:319
+#: ithaca/ui/window.py:321
 msgid "Avancer de {0} seconde"
 msgid_plural "Avancer de {0} secondes"
 msgstr[0] "{0} Sekunde vorspulen"
 msgstr[1] "{0} Sekunden vorspulen"
 
-#: ithaca/ui/window.py:320
+#: ithaca/ui/window.py:322
 msgid "Reculer de {0} seconde"
 msgid_plural "Reculer de {0} secondes"
 msgstr[0] "{0} Sekunde zurückspulen"
 msgstr[1] "{0} Sekunden zurückspulen"
 
-#: ithaca/ui/window.py:479
+#: ithaca/ui/window.py:497
 msgid "{0} fichier ignoré (illisible)"
 msgid_plural "{0} fichiers ignorés (illisibles)"
 msgstr[0] "{0} Datei übersprungen (nicht lesbar)"
 msgstr[1] "{0} Dateien übersprungen (nicht lesbar)"
 
-#: ithaca/ui/window.py:551
+#: ithaca/ui/window.py:569
 msgid "Lecture impossible : {0}"
 msgstr "Wiedergabe nicht möglich: {0}"

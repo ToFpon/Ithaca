@@ -118,7 +118,13 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   étroite ET la file affichée ; on élargit pour afficher → `collapsed` remis à False avant. Changer de
   mode en pleine animation donnait « Trying to snapshot AdwGizmo … without a current allocation » (vu
   chez Tof) ; ui_smoke échoue sur cet avertissement. Rétrécir la fenêtre à la main : libadwaita masque
-  la file (normal). Testé : `replier_la_file` d'ui_smoke, AUSSI sous un vrai gestionnaire de fenêtres
+  la file (normal). File à gauche (défaut, comme Amberol) ou à droite : réglage `playlist_side`
+  start / end, Préférences → Apparence (idée de Tof, gauchers / droitiers, repris de Nausicaa) →
+  `split.set_sidebar_position` en direct ; `_sync_side` repose le bouton de la file du côté de la file
+  (pack_start / pack_end, icône sidebar-show(-right)) et tourne la flèche de fermeture. Boutons de la
+  fenêtre : libadwaita les met d'elle-même sur la barre du bon bord — la barre de la file ne force
+  plus show_*_title_buttons à False. `tools/screenshot.py --right` ; testé : `cote_de_la_file`.
+  Testé : `replier_la_file` d'ui_smoke, AUSSI sous un vrai gestionnaire de fenêtres
   (xvfb seul redimensionne tout de suite et ne montrait rien) : `apt install openbox`, openbox lancé en
   fond dans le xvfb-run avant le test. `ui/waveform_view.py`
   : Gtk.Widget dessiné (`do_snapshot`, couleur d'accent / texte estompé du thème), clic, glisser,

@@ -128,13 +128,14 @@ class MainWindow(Adw.ApplicationWindow):
         return tv
 
     def _build_main(self) -> Gtk.Widget:
-        self.split = Adw.OverlaySplitView(max_sidebar_width=SIDEBAR_MAX, sidebar_width_fraction=SIDEBAR_FRACTION)
+        self.split = Adw.OverlaySplitView(max_sidebar_width=SIDEBAR_MAX, sidebar_width_fraction=SIDEBAR_FRACTION,
+                                          sidebar_position=self._playlist_side())
         content = Adw.ToolbarView()
-        header = Adw.HeaderBar(show_title=False)
-        # comme le bouton de la barre latérale d'Odysseus ; F9 et le bouton du bas font la même chose
+        self.content_header = header = Adw.HeaderBar(show_title=False)
+        # comme le bouton de la barre latérale d'Odysseus ; F9 et le bouton du bas font la même chose.
+        # Posé du côté de la file (_sync_side)
         self.sidebar_btn = Gtk.ToggleButton(icon_name="sidebar-show-symbolic", tooltip_text=tr("Afficher la file"))
         self.sidebar_btn.connect("toggled", self._on_playlist_toggled)
-        header.pack_start(self.sidebar_btn)
         content.add_top_bar(header)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, valign=Gtk.Align.CENTER, vexpand=True,
                       css_classes=["main-box"])
@@ -174,6 +175,7 @@ class MainWindow(Adw.ApplicationWindow):
         self.playlist = PlaylistView(self.c)
         self.playlist.back_btn.connect("clicked", lambda *_: self.set_playlist_shown(False))
         self.split.set_sidebar(self.playlist)
+        self._sync_side()
         return self.split
 
     def _build_controls(self) -> Gtk.Widget:
@@ -397,6 +399,22 @@ class MainWindow(Adw.ApplicationWindow):
         self.split.set_show_sidebar(show)
         if width is not None:
             self.set_default_size(width + self._frame, dh)
+
+    @staticmethod
+    def _playlist_side() -> Gtk.PackType:
+        """File à gauche (par défaut, comme Amberol) ou à droite (réglage playlist_side, idée de Tof :
+        gauchers / droitiers ; repris de Nausicaa)."""
+        return Gtk.PackType.END if settings["playlist_side"] == "end" else Gtk.PackType.START
+
+    def _sync_side(self):
+        """Ce qui suit le côté de la file : bouton de la barre de titre (posé de ce côté, icône assortie),
+        flèche de fermeture de la file."""
+        right = self._playlist_side() == Gtk.PackType.END
+        if self.sidebar_btn.get_parent() is not None:
+            self.content_header.remove(self.sidebar_btn)
+        (self.content_header.pack_end if right else self.content_header.pack_start)(self.sidebar_btn)
+        self.sidebar_btn.set_icon_name("sidebar-show-right-symbolic" if right else "sidebar-show-symbolic")
+        self.playlist.back_btn.set_icon_name("go-next-symbolic" if right else "go-previous-symbolic")
 
     def _set_narrow(self, narrow: bool):
         self._narrow = narrow
@@ -693,6 +711,9 @@ class MainWindow(Adw.ApplicationWindow):
                 self.waveform.set_peaks(None)
         elif key == "replaygain":
             self.lookup_action("replaygain").set_state(GLib.Variant.new_string(value))
+        elif key == "playlist_side":
+            self.split.set_sidebar_position(self._playlist_side())     # tout de suite, sans redémarrer
+            self._sync_side()
         elif key == "seek_step":
             self.waveform.step = float(value)
             self._install_help()                          # libellés « Avancer de N secondes »

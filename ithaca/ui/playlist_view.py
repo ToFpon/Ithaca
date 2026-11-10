@@ -47,7 +47,9 @@ class PlaylistView(Gtk.Box):
         self._rows = []                   # lignes créées (pour rafraîchir l'indicateur de lecture)
 
         tv = Adw.ToolbarView()
-        header = Adw.HeaderBar(show_end_title_buttons=False, show_start_title_buttons=False)
+        # boutons de la fenêtre : libadwaita les place d'elle-même sur la barre du bon bord, que la file
+        # soit à gauche ou à droite (réglage playlist_side)
+        header = Adw.HeaderBar()
         self.search_btn = Gtk.ToggleButton(icon_name="system-search-symbolic",
                                            tooltip_text=tr("Rechercher dans la file"))
         header.pack_start(self.search_btn)

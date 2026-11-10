@@ -29,6 +29,7 @@ DEFAULTS: dict[str, Any] = {
     "window_width": 800,
     "window_height": 720,
     "playlist_visible": True,
+    "playlist_side": "start",       # file à gauche (start, comme Amberol) ou à droite (end) — gauchers / droitiers
     "features": {},                 # fonctionnalités activées / désactivées (voir features.py)
 }
 

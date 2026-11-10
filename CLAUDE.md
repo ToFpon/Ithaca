@@ -45,8 +45,9 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   (repris d'Odysseus) envoie l'entrée de tête de `debian/changelog` pour noble (24.04, « X~noble1 »)
   puis resolute (26.04, « X~resolute1 », réécrite dans une copie). Tourne chez Tof (sa clé GPG,
   `dput`) ; `--build` construit et signe sans envoyer ; `--only SÉRIE` reconstruit et renvoie une
-  seule série, sans le site (1.1.0 : noble refusé par une « erreur 500 » de Launchpad, resolute passé —
-  un envoi refusé ne consomme pas la version, on renvoie la même). Nouvelle version : `dch -v X~noble1 "…"`,
+  seule série, sans le site (1.1.0 : « erreur 500 » de Launchpad sur noble, finalement passée après
+  coup — vérifier la page des paquets avant de renvoyer ; un envoi vraiment refusé ne consomme pas la
+  version, on renvoie la même). Nouvelle version : `dch -v X~noble1 "…"`,
   `dch -r`, version dans `ithaca/__init__.py` et `<release>` dans la fiche AppStream, commit
   « Version X », push, `tools/ppa.sh`.
 - `.github/workflows/release-deb.yml` : au push de `debian/changelog` sur main, .deb « X~deb1 » (plus

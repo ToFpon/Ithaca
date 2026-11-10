@@ -131,6 +131,14 @@ class MainWindow(Adw.ApplicationWindow):
         self.split = Adw.OverlaySplitView(max_sidebar_width=SIDEBAR_MAX, sidebar_width_fraction=SIDEBAR_FRACTION,
                                           sidebar_position=self._playlist_side())
         content = Adw.ToolbarView()
+        # molette = volume sur TOUT le lecteur (demande de Tof), pas seulement sur le curseur ; pas sur
+        # la file, qui défile. « Cran de molette » des Préférences ; en capture, avant le Gtk.Scale
+        # (dont le pas ne se règle pas ainsi)
+        wheel = Gtk.EventControllerScroll(flags=Gtk.EventControllerScrollFlags.VERTICAL
+                                          | Gtk.EventControllerScrollFlags.DISCRETE,
+                                          propagation_phase=Gtk.PropagationPhase.CAPTURE)
+        wheel.connect("scroll", self._on_volume_wheel)
+        content.add_controller(wheel)
         self.content_header = header = Adw.HeaderBar(show_title=False)
         # comme le bouton de la barre latérale d'Odysseus ; F9 et le bouton du bas font la même chose.
         # Posé du côté de la file (_sync_side)
@@ -203,12 +211,6 @@ class MainWindow(Adw.ApplicationWindow):
         self.volume_scale.set_hexpand(True)
         self.volume_scale.set_draw_value(False)
         self.volume_scale.connect("value-changed", self._on_volume_changed)
-        # molette : « Cran de molette » des Préférences (le pas de Gtk.Scale ne se règle pas ainsi)
-        wheel = Gtk.EventControllerScroll(flags=Gtk.EventControllerScrollFlags.VERTICAL
-                                          | Gtk.EventControllerScrollFlags.DISCRETE,
-                                          propagation_phase=Gtk.PropagationPhase.CAPTURE)
-        wheel.connect("scroll", self._on_volume_wheel)
-        volume.add_controller(wheel)
         volume.append(self.mute_btn)
         volume.append(self.volume_scale)
         volume.append(Gtk.Image(icon_name="audio-volume-high-symbolic", margin_end=10))

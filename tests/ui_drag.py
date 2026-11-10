@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
-"""Vrai glisser-déposer à la souris dans la file (xdotool) : la 1re ligne déposée sur le bas de la 3e.
+"""Vrais gestes de souris (xdotool) : glisser-déposer dans la file (la 1re ligne déposée sur le bas de la
+3e), puis molette — volume sur tout le lecteur, simple défilement sur la file.
 
     xvfb-run -a -s "-screen 0 1400x1000x24" python3.12 tests/ui_drag.py     # doit finir par « Aucune erreur. »
 
@@ -96,10 +97,43 @@ def go(win):
                   "vrai glisser : 1er morceau déposé après le 3e")
             check(not any(b.has_css_class("drop-above") or b.has_css_class("drop-below") for b in pv._rows),
                   "ligne d'insertion retirée après le dépôt")
-            app._quit()
+            wheel_tests()
             return False
         GLib.timeout_add(3000, verify)
         return False
+
+    def wheel_tests():
+        """Vraie molette : sur tout le lecteur (ici la pochette), elle règle le volume ; sur la file, elle
+        la fait défiler sans toucher au volume."""
+        from ithaca.settings import settings
+        settings["wheel_step"] = 10
+        settings["volume"] = 0.5
+        on_cover = screen_point(win, win.cover, win.cover.get_width() / 2, win.cover.get_height() / 2)
+        row = win.playlist._rows[0]
+        on_list = screen_point(win, row, row.get_width() / 2, row.get_height() / 2)
+
+        def run():
+            xdo("mousemove", *on_cover)
+            time.sleep(0.3)
+            xdo("click", 5)                           # molette vers le bas : -10 %
+            time.sleep(0.5)
+            GLib.idle_add(lambda: (results.append(settings["volume"]), False)[1])
+            time.sleep(0.3)
+            xdo("mousemove", *on_list)
+            time.sleep(0.3)
+            xdo("click", 5)
+            time.sleep(0.5)
+            GLib.idle_add(lambda: (results.append(settings["volume"]), False)[1])
+            time.sleep(0.3)
+            GLib.idle_add(done)
+        results = []
+
+        def done():
+            check(results and abs(results[0] - 0.4) < 1e-6, f"molette sur la pochette : volume -10 % ({results[:1]})")
+            check(len(results) > 1 and abs(results[1] - 0.4) < 1e-6, "molette sur la file : volume inchangé")
+            app._quit()
+            return False
+        threading.Thread(target=run, daemon=True).start()
     GLib.timeout_add(1500, start)
     GLib.timeout_add(20000, lambda: (errors.append("ÉCHEC : délai dépassé"), app._quit(), False)[-1])
     return False

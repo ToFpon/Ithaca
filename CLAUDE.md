@@ -217,7 +217,7 @@ dbus-run-session -- python3.12 -m unittest discover -s tests -p "test_tray.py"  
 xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par « Aucune erreur. »
 LANGUAGE=en xvfb-run -a python3.12 tests/ui_smoke.py
 LANGUAGE=de xvfb-run -a python3.12 tests/ui_smoke.py
-xvfb-run -a -s "-screen 0 1400x1000x24" python3.12 tests/ui_drag.py   # vrai glisser dans la file (xdotool)
+xvfb-run -a -s "-screen 0 1400x1000x24" python3.12 tests/ui_drag.py   # vrais glisser et molette (xdotool)
 python3 -m pyflakes ithaca tests tools
 ```
 
@@ -255,9 +255,10 @@ avant de toucher à ces sujets.
   ramène le volume — `Controller.max_volume`, `Player.MAX_VOLUME`, MPRIS accepte > 1), « Saut avec
   ← / → » (`seek_step` 5 / 10 / 30 s, 10 par défaut : Maj+← / → et flèches de la forme d'onde ;
   fenêtre des raccourcis RECONSTRUITE au changement, libellés « Avancer de N secondes » en `ntr`),
-  « Cran de molette » (`wheel_step` 2 / 5 / 10 % : molette sur le curseur du volume par un
-  EventControllerScroll en capture — le pas de Gtk.Scale ne se règle pas —, et sur l'icône de la barre
-  système). Testé : `reglages_lecture` d'ui_smoke.
+  « Cran de molette » (`wheel_step` 2 / 5 / 10 % : molette = volume sur TOUT le lecteur, demande de Tof
+  — EventControllerScroll en capture sur la ToolbarView du lecteur, avant le Gtk.Scale dont le pas ne
+  se règle pas ; pas sur la file, qui défile ; et sur l'icône de la barre système). Testé :
+  `reglages_lecture` d'ui_smoke, vraie molette dans `tests/ui_drag.py` (pochette / file).
 - Espace = lecture / pause partout, même si un bouton a le focus (`_on_key`, en capture) : un bouton
   cliqué garde le focus et Espace le « recliquait » (suivant, aléatoire…), retour de Tof. Exceptions :
   champs de texte, menus ouverts (ancêtre Gtk.Popover), cases du mode sélection. Testé dans ui_smoke et

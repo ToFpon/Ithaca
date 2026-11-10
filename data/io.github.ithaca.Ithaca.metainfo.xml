@@ -73,6 +73,14 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.1.0" date="2026-11-10">
+      <description>
+        <ul>
+          <li>Web radios show the station logo, from the playlist (tvg-logo, XSPF image) or the station's website icon</li>
+          <li>Drag and drop to reorder the play queue</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.0.3" date="2026-11-08">
       <description>
         <ul>

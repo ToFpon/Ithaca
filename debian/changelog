@@ -1,3 +1,12 @@
+ithaca (1.1.0~noble1) noble; urgency=medium
+
+  * Webradios : logo de la station, donné par la liste (tvg-logo, image
+    XSPF) ou, à défaut, icône du site annoncé par le flux ; retenu avec la
+    file et réécrit à l'enregistrement d'une liste.
+  * Glisser-déposer pour réordonner la file de lecture.
+
+ -- Tof <nourpon@gmail.com>  Tue, 10 Nov 2026 12:00:00 +0000
+
 ithaca (1.0.3~noble1) noble; urgency=medium
 
   * Espace met en lecture / pause même quand un bouton a le focus (il

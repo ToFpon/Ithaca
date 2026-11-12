@@ -90,6 +90,7 @@ If Ithaca is already running, the files are sent to it.
 | Ctrl+O | Add songs | Ctrl+Shift+O | Add a folder |
 | Ctrl+F | Search the queue | F9 | Show the queue |
 | Ctrl+, | Preferences | Ctrl+Q | Quit |
+| F1 or Ctrl+? | Keyboard shortcuts | | |
 
 ### Languages
 
@@ -186,6 +187,7 @@ Si Ithaca est déjà ouvert, les fichiers lui sont envoyés.
 | Ctrl+O | Ajouter des morceaux | Ctrl+Maj+O | Ajouter un dossier |
 | Ctrl+F | Rechercher dans la file | F9 | Afficher la file |
 | Ctrl+, | Préférences | Ctrl+Q | Quitter |
+| F1 ou Ctrl+? | Raccourcis clavier | | |
 
 ### Langues
 

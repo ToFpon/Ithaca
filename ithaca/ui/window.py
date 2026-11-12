@@ -307,7 +307,12 @@ class MainWindow(Adw.ApplicationWindow):
                                ("win.add-songs", ["<Control>o"]), ("win.add-folder", ["<Control><Shift>o"]),
                                ("win.search", ["<Control>f"]), ("win.toggle-playlist", ["F9"]),
                                ("win.mute", ["<Control>m"]), ("win.seek-forward", ["<Shift>Right"]),
-                               ("win.seek-backward", ["<Shift>Left"])):
+                               ("win.seek-backward", ["<Shift>Left"]),
+                               # Fenêtre des raccourcis : GTK n'attache Ctrl+? tout seul que pour un
+                               # help-overlay.ui des ressources — ici il n'était branché nulle part (retour
+                               # de Tof). F1 d'abord (le menu l'affiche, il marche sur tous les claviers),
+                               # Ctrl+? avec un filet pour les dispositions où GTK le rate (_help_key)
+                               ("win.show-help-overlay", ["F1", "<Control>question"])):
             app.set_accels_for_action(action, accels)
         self._install_help()
 
@@ -327,7 +332,7 @@ class MainWindow(Adw.ApplicationWindow):
                                          (tr("Ajouter un dossier"), "<Control><Shift>o"),
                                          (tr("Rechercher dans la file"), "<Control>f"),
                                          (tr("Afficher la file"), "F9"))),
-                (tr("Général"), ((tr("Préférences"), "<Control>comma"), (tr("Raccourcis clavier"), "<Control>question"),
+                (tr("Général"), ((tr("Préférences"), "<Control>comma"), (tr("Raccourcis clavier"), "F1 <Control>question"),
                                  (tr("Quitter"), "<Control>q")))):
             group = Gtk.ShortcutsGroup(title=title, visible=True)
             for label, accel in items:
@@ -531,7 +536,29 @@ class MainWindow(Adw.ApplicationWindow):
         (Gdk.KEY_Right, Gdk.ModifierType.SHIFT_MASK): (Gtk.MovementStep.VISUAL_POSITIONS, 1, True),
     }
 
-    def _on_key(self, _ctrl, keyval, _code, state):
+    def _help_key(self, ctl, keyval, keycode, state) -> bool:
+        """Ctrl+? quelle que soit la disposition du clavier (repris de Nausicaa) : « ? » est Maj+/ en
+        QWERTY, Maj+ß en QWERTZ, Maj+, en AZERTY, et GTK 4.14 rapproche mal certains raccourcis à Maj
+        (Wayland). On regarde le caractère que donne vraiment la touche, Ctrl retiré."""
+        if not state & Gdk.ModifierType.CONTROL_MASK:
+            return False
+        typed = keyval
+        event = ctl.get_current_event() if ctl is not None else None
+        group = event.get_layout() if event is not None else 0
+        try:
+            ok, typed, *_ = self.get_display().translate_key(keycode, state & ~Gdk.ModifierType.CONTROL_MASK, group)
+            if not ok:
+                typed = keyval
+        except (TypeError, ValueError, AttributeError):
+            typed = keyval
+        if ord("?") in (Gdk.keyval_to_unicode(typed), Gdk.keyval_to_unicode(keyval)):
+            self.activate_action("win.show-help-overlay", None)
+            return True
+        return False
+
+    def _on_key(self, ctl, keyval, code, state):
+        if self._help_key(ctl, keyval, code, state):
+            return True
         mods = state & Gtk.accelerator_get_default_mod_mask()
         focus = self.get_focus()
         move = self._TEXT_MOVES.get((keyval, mods))

@@ -218,6 +218,7 @@ xvfb-run -a python3.12 tests/ui_smoke.py            # interface : doit finir par
 LANGUAGE=en xvfb-run -a python3.12 tests/ui_smoke.py
 LANGUAGE=de xvfb-run -a python3.12 tests/ui_smoke.py
 xvfb-run -a -s "-screen 0 1400x1000x24" python3.12 tests/ui_drag.py   # vrais glisser et molette (xdotool)
+xvfb-run -a python3.12 tests/ui_keyboard.py         # F1 / Ctrl+? sur claviers us, de, fr (setxkbmap)
 python3 -m pyflakes ithaca tests tools
 ```
 
@@ -259,6 +260,12 @@ avant de toucher à ces sujets.
   — EventControllerScroll en capture sur la ToolbarView du lecteur, avant le Gtk.Scale dont le pas ne
   se règle pas ; pas sur la file, qui défile ; et sur l'icône de la barre système). Testé :
   `reglages_lecture` d'ui_smoke, vraie molette dans `tests/ui_drag.py` (pochette / file).
+- Fenêtre des raccourcis (`set_help_overlay`) : GTK n'attache Ctrl+? tout seul qu'à un help-overlay.ui
+  des RESSOURCES — jusqu'en 1.3.1 il n'était branché nulle part (retour de Tof). Maintenant
+  `set_accels_for_action("win.show-help-overlay", ["F1", "<Control>question"])` + filet repris de
+  Nausicaa (`MainWindow._help_key`, appelé en tête de `_on_key` : caractère réel de la touche par
+  `display.translate_key`, Ctrl retiré — « ? » = Maj+ß en QWERTZ, Maj+, en AZERTY). Testé :
+  `tests/ui_keyboard.py` (setxkbmap us / de / fr + xdotool, avec et sans le raccourci de GTK, F1).
 - Espace = lecture / pause partout, même si un bouton a le focus (`_on_key`, en capture) : un bouton
   cliqué garde le focus et Espace le « recliquait » (suivant, aléatoire…), retour de Tof. Exceptions :
   champs de texte, menus ouverts (ancêtre Gtk.Popover), cases du mode sélection. Testé dans ui_smoke et

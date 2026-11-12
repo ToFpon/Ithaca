@@ -62,7 +62,7 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   même gabarit) : en ligne sur https://tofmicro.pages-perso.free.fr/Ithaca/, envoyé par FTP à la fin de
   `tools/ppa.sh` via `tools/site.sh` (copie de celui d'Odysseus : lftp, identifiants dans ~/.netrc de
   Tof, `--transfer-all`, jamais de suppression ; `--essai` montre sans envoyer). Version dans la pastille
-  de la barre et l'accroche (« v1.3.1 », « Version 1.3.1 ») : à tenir à jour. « Copy » ne copie que les deux
+  de la barre et l'accroche (« v1.3.2 », « Version 1.3.2 ») : à tenir à jour. « Copy » ne copie que les deux
   commandes d'installation. Captures de `site/img/` en anglais et en sombre (sauf `light.png`) :
   `LANGUAGE=en … tools/screenshot.py site/img/NOM.png --delay=6000 --dark --size=1000x680 [options]` —
   dark, light (sans `--dark`), cover-colors (`--recolor`), search (`--search=pen`), selection, features

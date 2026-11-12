@@ -1,3 +1,10 @@
+ithaca (1.3.2~noble1) noble; urgency=medium
+
+  * F1 et Ctrl+? ouvrent la fenêtre des raccourcis clavier (Ctrl+? n'était
+    branché nulle part), sur toutes les dispositions de clavier.
+
+ -- Tof <nourpon@gmail.com>  Thu, 12 Nov 2026 07:00:00 +0000
+
 ithaca (1.3.1~noble1) noble; urgency=medium
 
   * La molette règle le volume sur tout le lecteur, plus seulement sur le

@@ -25,8 +25,11 @@ if [ "$1" = "--only" ]; then
     esac
 fi
 cd "$(dirname "$0")/.."
-if [ -n "$(git status --porcelain)" ]; then
+# Fichiers du dépôt modifiés : refus. Fichiers NON SUIVIS (un dossier posé là, comme blur-my-shell/
+# chez Tof) : ignorés — le paquet ne prend que les fichiers suivis (git archive HEAD).
+if [ -n "$(git status --porcelain --untracked-files=no)" ]; then
     echo "Des modifications ne sont pas commitées : le paquet doit correspondre au dépôt."
+    git status --short --untracked-files=no
     exit 1
 fi
 VERSION=$(dpkg-parsechangelog -S Version)

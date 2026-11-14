@@ -26,7 +26,7 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   `msgfmt -c --statistics` et `msgcmp` (aucune chaîne non traduite, placeholders identiques).
   Un même texte français ne doit pas porter deux sens (« Lecture » = Playback ; le bouton dit « Lire »).
   « File de lecture » : « Playlist » en anglais, « Wiedergabeliste » en allemand — jamais
-  « Warteschlange » (remarque d'un utilisateur allemand ; Nausicaa, lui, dit « queue » / « Warteschlange »).
+  « Warteschlange » (remarque d'un utilisateur allemand ; Nausicaa a été aligné de même par Tof).
 - Jamais `GLib.idle_add(widget.grab_focus)` (rappel sans fin) : `common.focus_later(widget)`. Toute
   fonction passée à `idle_add` / `timeout_add` renvoie False (sauf répétition voulue).
 - Lancer sans installer : `bin/ithaca` (ou `python3 -m ithaca`). `install.sh` installe dans ~/.local
@@ -64,7 +64,7 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   même gabarit) : en ligne sur https://tofmicro.pages-perso.free.fr/Ithaca/, envoyé par FTP à la fin de
   `tools/ppa.sh` via `tools/site.sh` (copie de celui d'Odysseus : lftp, identifiants dans ~/.netrc de
   Tof, `--transfer-all`, jamais de suppression ; `--essai` montre sans envoyer). Version dans la pastille
-  de la barre et l'accroche (« v1.3.2 », « Version 1.3.2 ») : à tenir à jour. « Copy » ne copie que les deux
+  de la barre et l'accroche (« v1.3.3 », « Version 1.3.3 ») : à tenir à jour. « Copy » ne copie que les deux
   commandes d'installation. Captures de `site/img/` en anglais et en sombre (sauf `light.png`) :
   `LANGUAGE=en … tools/screenshot.py site/img/NOM.png --delay=6000 --dark --size=1000x680 [options]` —
   dark, light (sans `--dark`), cover-colors (`--recolor`), search (`--search=pen`), selection, features

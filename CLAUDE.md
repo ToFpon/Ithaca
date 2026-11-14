@@ -25,6 +25,8 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   `python3 tools/update-pot.py`, compléter `data/locale/en.po` et `de.po`, puis
   `msgfmt -c --statistics` et `msgcmp` (aucune chaîne non traduite, placeholders identiques).
   Un même texte français ne doit pas porter deux sens (« Lecture » = Playback ; le bouton dit « Lire »).
+  « File de lecture » : « Playlist » en anglais, « Wiedergabeliste » en allemand — jamais
+  « Warteschlange » (remarque d'un utilisateur allemand ; Nausicaa, lui, dit « queue » / « Warteschlange »).
 - Jamais `GLib.idle_add(widget.grab_focus)` (rappel sans fin) : `common.focus_later(widget)`. Toute
   fonction passée à `idle_add` / `timeout_add` renvoie False (sauf répétition voulue).
 - Lancer sans installer : `bin/ithaca` (ou `python3 -m ithaca`). `install.sh` installe dans ~/.local

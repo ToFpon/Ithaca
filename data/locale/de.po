@@ -345,11 +345,11 @@ msgstr "Ordner hinzufügen"
 
 #: ithaca/ui/window.py:246
 msgid "Enregistrer la file…"
-msgstr "Warteschlange speichern…"
+msgstr "Wiedergabeliste speichern…"
 
 #: ithaca/ui/window.py:247
 msgid "Ajouter la file à une liste…"
-msgstr "Warteschlange zu einer Liste hinzufügen…"
+msgstr "Zu einer gespeicherten Wiedergabeliste hinzufügen…"
 
 #: ithaca/ui/window.py:248
 msgid "Vider la file"

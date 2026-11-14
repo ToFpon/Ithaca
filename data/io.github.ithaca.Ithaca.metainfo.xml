@@ -24,7 +24,7 @@
     </p>
     <p xml:lang="de">
       Ithaca ist ein kleiner Musikplayer für GNOME, inspiriert von Amberol. Keine Bibliothek zu
-      verwalten: Titel, Ordner oder Wiedergabelisten öffnen, und sie kommen in die Warteschlange, die
+      verwalten: Titel, Ordner oder Wiedergabelisten öffnen, und sie kommen in die Wiedergabeliste, die
       zwischen den Sitzungen erhalten bleibt. Es folgt dem Thema der Arbeitsumgebung oder färbt das
       Fenster auf Wunsch nach dem Cover ein.
     </p>
@@ -44,7 +44,7 @@
     </ul>
     <ul xml:lang="de">
       <li>Großes Cover, Wellenform-Leiste, lückenlose Wiedergabe</li>
-      <li>Zufallswiedergabe, Wiederholen, Suche in der Warteschlange</li>
+      <li>Zufallswiedergabe, Wiederholen, Suche in der Wiedergabeliste</li>
       <li>Wiedergabelisten (.m3u, .m3u8, .xspf, .pls) und Webradios</li>
       <li>ReplayGain, Medientasten und Steuerung über die GNOME-Leiste (MPRIS)</li>
       <li>Wiedergabe im Hintergrund mit Symbol in der Systemleiste</li>

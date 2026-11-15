@@ -148,7 +148,22 @@ class MainWindow(Adw.ApplicationWindow):
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=6, valign=Gtk.Align.CENTER, vexpand=True,
                       css_classes=["main-box"])
         self.cover = CoverView(256)
-        box.append(self.cover)
+        # pastille du volume sur la pochette (molette, touches, icône de la barre…) : l'œil est là, pas sur
+        # le curseur ; classe « osd » de GTK, couleurs du thème
+        cover_overlay = Gtk.Overlay(halign=Gtk.Align.CENTER, child=self.cover)
+        self.volume_osd = Gtk.Revealer(transition_type=Gtk.RevealerTransitionType.CROSSFADE,
+                                       transition_duration=200, halign=Gtk.Align.CENTER,
+                                       valign=Gtk.Align.END, margin_bottom=28, can_target=False)
+        osd = Gtk.Box(spacing=8, css_classes=["osd", "volume-osd"])
+        self.volume_osd_icon = Gtk.Image(icon_name="audio-volume-high-symbolic")
+        self.volume_osd_label = Gtk.Label(css_classes=["numeric"])
+        osd.append(self.volume_osd_icon)
+        osd.append(self.volume_osd_label)
+        self.volume_osd.set_child(osd)
+        cover_overlay.add_overlay(self.volume_osd)
+        self._osd_timer = 0
+        self._volume_from_slider = False
+        box.append(cover_overlay)
 
         wave_box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=2, halign=Gtk.Align.CENTER,
                            width_request=256)
@@ -213,7 +228,11 @@ class MainWindow(Adw.ApplicationWindow):
         self.volume_scale.connect("value-changed", self._on_volume_changed)
         volume.append(self.mute_btn)
         volume.append(self.volume_scale)
-        volume.append(Gtk.Image(icon_name="audio-volume-high-symbolic", margin_end=10))
+        volume.append(Gtk.Image(icon_name="audio-volume-high-symbolic"))
+        # valeur exacte (demande de Tof) : chiffres à largeur fixe, le curseur ne bouge pas quand elle change
+        self.volume_label = Gtk.Label(width_chars=5, xalign=1, margin_start=6, margin_end=10,
+                                      css_classes=["caption", "numeric", "dim-label", "volume-value"])
+        volume.append(self.volume_label)
         outer.append(volume)
 
         bottom = Gtk.CenterBox()
@@ -604,6 +623,8 @@ class MainWindow(Adw.ApplicationWindow):
             self._sync_modes()
         elif event == "volume":
             self._sync_volume()
+            if not self._volume_from_slider and self.get_visible():
+                self.show_volume_osd()
         elif event == "error":
             song, message = args
             name = song.display_title if song else ""
@@ -707,11 +728,36 @@ class MainWindow(Adw.ApplicationWindow):
             self._dragging_volume = False
         self.mute_btn.set_icon_name("audio-volume-muted-symbolic" if muted else "audio-volume-low-symbolic")
         self.mute_btn.set_tooltip_text(tr("Rétablir le son") if muted else tr("Couper le son"))
+        self.volume_label.set_label(self.volume_text())
+
+    def volume_text(self) -> str:
+        return tr("Muet") if settings["muted"] else tr("{0} %").format(round(settings["volume"] * 100))
+
+    def show_volume_osd(self):
+        """Pastille « 🔊 65 % » sur la pochette, effacée 1,2 s après le dernier changement."""
+        v, muted = settings["volume"], settings["muted"]
+        self.volume_osd_icon.set_from_icon_name(
+            "audio-volume-muted-symbolic" if muted or v <= 0 else "audio-volume-low-symbolic" if v < 0.34
+            else "audio-volume-medium-symbolic" if v < 0.67 else "audio-volume-high-symbolic")
+        self.volume_osd_label.set_label(self.volume_text())
+        self.volume_osd.set_reveal_child(True)
+        if self._osd_timer:
+            GLib.source_remove(self._osd_timer)
+        self._osd_timer = GLib.timeout_add(1200, self._hide_volume_osd)
+
+    def _hide_volume_osd(self):
+        self._osd_timer = 0
+        self.volume_osd.set_reveal_child(False)
+        return False
 
     def _on_volume_changed(self, scale):
         if not self._dragging_volume:
-            self.c.set_muted(False)
-            self.c.set_volume(scale.get_value())
+            self._volume_from_slider = True          # le curseur montre déjà la valeur : pas de pastille
+            try:
+                self.c.set_muted(False)
+                self.c.set_volume(scale.get_value())
+            finally:
+                self._volume_from_slider = False
 
     def _on_volume_wheel(self, _ctrl, _dx, dy):
         if dy:

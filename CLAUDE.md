@@ -292,6 +292,10 @@ avant de toucher à ces sujets.
   — EventControllerScroll en capture sur la ToolbarView du lecteur, avant le Gtk.Scale dont le pas ne
   se règle pas ; pas sur la file, qui défile ; et sur l'icône de la barre système). Testé :
   `reglages_lecture` d'ui_smoke, vraie molette dans `tests/ui_drag.py` (pochette / file).
+- Valeur du volume (demande de Tof) : « 65 % » / « Muet » à droite du curseur (`volume_label`, chiffres à
+  largeur fixe) et pastille `osd` sur la pochette (`show_volume_osd`, Gtk.Revealer dans un Gtk.Overlay,
+  effacée 1,2 s après) pour tout changement qui ne vient PAS du curseur (`_volume_from_slider`) : molette,
+  Ctrl+M, icône de la barre, MPRIS. Testé : étape `volume` d'ui_smoke ; capture `--volume=65`.
 - Fenêtre des raccourcis (`set_help_overlay`) : GTK n'attache Ctrl+? tout seul qu'à un help-overlay.ui
   des RESSOURCES — jusqu'en 1.3.1 il n'était branché nulle part (retour de Tof). Maintenant
   `set_accels_for_action("win.show-help-overlay", ["F1", "<Control>question"])` + filet repris de

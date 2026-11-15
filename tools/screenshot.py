@@ -138,6 +138,9 @@ def on_ready(win):
         GLib.timeout_add(delay - 1200, select)
     if "title" in opts:                 # titre long : capturé en plein défilement
         GLib.timeout_add(delay - 3200, lambda: (win.title_label.set_label(opts["title"]), False)[1])
+    if "volume" in opts:                # pastille du volume sur la pochette (--volume=65, comme la molette)
+        GLib.timeout_add(delay - 600, lambda: (app.controller.set_volume(int(opts["volume"] or 65) / 100),
+                                               False)[1])
     if "equalizer" in opts:             # fenêtre de l'égaliseur, activé, sur un préréglage (--equalizer=rock)
         def equalizer():
             features.set_enabled("equalizer", True)

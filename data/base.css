@@ -27,6 +27,7 @@ button.large { min-width: 48px; min-height: 48px; }
 .playback-control button.active-mode { background-color: alpha(@accent_bg_color, 0.25); }
 .volume scale trough highlight { min-height: 8px; }
 .volume scale { margin: 0 6px; }
+.volume-osd { padding: 8px 16px; border-radius: 999px; font-weight: bold; }
 
 /* File de lecture */
 .playlist-pane { background-color: alpha(currentColor, 0.03); }

@@ -35,7 +35,7 @@ msgstr ""
 msgid "Afficher"
 msgstr ""
 
-#: ithaca/app.py:117 ithaca/backend/tray.py:203 ithaca/ui/window.py:267 ithaca/ui/window.py:338
+#: ithaca/app.py:117 ithaca/backend/tray.py:203 ithaca/ui/window.py:286 ithaca/ui/window.py:357
 msgid "Quitter"
 msgstr ""
 
@@ -59,19 +59,19 @@ msgstr ""
 msgid "Afficher Ithaca"
 msgstr ""
 
-#: ithaca/backend/tray.py:200 ithaca/ui/window.py:200 ithaca/ui/window.py:328
+#: ithaca/backend/tray.py:200 ithaca/ui/window.py:215 ithaca/ui/window.py:347
 msgid "Morceau suivant"
 msgstr ""
 
-#: ithaca/backend/tray.py:201 ithaca/ui/window.py:194 ithaca/ui/window.py:329
+#: ithaca/backend/tray.py:201 ithaca/ui/window.py:209 ithaca/ui/window.py:348
 msgid "Morceau précédent"
 msgstr ""
 
-#: ithaca/backend/tray.py:198 ithaca/ui/window.py:675
+#: ithaca/backend/tray.py:198 ithaca/ui/window.py:696
 msgid "Pause"
 msgstr ""
 
-#: ithaca/backend/tray.py:198 ithaca/ui/playlist_view.py:314 ithaca/ui/window.py:675
+#: ithaca/backend/tray.py:198 ithaca/ui/playlist_view.py:314 ithaca/ui/window.py:696
 msgid "Lire"
 msgstr ""
 
@@ -91,7 +91,7 @@ msgstr ""
 msgid "Panneau de GNOME, écran verrouillé et touches multimédia du clavier (MPRIS)"
 msgstr ""
 
-#: ithaca/features.py:31 ithaca/ui/window.py:254
+#: ithaca/features.py:31 ithaca/ui/window.py:273
 msgid "Lecture en arrière-plan"
 msgstr ""
 
@@ -99,7 +99,7 @@ msgstr ""
 msgid "Fermer la fenêtre pendant la lecture laisse la musique jouer"
 msgstr ""
 
-#: ithaca/features.py:34 ithaca/ui/window.py:253
+#: ithaca/features.py:34 ithaca/ui/window.py:272
 msgid "Couleurs de la pochette"
 msgstr ""
 
@@ -185,7 +185,7 @@ msgstr ""
 msgid "Ajouter à une liste de lecture…"
 msgstr ""
 
-#: ithaca/ui/playlist_view.py:54 ithaca/ui/window.py:335
+#: ithaca/ui/playlist_view.py:54 ithaca/ui/window.py:354
 msgid "Rechercher dans la file"
 msgstr ""
 
@@ -213,7 +213,7 @@ msgstr ""
 msgid "Retirer de la file"
 msgstr ""
 
-#: ithaca/ui/playlist_view.py:114 ithaca/ui/window.py:463
+#: ithaca/ui/playlist_view.py:114 ithaca/ui/window.py:482
 msgid "Liste de lecture"
 msgstr ""
 
@@ -225,7 +225,7 @@ msgstr ""
 msgid "Afficher dans le dossier"
 msgstr ""
 
-#: ithaca/ui/playlist_view.py:57 ithaca/ui/preferences.py:48 ithaca/ui/window.py:333
+#: ithaca/ui/playlist_view.py:57 ithaca/ui/preferences.py:48 ithaca/ui/window.py:352
 msgid "File de lecture"
 msgstr ""
 
@@ -245,11 +245,11 @@ msgstr[1] ""
 msgid "Style"
 msgstr ""
 
-#: ithaca/ui/preferences.py:33 ithaca/ui/window.py:264 ithaca/ui/window.py:337
+#: ithaca/ui/preferences.py:33 ithaca/ui/window.py:283 ithaca/ui/window.py:356
 msgid "Préférences"
 msgstr ""
 
-#: ithaca/ui/preferences.py:38 ithaca/ui/window.py:337
+#: ithaca/ui/preferences.py:38 ithaca/ui/window.py:356
 msgid "Général"
 msgstr ""
 
@@ -281,11 +281,11 @@ msgstr ""
 msgid "Côté de la fenêtre où s'ouvre la file (F9)"
 msgstr ""
 
-#: ithaca/ui/preferences.py:51 ithaca/ui/window.py:328
+#: ithaca/ui/preferences.py:51 ithaca/ui/window.py:347
 msgid "Lecture"
 msgstr ""
 
-#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:260
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:279
 msgid "ReplayGain"
 msgstr ""
 
@@ -333,15 +333,15 @@ msgstr ""
 msgid "À droite"
 msgstr ""
 
-#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:256
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:275
 msgid "Album"
 msgstr ""
 
-#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:256
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:275
 msgid "Morceau"
 msgstr ""
 
-#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:256
+#: ithaca/ui/preferences.py:52 ithaca/ui/window.py:275
 msgid "Désactivé"
 msgstr ""
 
@@ -359,52 +359,56 @@ msgstr ""
 msgid "Webradio"
 msgstr ""
 
-#: ithaca/ui/window.py:242
+#: ithaca/ui/window.py:261
 msgid "Copier le titre"
 msgstr ""
 
-#: ithaca/ui/window.py:243
+#: ithaca/ui/window.py:262
 msgid "Ouvrir le dossier"
 msgstr ""
 
-#: ithaca/ui/window.py:246 ithaca/ui/window.py:451 ithaca/ui/window.py:125 ithaca/ui/window.py:333
+#: ithaca/ui/window.py:265 ithaca/ui/window.py:470 ithaca/ui/window.py:125 ithaca/ui/window.py:352
 msgid "Ajouter des morceaux"
 msgstr ""
 
-#: ithaca/ui/window.py:247 ithaca/ui/window.py:509 ithaca/ui/window.py:124 ithaca/ui/window.py:334
+#: ithaca/ui/window.py:266 ithaca/ui/window.py:528 ithaca/ui/window.py:124 ithaca/ui/window.py:353
 msgid "Ajouter un dossier"
 msgstr ""
 
-#: ithaca/ui/window.py:248
+#: ithaca/ui/window.py:267
 msgid "Enregistrer la file…"
 msgstr ""
 
-#: ithaca/ui/window.py:249
+#: ithaca/ui/window.py:268
 msgid "Ajouter la file à une liste…"
 msgstr ""
 
-#: ithaca/ui/window.py:250
+#: ithaca/ui/window.py:269
 msgid "Vider la file"
 msgstr ""
 
-#: ithaca/ui/window.py:261
+#: ithaca/ui/window.py:280
 msgid "Égaliseur…"
 msgstr ""
 
-#: ithaca/ui/window.py:265 ithaca/ui/window.py:337
+#: ithaca/ui/window.py:284 ithaca/ui/window.py:356
 msgid "Raccourcis clavier"
 msgstr ""
 
-#: ithaca/ui/window.py:266
+#: ithaca/ui/window.py:285
 msgid "À propos d'Ithaca"
 msgstr ""
 
-#: ithaca/ui/window.py:462
+#: ithaca/ui/window.py:481
 msgid "Enregistrer la liste de lecture"
 msgstr ""
 
-#: ithaca/ui/window.py:483
+#: ithaca/ui/window.py:502
 msgid "Ajouter à une liste de lecture"
+msgstr ""
+
+#: ithaca/ui/window.py:734
+msgid "Muet"
 msgstr ""
 
 #: ithaca/ui/window.py:73
@@ -419,120 +423,124 @@ msgstr ""
 msgid "Restaurer la file"
 msgstr ""
 
-#: ithaca/ui/window.py:145 ithaca/ui/window.py:222 ithaca/ui/window.py:336
+#: ithaca/ui/window.py:145 ithaca/ui/window.py:241 ithaca/ui/window.py:355
 msgid "Afficher la file"
 msgstr ""
 
-#: ithaca/ui/window.py:197 ithaca/ui/window.py:328
+#: ithaca/ui/window.py:212 ithaca/ui/window.py:347
 msgid "Lecture / pause"
 msgstr ""
 
-#: ithaca/ui/window.py:208 ithaca/ui/window.py:709 ithaca/ui/window.py:332
+#: ithaca/ui/window.py:223 ithaca/ui/window.py:730 ithaca/ui/window.py:351
 msgid "Couper le son"
 msgstr ""
 
-#: ithaca/ui/window.py:225
+#: ithaca/ui/window.py:244
 msgid "Lecture aléatoire"
 msgstr ""
 
-#: ithaca/ui/window.py:271
+#: ithaca/ui/window.py:290
 msgid "Menu principal"
 msgstr ""
 
-#: ithaca/ui/window.py:665
+#: ithaca/ui/window.py:686
 msgid "En direct"
 msgstr ""
 
-#: ithaca/ui/window.py:709
+#: ithaca/ui/window.py:730
 msgid "Rétablir le son"
 msgstr ""
 
-#: ithaca/ui/window.py:472
+#: ithaca/ui/window.py:491
 msgid "Impossible d'enregistrer la liste"
 msgstr ""
 
-#: ithaca/ui/window.py:474
+#: ithaca/ui/window.py:493
 msgid "Liste enregistrée : {0}"
 msgstr ""
 
-#: ithaca/ui/window.py:496
+#: ithaca/ui/window.py:515
 msgid "Impossible de compléter la liste"
 msgstr ""
 
-#: ithaca/ui/window.py:500
+#: ithaca/ui/window.py:519
 msgid "{0} morceau ajouté à « {1} »"
 msgid_plural "{0} morceaux ajoutés à « {1} »"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:504
+#: ithaca/ui/window.py:523
 msgid "Tout est déjà dans « {0} »"
 msgstr ""
 
-#: ithaca/ui/window.py:514
+#: ithaca/ui/window.py:533
 msgid "Aucun morceau lisible"
 msgstr ""
 
-#: ithaca/ui/window.py:688
+#: ithaca/ui/window.py:709
 msgid "Répétition : désactivée"
 msgstr ""
 
-#: ithaca/ui/window.py:689
+#: ithaca/ui/window.py:710
 msgid "Répétition : toute la file"
 msgstr ""
 
-#: ithaca/ui/window.py:690
+#: ithaca/ui/window.py:711
 msgid "Répétition : ce morceau"
 msgstr ""
 
-#: ithaca/ui/window.py:359
+#: ithaca/ui/window.py:734
+msgid "{0} %"
+msgstr ""
+
+#: ithaca/ui/window.py:378
 msgid "« {0} » copié"
 msgstr ""
 
-#: ithaca/ui/window.py:452
+#: ithaca/ui/window.py:471
 msgid "Musique et listes de lecture"
 msgstr ""
 
-#: ithaca/ui/window.py:453 ithaca/ui/window.py:485
+#: ithaca/ui/window.py:472 ithaca/ui/window.py:504
 msgid "Listes de lecture"
 msgstr ""
 
-#: ithaca/ui/window.py:454
+#: ithaca/ui/window.py:473
 msgid "Tous les fichiers"
 msgstr ""
 
-#: ithaca/ui/window.py:490
+#: ithaca/ui/window.py:509
 msgid "Format non pris en charge : {0}"
 msgstr ""
 
-#: ithaca/ui/window.py:502
+#: ithaca/ui/window.py:521
 msgid "({0} déjà présent)"
 msgid_plural "({0} déjà présents)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:519
+#: ithaca/ui/window.py:538
 msgid "Aucun morceau trouvé"
 msgstr ""
 
-#: ithaca/ui/window.py:330
+#: ithaca/ui/window.py:349
 msgid "Avancer de {0} seconde"
 msgid_plural "Avancer de {0} secondes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:331
+#: ithaca/ui/window.py:350
 msgid "Reculer de {0} seconde"
 msgid_plural "Reculer de {0} secondes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:516
+#: ithaca/ui/window.py:535
 msgid "{0} fichier ignoré (illisible)"
 msgid_plural "{0} fichiers ignorés (illisibles)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ithaca/ui/window.py:610
+#: ithaca/ui/window.py:631
 msgid "Lecture impossible : {0}"
 msgstr ""

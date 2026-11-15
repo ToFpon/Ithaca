@@ -230,11 +230,22 @@ def volume(win):
     win.volume_scale.set_value(0.5)
     yield pump(0.2)
     check(abs(settings["volume"] - 0.5) < 0.01, "curseur de volume")
+    check(win.volume_label.get_label() == tr("{0} %").format(50), "valeur du volume à côté du curseur")
+    check(not win.volume_osd.get_reveal_child(), "curseur : pas de pastille sur la pochette")
     win.mute_btn.emit("clicked")
     yield pump(0.2)
     check(settings["muted"] and win.mute_btn.get_icon_name() == "audio-volume-muted-symbolic", "son coupé")
+    check(win.volume_label.get_label() == tr("Muet"), "« Muet » à côté du curseur")
     win.mute_btn.emit("clicked")
     win.volume_scale.set_value(1.0)
+    yield pump(1.5)
+    win.c.change_volume(-5)                           # molette, touches, icône de la barre
+    yield pump(0.4)
+    check(win.volume_osd.get_reveal_child() and win.volume_osd.get_child_revealed()
+          and win.volume_osd_label.get_label() == tr("{0} %").format(95), "pastille du volume sur la pochette")
+    yield pump(1.5)
+    check(not win.volume_osd.get_reveal_child(), "pastille effacée")
+    win.c.set_volume(1.0)
 
 
 @step

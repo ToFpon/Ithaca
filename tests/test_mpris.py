@@ -101,6 +101,21 @@ class MprisTest(unittest.TestCase):
         self.assertTrue(wait(lambda: self.c.playing, 5))
         self.call("SetPosition", GLib.Variant("(ox)", (self.m.metadata()["mpris:trackid"].unpack(), 1_200_000)))
         self.assertTrue(wait(lambda: abs(self.c.player.position() - 1.2) < 0.25, 3))
+        # SetPosition hors de [0, durée] : ignoré (la norme), pas de saut — en pause, les morceaux de test
+        # ne durant que 1 à 2 s
+        self.c.pause()
+        wait(lambda: False, 0.2)
+        before = self.c.player.position()
+        self.call("SetPosition", GLib.Variant("(ox)", (self.m.metadata()["mpris:trackid"].unpack(), 3_600_000_000)))
+        wait(lambda: False, 0.4)
+        self.assertLess(abs(self.c.player.position() - before), 0.8, "position hors du morceau ignorée")
+        # saut fait dans la FENÊTRE (forme d'onde, Maj+→) : Seeked aussi, avec la position visée
+        seeked = []
+        self.player.connect("g-signal", lambda _p, _s, name, params:
+                            seeked.append(params.unpack()[0]) if name == "Seeked" else None)
+        self.c.seek(0.5)
+        self.assertTrue(wait(lambda: seeked, 3), "Seeked pour un saut fait dans la fenêtre")
+        self.assertEqual(seeked[-1], 500_000)
         root = Gio.DBusProxy.new_for_bus_sync(Gio.BusType.SESSION, Gio.DBusProxyFlags.DO_NOT_LOAD_PROPERTIES, None, mpris.BUS_NAME,
                                               mpris.PATH, mpris.ROOT, None)
         root.call("Raise", None, Gio.DBusCallFlags.NONE, 2000, None, None)

@@ -34,6 +34,17 @@ WATCHER_XML = """<node><interface name="org.kde.StatusNotifierWatcher">
 </interface></node>"""
 
 
+class MenuLabelTest(unittest.TestCase):
+    def test_underscores_survive_the_extension(self):
+        """Titre avec « _ » dans le menu de l'icône : l'extension AppIndicator d'Ubuntu retire le premier
+        « _ » suivi d'autre chose qu'un « _ » (`replace(/_([^_])/, '$1')`) ; menu_label le double, et
+        seulement lui (audit : « 01_Intro » s'affichait « 01Intro »)."""
+        import re
+        shown = lambda s: re.sub(r"_([^_])", r"\1", s, count=1)    # noqa: E731  (l'extension)
+        for t in ("01_Intro", "a_b_c", "__x", "x_", "sans", "_debut", "a__b", "fin__", "_", "x__y_z"):
+            self.assertEqual(shown(tray_mod.menu_label(t)), t, t)
+
+
 @unittest.skipUnless(os.environ.get("DBUS_SESSION_BUS_ADDRESS"), "pas de bus de session")
 class TrayTest(unittest.TestCase):
     @classmethod

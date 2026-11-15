@@ -86,6 +86,39 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(pl.parse(os.path.join(TMP, "absente.m3u")), [])
 
 
+class AuditEncodingTest(unittest.TestCase):
+    """Audit de novembre 2026 (défauts trouvés dans Nausicaa, présents aussi dans Ithaca)."""
+
+    def test_utf16_from_windows(self):
+        p = os.path.join(TMP, "windows-utf16.m3u")
+        with open(p, "wb") as fh:
+            fh.write("#EXTM3U\r\n#EXTINF:-1,Été\r\nrelatif é.mp3\r\n".encode("utf-16"))
+        entries = pl.parse(p)
+        self.assertEqual([e.location for e in entries], [os.path.join(TMP, "relatif é.mp3")])
+        self.assertEqual(entries[0].title, "Été")
+
+    def test_one_latin1_line_in_utf8(self):
+        """Une seule ligne en latin-1 dans un .m3u8 ne brouille plus toutes les autres."""
+        p = os.path.join(TMP, "mixte.m3u8")
+        with open(p, "wb") as fh:
+            fh.write("#EXTINF:-1,Café\n/x/été.mp3\n".encode("utf-8") + b"/x/na\xefve.mp3\n")
+        self.assertEqual([e.location for e in pl.parse(p)], ["/x/été.mp3", "/x/naïve.mp3"])
+        self.assertEqual(pl.parse(p)[0].title, "Café")
+
+    def test_name_starting_with_hash(self):
+        """« #1 Intro.mp3 » n'est plus lu comme un commentaire : écrit « ./#1 Intro.mp3 »."""
+        from ithaca.backend.song import Song
+        folder = tempfile.mkdtemp(dir=TMP)
+        names = ["#1 Intro.mp3", " espace.mp3", "normal.mp3"]
+        songs = []
+        for n in names:
+            shutil.copy(LIB["a1"], os.path.join(folder, n))
+            songs.append(Song(os.path.join(folder, n), title=n))
+        for ext in (".m3u", ".xspf"):
+            path = pl.save(songs, os.path.join(folder, "liste" + ext))
+            self.assertEqual([e.location for e in pl.parse(path)], [s.path for s in songs], ext)
+
+
 class WriteTest(unittest.TestCase):
     def songs(self):
         return [read_song(LIB[k]) for k in ("a1", "a10", "b1")]

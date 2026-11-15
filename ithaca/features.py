@@ -44,7 +44,8 @@ def enabled(fid: str) -> bool:
     f = BY_ID.get(fid)
     if f is None:
         return False
-    return bool(settings["features"].get(fid, f.default))
+    value = settings["features"].get(fid, f.default)
+    return value if isinstance(value, bool) else f.default     # « "no" » écrit à la main ne vaut pas vrai
 
 
 def set_enabled(fid: str, value: bool):

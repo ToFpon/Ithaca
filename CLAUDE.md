@@ -210,6 +210,25 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   d'une liste (tvg-logo, <image> avant <album> comme le veut XSPF). Testé : `LogoTest`,
   `StreamLogoTest` (logo de la liste, icône du site par icy-url, page HTML refusée).
 
+## Audit de novembre 2026
+
+Défauts trouvés par l'audit de Nausicaa et vérifiés dans Ithaca (tous présents), plus ceux d'Ithaca ;
+corrigés, tests `AuditTest` (test_backend), `AuditEncodingTest` (test_playlists), `MenuLabelTest`
+(test_tray), test_mpris — ils échouent sur l'ancien code.
+- Nom de fichier non UTF-8 (clé FAT, vieux partage) : GStreamer le lit, mais queue.json levait
+  UnicodeEncodeError à chaque enregistrement → plus jamais retenue. `ensure_ascii=True` (« \udce9 » passe).
+- Listes : UTF-16 de Windows reconnu au BOM ; décodage ligne par ligne (un nom latin-1 dans un .m3u8 ne
+  brouille plus tout) ; nom commençant par « # » ou une espace écrit « ./… » (sinon perdu).
+- Réglages retouchés à la main : `settings._fits` (repris d'Odysseus : mauvais type → défaut), features en
+  vrais booléens seulement, répétition inconnue → « consecutive », position non numérique de queue.json.
+- MPRIS : `Seeked` pour TOUT saut (événement « seeked » de `Controller.seek` — forme d'onde, Maj+← / →,
+  « Précédent » qui revient au début ; avant, seulement les sauts MPRIS), avec la position VISÉE ;
+  SetPosition hors de [0, durée] ignoré.
+- Menu de l'icône : l'extension AppIndicator retire le premier « _ » d'un libellé (lettre de raccourci) :
+  « 01_Intro » → « 01Intro ». `tray.menu_label` double exactement ce « _ »-là.
+- Vérifié sans défaut : fenêtre des raccourcis sur une page (13 raccourcis ; le « min width -4 » de Nausicaa
+  venait de deux pages).
+
 ## Tests
 
 Le `python3` du bac à sable n'a pas `gi` : utiliser `python3.12`.

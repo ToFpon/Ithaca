@@ -181,9 +181,12 @@ class PlayQueue:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             tmp = path + ".tmp"
             with open(tmp, "w", encoding="utf-8") as fh:
-                json.dump(data, fh, ensure_ascii=False)
+                # ensure_ascii : un nom non UTF-8 (clé FAT, vieux partage : « \udce9 ») passe tel quel ;
+                # sans, chaque enregistrement levait UnicodeEncodeError et la file n'était plus jamais
+                # retenue (audit, repris de Nausicaa)
+                json.dump(data, fh, ensure_ascii=True)
             os.replace(tmp, path)
-        except OSError:
+        except (OSError, ValueError):
             pass
 
 

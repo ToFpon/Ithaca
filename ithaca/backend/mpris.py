@@ -188,13 +188,15 @@ class Mpris:
             if pos > self.c.player.duration():
                 self.c.next()
             else:
-                self.c.seek(max(0.0, pos))
-                self._seeked()
+                self.c.seek(max(0.0, pos))               # Seeked : annoncé par l'événement « seeked »
         elif method == "SetPosition":
+            # la norme : position hors de [0, durée] ignorée
             song = self.c.song
-            if song is not None and args[0] == self.metadata()["mpris:trackid"].unpack():
-                self.c.seek(args[1] / 1_000_000)
-                self._seeked()
+            pos = args[1] / 1_000_000
+            duration = self.c.player.duration()
+            if song is not None and args[0] == self.metadata()["mpris:trackid"].unpack() and pos >= 0 \
+                    and (not duration or pos <= duration):
+                self.c.seek(pos)
         elif method == "OpenUri":
             f = Gio.File.new_for_uri(args[0])
             if f.get_path():
@@ -202,13 +204,16 @@ class Mpris:
         inv.return_value(None)
 
     # -- annonces --------------------------------------------------------------------------------
-    def _seeked(self):
+    def _seeked(self, seconds: float):
+        """Position VISÉE : juste après un saut, GStreamer peut encore donner l'ancienne."""
         if self.conn is not None:
-            self.conn.emit_signal(None, PATH, PLAYER, "Seeked",
-                                  GLib.Variant("(x)", (int(self.c.player.position() * 1_000_000),)))
+            self.conn.emit_signal(None, PATH, PLAYER, "Seeked", GLib.Variant("(x)", (int(seconds * 1_000_000),)))
 
     def _on_event(self, event, *args):
         if self.conn is None or event == "position":
+            return
+        if event == "seeked":
+            self._seeked(args[0])
             return
         props = self._player_props()
         changed = {k: v for k, v in props.items() if self._last.get(k) != v}

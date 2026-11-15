@@ -66,12 +66,28 @@ def is_stream(location: str) -> bool:
 def _read_text(path: str) -> str:
     with open(path, "rb") as fh:
         raw = fh.read(20_000_000)
-    for enc in ("utf-8-sig", "cp1252", "latin-1"):          # vieux .m3u de Windows : cp1252
+    if raw[:2] in (b"\xff\xfe", b"\xfe\xff"):
+        # liste exportée de Windows en UTF-16 : lue en latin-1, chaque nom portait des octets nuls
+        # (audit, repris de Nausicaa)
         try:
-            return raw.decode(enc)
+            return raw.decode("utf-16")
         except UnicodeDecodeError:
-            continue
-    return raw.decode("utf-8", "replace")
+            pass
+    try:
+        return raw.decode("utf-8-sig")
+    except UnicodeDecodeError:
+        pass
+    # ligne par ligne : un seul nom en latin-1 dans un .m3u8 en UTF-8 ne doit pas rendre illisibles toutes
+    # les autres (avant : fichier entier relu en cp1252, « Ã© » partout). Vieux .m3u de Windows : cp1252.
+    out = []
+    for line in raw.split(b"\n"):
+        for enc in ("utf-8", "cp1252", "latin-1"):
+            try:
+                out.append(line.decode(enc))
+                break
+            except UnicodeDecodeError:
+                continue
+    return "\n".join(out)
 
 
 def _resolve(location: str, folder: str) -> str:
@@ -173,7 +189,12 @@ def _parse_xspf(path: str, folder: str) -> list[Entry]:
 
 # -- écriture -----------------------------------------------------------------------------------
 def _entry_path(location: str, folder: str) -> str:
-    return location if is_stream(location) else os.path.relpath(location, folder)
+    if is_stream(location):
+        return location
+    rel = os.path.relpath(location, folder)
+    # « #1 Intro.mp3 » serait lu comme un commentaire (par nous et par tous les lecteurs), une espace en
+    # tête serait retirée : « ./ » devant (audit, repris de Nausicaa)
+    return "./" + rel if rel[:1] in ("#", " ", "\t") else rel
 
 
 def _label(song) -> str:

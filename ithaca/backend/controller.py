@@ -2,7 +2,7 @@
 
 Événements envoyés aux écouteurs : song (morceau courant changé), state (lecture / pause),
 position, queue (contenu ou ordre de la file), modes (aléatoire, répétition), error, cover (logo
-d'une webradio arrivé : song en argument).
+d'une webradio arrivé : song en argument), seeked (saut : position en secondes).
 """
 
 from __future__ import annotations
@@ -13,7 +13,7 @@ from gi.repository import GLib
 
 from .logos import cached, fetcher
 from .player import Player
-from .playqueue import PlayQueue, load_saved, restore
+from .playqueue import REPEAT_MODES, PlayQueue, load_saved, restore
 from .song import Song, load_paths
 from ..settings import settings
 
@@ -24,7 +24,8 @@ SAVE_EVERY_MS = 5000
 class Controller:
     def __init__(self, queue_file: str = ""):
         self.queue = PlayQueue()
-        self.queue.repeat = settings["repeat"]
+        # mode inconnu (réglage retouché à la main) : comme par défaut — sinon la file s'arrêtait sans raison
+        self.queue.repeat = settings["repeat"] if settings["repeat"] in REPEAT_MODES else "consecutive"
         self.queue.shuffled = bool(settings["shuffle"])
         self.queue.connect(self._on_queue)
         self.player = Player()
@@ -117,7 +118,10 @@ class Controller:
             settings["shuffle"] = self.queue.shuffled
             settings["repeat"] = self.queue.repeat
             if self.queue.current is not None:
-                position = 0.0 if self.queue.current.stream else float(data.get("position") or 0)
+                saved = data.get("position")
+                # queue.json retouché : une position qui n'est pas un nombre ne doit pas bloquer la reprise
+                position = float(saved) if isinstance(saved, (int, float)) and not self.queue.current.stream \
+                    else 0.0
                 self.player.load(self.queue.current, play=False, position=position)
                 self._prepare_next()
             self._emit("loading")
@@ -164,14 +168,21 @@ class Controller:
 
     def previous(self):
         if self.player.position() > RESTART_AFTER:
-            self.player.seek(0)
+            self.seek(0)
             return
         i = self.queue.previous_index()
         if i is not None:
             self.play_song(self.queue.items[i], play=self.player.playing or self.player.song is None)
 
     def seek(self, seconds: float):
+        """Tout saut (forme d'onde, Maj+← / →, « Précédent » qui revient au début, MPRIS) : événement
+        « seeked » → MPRIS annonce Seeked ; avant, seuls les sauts demandés par MPRIS l'étaient et le
+        panneau de GNOME gardait une position fausse (audit)."""
+        if self.player.song is None:
+            return
+        seconds = max(0.0, seconds)
         self.player.seek(seconds)
+        self._emit("seeked", seconds)
 
     def remove(self, songs: list[Song]):
         was_current = self.queue.current

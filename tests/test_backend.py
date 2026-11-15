@@ -299,6 +299,86 @@ class PlayerTest(unittest.TestCase):
         self.c = Controller(self.qfile)          # pour tearDown
 
 
+class AuditTest(unittest.TestCase):
+    """Audit de novembre 2026 (défauts trouvés dans Nausicaa, présents aussi dans Ithaca)."""
+
+    def test_non_utf8_name_queue_saved(self):
+        """Un nom non UTF-8 (clé FAT, vieux partage) : lu, et la file s'enregistre encore (avant :
+        UnicodeEncodeError à chaque enregistrement, la file n'était plus jamais retenue)."""
+        raw = os.path.join(os.fsencode(TMP), b"brut")
+        os.makedirs(raw, exist_ok=True)
+        bad = os.path.join(raw, b"caf\xe9.mp3")
+        shutil.copy(LIB["a1"], bad)
+        name = os.fsdecode(bad)
+        s = song_mod.read_song(name)
+        self.assertIsNotNone(s, "lu par GStreamer")
+        q = PlayQueue()
+        q.add([s])
+        qfile = os.path.join(TMP, "q-brut.json")
+        q.save(path=qfile)
+        data = load_saved(qfile)
+        self.assertIsNotNone(data, "file enregistrée")
+        self.assertEqual(data["songs"], [name], "nom retrouvé tel quel")
+
+    def test_settings_written_by_hand(self):
+        """Réglages retouchés : mauvais type ignoré, faux booléen ignoré, répétition inconnue → défaut."""
+        from ithaca import features
+        from ithaca.settings import Settings
+        path = os.path.join(TMP, "reglages.json")
+        with open(path, "w") as fh:
+            fh.write('{"volume": "fort", "shuffle": "oui", "features": null, "seek_step": 30, '
+                     '"repeat": "n\'importe quoi"}')
+        s = Settings(path)
+        self.assertEqual(s["volume"], 1.0, "volume d'un autre type : valeur par défaut")
+        self.assertIs(s["shuffle"], False)
+        self.assertEqual(s["features"], {})
+        self.assertEqual(s["seek_step"], 30, "valeur du bon type gardée")
+        saved = dict(settings.data)
+        try:
+            settings.data["features"] = {"recolor": "no", "waveform": False}
+            self.assertFalse(features.enabled("recolor"), "« no » n'est pas « activé »")
+            self.assertFalse(features.enabled("waveform"))
+            settings.data["repeat"] = "n'importe quoi"
+            c = Controller(os.path.join(TMP, "q-reglages.json"))
+            try:
+                self.assertEqual(c.queue.repeat, "consecutive")
+            finally:
+                c.shutdown()
+        finally:
+            settings.data.clear()
+            settings.data.update(saved)
+
+    def test_restore_with_bad_position(self):
+        """queue.json retouché (position qui n'est pas un nombre) : la reprise se fait quand même."""
+        import json
+        qfile = os.path.join(TMP, "q-pos.json")
+        with open(qfile, "w") as fh:
+            json.dump({"songs": [LIB["a1"]], "current": LIB["a1"], "position": "milieu"}, fh)
+        c = Controller(qfile)
+        done = []
+        try:
+            self.assertTrue(c.restore_saved(lambda: done.append(1)))
+            self.assertTrue(wait(lambda: done, 20), "reprise terminée")
+            self.assertEqual(c.song.path, LIB["a1"])
+        finally:
+            c.shutdown()
+
+    def test_every_seek_is_announced(self):
+        """Tout saut passe par le contrôleur et s'annonce (« seeked ») : MPRIS envoie Seeked."""
+        c = Controller(os.path.join(TMP, "q-seek.json"))
+        seen = []
+        c.connect(lambda event, *a: seen.append(a[0]) if event == "seeked" else None)
+        done = []
+        c.add_paths([LIB["album_a"]], on_done=lambda *a: done.append(1))
+        try:
+            self.assertTrue(wait(lambda: done and c.player.song is not None, 20))
+            c.seek(1.0)
+            c.seek(-3)
+            self.assertEqual(seen, [1.0, 0.0], "position visée annoncée, jamais négative")
+        finally:
+            c.shutdown()
+
+
 class WaveformTest(unittest.TestCase):
     def test_generate_and_cache(self):
         s = song_mod.read_song(LIB["b1"])

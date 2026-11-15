@@ -34,6 +34,20 @@ DEFAULTS: dict[str, Any] = {
 }
 
 
+def _fits(key, value) -> bool:
+    """Valeur lue du fichier gardée seulement si elle a le type de la valeur par défaut (repris
+    d'Odysseus) : un « "volume": "fort" » ou « "features": null » écrit à la main faisait planter le
+    lecteur au démarrage. Les valeurs hors liste (mode de répétition…) sont vérifiées à l'usage."""
+    default = DEFAULTS[key]
+    if isinstance(default, bool):
+        return isinstance(value, bool)
+    if isinstance(default, int):
+        return isinstance(value, int) and not isinstance(value, bool)
+    if isinstance(default, float):
+        return isinstance(value, (int, float)) and not isinstance(value, bool)
+    return isinstance(value, type(default))
+
+
 class Settings:
     def __init__(self, path: str = CONFIG_FILE):
         self.path = path
@@ -42,7 +56,7 @@ class Settings:
             with open(path, encoding="utf-8") as fh:
                 loaded = json.load(fh)
             if isinstance(loaded, dict):
-                self.data = {k: v for k, v in loaded.items() if k in DEFAULTS}
+                self.data = {k: v for k, v in loaded.items() if k in DEFAULTS and _fits(k, v)}
         except (OSError, ValueError):
             pass
         self._listeners = []

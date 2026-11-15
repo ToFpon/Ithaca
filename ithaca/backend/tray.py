@@ -10,6 +10,7 @@ on parle D-Bus directement. L'icône : org.kde.StatusNotifierItem ; son menu : c
 from __future__ import annotations
 
 import os
+import re
 from typing import Callable
 
 from gi.repository import Gio, GLib
@@ -39,6 +40,15 @@ def icon_theme_path() -> str:
                 os.path.exists(os.path.join(icons, "symbolic", "apps", ICON_NAME + "-symbolic.svg")):
             return ""                                 # les deux variantes installées dans le thème
     return ICONS_DIR
+
+def menu_label(text: str) -> str:
+    """Texte venu de l'extérieur (titre, nom de fichier) dans un libellé dbusmenu, où « _ » marque la
+    lettre de raccourci. L'extension AppIndicator d'Ubuntu en retire UN : le premier « _ » suivi d'autre
+    chose qu'un « _ » (`replace(/_([^_])/, '$1')`, sans « g »). « 01_Intro » s'affichait « 01Intro » :
+    on double exactement CE « _ »-là (pas un « _ » final, que l'extension laisse) ; vérifié contre la
+    même expression régulière dans test_tray (audit)."""
+    return re.sub(r"_(?=[^_])", "__", text, count=1)
+
 
 ITEM_XML = """<node><interface name="org.kde.StatusNotifierItem">
   <property name="Category" type="s" access="read"/><property name="Id" type="s" access="read"/>
@@ -183,7 +193,7 @@ class Tray:
         title = " — ".join(x for x in (song.display_title, song.artist) if x) if song else APP_NAME
         has = len(self.c.queue) > 0
         return [
-            (SONG, {"label": GLib.Variant("s", title), "enabled": GLib.Variant("b", False)}),
+            (SONG, {"label": GLib.Variant("s", menu_label(title)), "enabled": GLib.Variant("b", False)}),
             (SHOW, {"label": GLib.Variant("s", tr("Afficher Ithaca"))}),
             (PLAY, {"label": GLib.Variant("s", tr("Pause") if self.c.playing else tr("Lire")),
                     "enabled": GLib.Variant("b", has)}),
@@ -251,7 +261,7 @@ class Tray:
             self.quit_cb()
 
     def _on_event(self, event, *args):
-        if self.conn is None or event in ("position", "loading", "volume"):
+        if self.conn is None or event in ("position", "loading", "volume", "seeked"):
             return
         self.revision += 1
         self.conn.emit_signal(None, MENU_PATH, "com.canonical.dbusmenu", "LayoutUpdated",

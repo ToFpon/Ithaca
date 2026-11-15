@@ -337,6 +337,7 @@ def replaygain(win):
 def egaliseur(win):
     player = win.c.player
     check(not features.enabled("equalizer"), "égaliseur coupé par défaut")
+    check(not win.equalizer_btn.get_visible(), "pas de bouton d'égaliseur tant qu'il est coupé")
     win.activate_action("win.equalizer", None)
     yield pump(0.5)
     eq = win._equalizer
@@ -345,6 +346,7 @@ def egaliseur(win):
     eq.switch.set_active(True)
     yield pump(0.2)
     check(features.enabled("equalizer") and eq.sliders_box.get_sensitive(), "interrupteur = fonctionnalité")
+    check(win.equalizer_btn.get_visible(), "bouton de l'égaliseur dans la barre du bas")
     eq.presets.set_selected(eq.ids.index("rock"))
     yield pump(0.2)
     check(settings["eq_bands"] == [float(g) for g in PRESETS["rock"]], "préréglage Rock enregistré")
@@ -356,7 +358,7 @@ def egaliseur(win):
     check(settings["eq_bands"][4] == 6.0, "curseur enregistré après le glisser")
     features.set_enabled("equalizer", False)               # coupé ailleurs (Préférences)
     yield pump(0.2)
-    check(not eq.switch.get_active(), "interrupteur suit les Préférences")
+    check(not eq.switch.get_active() and not win.equalizer_btn.get_visible(), "interrupteur et bouton suivent les Préférences")
     if player.eq is not None:
         check(player.eq.get_property("band0") == 0.0, "égaliseur coupé : son à plat")
     check(win.show_equalizer() is eq, "une seule fenêtre de l'égaliseur")

@@ -76,7 +76,7 @@
     <release version="1.4.0" date="2026-11-15">
       <description>
         <ul>
-          <li>10-band equalizer with presets (Rock, Pop, Jazz, Classical, Bass boost…), menu → Equalizer…, applied live and never clipping; optional, off by default</li>
+          <li>10-band equalizer with presets (Rock, Pop, Jazz, Classical, Bass boost…), applied live and never clipping; optional, off by default, then opened by a button in the bottom bar</li>
           <li>The volume value is shown next to the slider, and on the cover art when it changes with the mouse wheel, the keyboard or the system</li>
           <li>Fixes: file names that are not UTF-8 are kept in the playlist, playlists in UTF-16 or with mixed encodings, hand-edited settings, MPRIS position announced on every seek, underscores in titles in the tray menu</li>
         </ul>

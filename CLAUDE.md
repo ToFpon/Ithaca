@@ -107,7 +107,8 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   `audioconvert ! equalizer-10bands ! volume` (repli sur le seul `volume` si le greffon manque) ; le gain
   le plus fort est retiré du volume ReplayGain (`headroom`) : jamais de saturation. Réglage `eq_bands`
   ([] = plat), appliqué en direct par `Controller._apply_equalizer` (coupé → tout à 0). `ui/equalizer.py` :
-  fenêtre NON modale (on règle en écoutant), une seule (`MainWindow.show_equalizer`, menu « Égaliseur… »),
+  fenêtre NON modale (on règle en écoutant), une seule (`MainWindow.show_equalizer`, menu « Égaliseur… » et
+  bouton de la barre du bas `equalizer_btn`, visible seulement fonctionnalité activée — retour de Tof),
   interrupteur = la fonctionnalité, curseurs → « Personnalisé », enregistré 250 ms après le dernier
   mouvement. Testé : `EqualizerTest`, `egaliseur` d'ui_smoke ; capture `tools/screenshot.py --equalizer[=id]`.
 - `backend/waveform.py` : `uridecodebin ! audioconvert ! level` sans synchronisation, une crête par

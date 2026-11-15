@@ -249,6 +249,12 @@ class MainWindow(Adw.ApplicationWindow):
         self.repeat_btn = Gtk.Button(css_classes=["circular"], valign=Gtk.Align.CENTER)
         self.repeat_btn.connect("clicked", lambda *_: self.c.cycle_repeat())
         end.append(self.repeat_btn)
+        # bouton de l'égaliseur, seulement quand la fonctionnalité est activée (retour de Tof : le menu seul
+        # ne se voyait pas)
+        self.equalizer_btn = Gtk.Button(icon_name="ithaca-equalizer-symbolic", css_classes=["circular"],
+                                        valign=Gtk.Align.CENTER, tooltip_text=tr("Égaliseur"),
+                                        action_name="win.equalizer", visible=features.enabled("equalizer"))
+        end.append(self.equalizer_btn)
         end.append(self._menu_button(direction=Gtk.ArrowType.UP))
         bottom.set_start_widget(start)
         bottom.set_end_widget(end)
@@ -790,6 +796,7 @@ class MainWindow(Adw.ApplicationWindow):
         if key == "features":
             self.lookup_action("recolor").set_state(GLib.Variant.new_boolean(features.enabled("recolor")))
             self.lookup_action("background").set_state(GLib.Variant.new_boolean(features.enabled("background")))
+            self.equalizer_btn.set_visible(features.enabled("equalizer"))
             self._apply_recolor(self.c.song.cover if self.c.song else "")
             if features.enabled("waveform") and self.c.song is not None:
                 self.waveforms.request(self.c.song, self._on_peaks)

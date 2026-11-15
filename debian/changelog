@@ -1,8 +1,9 @@
 ithaca (1.4.0~noble1) noble; urgency=medium
 
   * Égaliseur 10 bandes avec préréglages (Rock, Pop, Jazz, Classique,
-    Graves renforcés…), menu → Égaliseur…, appliqué en direct, sans jamais
-    saturer. Fonctionnalité facultative, coupée par défaut.
+    Graves renforcés…), appliqué en direct, sans jamais saturer.
+    Fonctionnalité facultative, coupée par défaut ; activée, un bouton
+    l'ouvre dans la barre du bas (aussi menu → Égaliseur…).
   * Valeur du volume affichée à côté du curseur, et pastille sur la pochette
     quand il change à la molette, au clavier ou depuis le système.
   * Audit : noms de fichiers non UTF-8 retenus dans la file, listes de

@@ -1,3 +1,17 @@
+ithaca (1.4.0~noble1) noble; urgency=medium
+
+  * Égaliseur 10 bandes avec préréglages (Rock, Pop, Jazz, Classique,
+    Graves renforcés…), menu → Égaliseur…, appliqué en direct, sans jamais
+    saturer. Fonctionnalité facultative, coupée par défaut.
+  * Valeur du volume affichée à côté du curseur, et pastille sur la pochette
+    quand il change à la molette, au clavier ou depuis le système.
+  * Audit : noms de fichiers non UTF-8 retenus dans la file, listes de
+    lecture en UTF-16 ou mêlant les encodages, réglages retouchés à la main,
+    position MPRIS annoncée à chaque saut, « _ » des titres dans le menu de
+    l'icône.
+
+ -- Tof <nourpon@gmail.com>  Sun, 15 Nov 2026 12:00:00 +0000
+
 ithaca (1.3.3~noble1) noble; urgency=medium
 
   * Traduction allemande : « Wiedergabeliste » partout, plus de

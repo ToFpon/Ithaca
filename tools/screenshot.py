@@ -6,6 +6,7 @@
 Options : --empty (page d'accueil) --dark --recolor --size=LxH --prefs=page --delay=ms --hidden-list
           --search=texte (recherche dans la file) --selection (mode sélection, un morceau sur deux)
           --title=texte (titre long, capturé en plein défilement) --right (file à droite)
+          --equalizer[=préréglage] (fenêtre de l'égaliseur, Rock par défaut)
 Musique d'exemple générée par ffmpeg, sortie son factice, configuration jetable.
 """
 import os
@@ -137,6 +138,12 @@ def on_ready(win):
         GLib.timeout_add(delay - 1200, select)
     if "title" in opts:                 # titre long : capturé en plein défilement
         GLib.timeout_add(delay - 3200, lambda: (win.title_label.set_label(opts["title"]), False)[1])
+    if "equalizer" in opts:             # fenêtre de l'égaliseur, activé, sur un préréglage (--equalizer=rock)
+        def equalizer():
+            features.set_enabled("equalizer", True)
+            win.show_equalizer().apply_preset(opts["equalizer"] or "rock")
+            return False
+        GLib.timeout_add(delay - 1000, equalizer)
     if "prefs" in opts:
         def prefs():
             from ithaca.ui.preferences import PreferencesWindow

@@ -258,6 +258,7 @@ class MainWindow(Adw.ApplicationWindow):
             item.set_action_and_target_value("win.replaygain", GLib.Variant.new_string(mode))
             rg.append_item(item)
         s3.append_submenu(tr("ReplayGain"), rg)
+        s3.append(tr("Égaliseur…"), "win.equalizer")
         menu.append_section(None, s3)
         s4 = Gio.Menu()
         s4.append(tr("Préférences"), "app.preferences")
@@ -284,6 +285,7 @@ class MainWindow(Adw.ApplicationWindow):
             "seek-forward": lambda: self.c.seek(min(self.c.player.duration(),
                                                     self.c.player.position() + settings["seek_step"])),
             "seek-backward": lambda: self.c.seek(max(0.0, self.c.player.position() - settings["seek_step"])),
+            "equalizer": self.show_equalizer,
         }
         for name, cb in simple.items():
             a = Gio.SimpleAction.new(name, None)
@@ -366,6 +368,16 @@ class MainWindow(Adw.ApplicationWindow):
         self.playlist.search_btn.set_active(not self.playlist.search_btn.get_active())
         if self.playlist.search_btn.get_active():
             self.playlist.search_entry.grab_focus()
+
+    def show_equalizer(self):
+        """Une seule fenêtre de l'égaliseur, non modale : on règle en écoutant, le lecteur reste utilisable."""
+        win = getattr(self, "_equalizer", None)
+        if win is None:
+            from .equalizer import EqualizerWindow
+            win = self._equalizer = EqualizerWindow()
+            win.connect("closed", lambda *_: setattr(self, "_equalizer", None))
+        win.present(self)
+        return win
 
     def _toggle_playlist(self):
         self.set_playlist_shown(not self.split.get_show_sidebar())

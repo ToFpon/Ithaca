@@ -35,6 +35,10 @@ FEATURES = [
             tr("Teinter la fenêtre d'après la pochette du morceau, comme Amberol ; sinon les couleurs "
                "du thème du système"),
             "applications-graphics-symbolic", default=False),
+    Feature("equalizer", tr("Égaliseur"),
+            tr("Régler les graves, les médiums et les aigus sur 10 bandes, avec des préréglages "
+               "(menu → Égaliseur…)"),
+            "ithaca-equalizer-symbolic", default=False),
 ]
 
 BY_ID = {f.id: f for f in FEATURES}

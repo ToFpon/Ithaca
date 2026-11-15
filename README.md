@@ -40,6 +40,8 @@ accent color), or, if you wish, tints the window after the album cover like Ambe
 - **Web radios** from playlists, played live, with the song title announced by the station and its logo
   (`tvg-logo` from the playlist, or the station's website icon).
 - **ReplayGain** (album or song), applied live without interrupting the music, never clipping.
+- **Equalizer** (optional): 10 bands with presets (Rock, Pop, Jazz, Classical, Bass boost…), applied live,
+  never clipping.
 - **System controls (MPRIS)**: GNOME panel, lock screen and keyboard media keys.
 - **Background playback**: closing the window while playing keeps the music going, with a tray icon (via the
   [AppIndicator extension](https://github.com/ubuntu/gnome-shell-extension-appindicator)) and a notification
@@ -136,6 +138,8 @@ d'après la pochette comme Amberol.
 - **Webradios** des listes, lues en direct, avec le titre annoncé par la station et son logo
   (`tvg-logo` de la liste, ou l'icône du site de la station).
 - **ReplayGain** (album ou morceau), appliqué en direct sans couper la musique, sans jamais saturer.
+- **Égaliseur** (facultatif) : 10 bandes et des préréglages (Rock, Pop, Jazz, Classique, Graves renforcés…),
+  appliqué en direct, sans jamais saturer.
 - **Contrôle depuis le système (MPRIS)** : panneau de GNOME, écran verrouillé et touches multimédia du clavier.
 - **Lecture en arrière-plan** : fermer la fenêtre pendant la lecture laisse la musique jouer, avec une icône dans
   la barre système (par l'[extension AppIndicator](https://github.com/ubuntu/gnome-shell-extension-appindicator))

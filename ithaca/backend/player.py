@@ -7,6 +7,8 @@
   arrive par le message « stream-start ».
 - ReplayGain : un élément « volume » en audio-filter, réglé par nous d'après les étiquettes du
   morceau (album, morceau ou rien), en direct, sans interrompre la lecture ; crête respectée.
+- Égaliseur 10 bandes (equalizer-10bands) avant lui, dans le même audio-filter ; sa plus forte hausse
+  est retirée du volume ReplayGain (jamais de saturation).
 - Sortie : ITHACA_AUDIO_SINK (« fakesink sync=true » dans les tests), sinon celle du système.
 """
 
@@ -22,6 +24,7 @@ gi.require_version("Gst", "1.0")
 gi.require_version("GstAudio", "1.0")
 from gi.repository import GLib, Gst, GstAudio  # noqa: E402
 
+from .equalizer import BANDS as EQ_BANDS, clean as clean_bands, headroom as eq_headroom  # noqa: E402
 from .song import Song  # noqa: E402
 
 Gst.init(None)
@@ -62,8 +65,17 @@ class Player:
         sink = os.environ.get("ITHACA_AUDIO_SINK")
         if sink:
             self.playbin.set_property("audio-sink", Gst.parse_bin_from_description(sink, True))
-        self.rg = Gst.ElementFactory.make("volume", "replaygain")
-        self.playbin.set_property("audio-filter", self.rg)
+        # audio-filter : égaliseur 10 bandes (s'il est là : gst-plugins-good) puis volume ReplayGain
+        try:
+            self.filter = Gst.parse_bin_from_description(
+                "audioconvert ! equalizer-10bands name=eq ! volume name=replaygain", True)
+            self.eq = self.filter.get_by_name("eq")
+            self.rg = self.filter.get_by_name("replaygain")
+        except GLib.Error:
+            self.filter = self.rg = Gst.ElementFactory.make("volume", "replaygain")
+            self.eq = None
+        self.playbin.set_property("audio-filter", self.filter)
+        self.eq_gains = [0.0] * len(EQ_BANDS)
         bus = self.playbin.get_bus()
         bus.add_signal_watch()
         bus.connect("message", self._on_message)
@@ -146,8 +158,18 @@ class Player:
         self.replaygain = mode
         self._apply_replaygain()
 
+    def set_equalizer(self, gains):
+        """Gains des 10 bandes (dB), en direct ; tout à 0 = égaliseur neutre."""
+        self.eq_gains = clean_bands(gains) if self.eq is not None else [0.0] * len(EQ_BANDS)
+        if self.eq is not None:
+            for i, g in enumerate(self.eq_gains):
+                self.eq.set_property(f"band{i}", g)
+        self._apply_replaygain()
+
     def _apply_replaygain(self):
-        self.rg.set_property("volume", replaygain_factor(self.song, self.replaygain))
+        # la marge de l'égaliseur (sa plus forte hausse) s'ajoute : jamais de saturation
+        margin = math.pow(10.0, -eq_headroom(self.eq_gains) / 20.0)
+        self.rg.set_property("volume", replaygain_factor(self.song, self.replaygain) * margin)
 
     def shutdown(self):
         self.playbin.set_state(Gst.State.NULL)

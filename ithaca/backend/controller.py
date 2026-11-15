@@ -31,6 +31,7 @@ class Controller:
         self.player = Player()
         self.player.set_volume(settings["volume"], settings["muted"])
         self.player.set_replaygain(settings["replaygain"])
+        self._apply_equalizer()
         self.player.on_state = lambda playing: self._emit("state")
         self.player.on_position = lambda pos: self._emit("position", pos)
         self.player.on_song_started = self._on_song_started
@@ -238,6 +239,13 @@ class Controller:
             self._emit("volume")
         elif key == "replaygain":
             self.player.set_replaygain(value)
+        elif key in ("eq_bands", "features"):
+            self._apply_equalizer()
+
+    def _apply_equalizer(self):
+        """Égaliseur coupé (fonctionnalité « equalizer ») : gains à 0 ; sinon ceux du réglage."""
+        from .. import features
+        self.player.set_equalizer(settings["eq_bands"] if features.enabled("equalizer") else [])
 
     def _on_queue(self, what: str):
         if what == "items":

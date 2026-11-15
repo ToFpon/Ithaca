@@ -19,7 +19,7 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
 - Dialogues : de vraies fenêtres comme Nautilus 46 — `common.AlertDialog` (Adw.MessageDialog),
   `common.DialogWindow`, `Adw.PreferencesWindow`, `Adw.AboutWindow`. Jamais Adw.Dialog / Adw.AlertDialog.
 - Chaque fonctionnalité facultative est déclarée dans `ithaca/features.py` (waveform, mpris,
-  background, recolor) et reste désactivable sans redémarrage (`features.enabled(id)` au moment de
+  background, recolor, equalizer) et reste désactivable sans redémarrage (`features.enabled(id)` au moment de
   l'usage, réglage `features` suivi en direct par la fenêtre et l'application).
 - Tout texte visible passe par `tr()` / `ntr()` (jamais `_`). Après modification :
   `python3 tools/update-pot.py`, compléter `data/locale/en.po` et `de.po`, puis
@@ -101,6 +101,15 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   volume / loading / error / ended. « Précédent » après 3 s : retour au début. Fichier illisible :
   message et morceau suivant (arrêt si tout est illisible). Enregistrement différé de 0,7 s, et
   toutes les 5 s pendant la lecture (position).
+- Égaliseur (demande de Tof, fonctionnalité `equalizer`, coupée par défaut) : `backend/equalizer.py`
+  (10 bandes d'`equalizer-10bands`, 29 Hz à 15 kHz, ±12 dB ; préréglages `PRESETS`, `clean` rejette un
+  réglage retouché à la main, `preset_of` → « custom »). audio-filter de playbin =
+  `audioconvert ! equalizer-10bands ! volume` (repli sur le seul `volume` si le greffon manque) ; le gain
+  le plus fort est retiré du volume ReplayGain (`headroom`) : jamais de saturation. Réglage `eq_bands`
+  ([] = plat), appliqué en direct par `Controller._apply_equalizer` (coupé → tout à 0). `ui/equalizer.py` :
+  fenêtre NON modale (on règle en écoutant), une seule (`MainWindow.show_equalizer`, menu « Égaliseur… »),
+  interrupteur = la fonctionnalité, curseurs → « Personnalisé », enregistré 250 ms après le dernier
+  mouvement. Testé : `EqualizerTest`, `egaliseur` d'ui_smoke ; capture `tools/screenshot.py --equalizer[=id]`.
 - `backend/waveform.py` : `uridecodebin ! audioconvert ! level` sans synchronisation, une crête par
   250 ms, cache `~/.cache/ithaca/waveforms/<sha1 chemin|taille|date>.json` ; un calcul à la fois.
 - `backend/mpris.py` : org.mpris.MediaPlayer2(.Player) sur `org.mpris.MediaPlayer2.ithaca` ; les

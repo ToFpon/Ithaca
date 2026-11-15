@@ -41,6 +41,7 @@ sys.excepthook = hook
 import media  # noqa: E402
 from ithaca import features  # noqa: E402
 from ithaca.app import IthacaApp  # noqa: E402
+from ithaca.backend.equalizer import PRESETS  # noqa: E402
 from ithaca.i18n import tr  # noqa: E402
 from ithaca.settings import settings  # noqa: E402
 
@@ -319,6 +320,39 @@ def replaygain(win):
     yield pump(0.2)
     check(settings["replaygain"] == "track", "ReplayGain : morceau")
     win.activate_action("win.replaygain", GLib.Variant.new_string("album"))
+
+
+@step
+def egaliseur(win):
+    player = win.c.player
+    check(not features.enabled("equalizer"), "égaliseur coupé par défaut")
+    win.activate_action("win.equalizer", None)
+    yield pump(0.5)
+    eq = win._equalizer
+    check(eq is not None and eq.get_visible() and not eq.get_modal(), "fenêtre de l'égaliseur (non modale)")
+    check(not eq.sliders_box.get_sensitive(), "curseurs grisés tant que l'égaliseur est coupé")
+    eq.switch.set_active(True)
+    yield pump(0.2)
+    check(features.enabled("equalizer") and eq.sliders_box.get_sensitive(), "interrupteur = fonctionnalité")
+    eq.presets.set_selected(eq.ids.index("rock"))
+    yield pump(0.2)
+    check(settings["eq_bands"] == [float(g) for g in PRESETS["rock"]], "préréglage Rock enregistré")
+    if player.eq is not None:
+        check(player.eq.get_property("band0") == PRESETS["rock"][0], "bande 0 appliquée au son")
+    eq.scales[4].set_value(6.0)
+    yield pump(0.5)
+    check(eq.ids[eq.presets.get_selected()] == "custom", "curseur touché → Personnalisé")
+    check(settings["eq_bands"][4] == 6.0, "curseur enregistré après le glisser")
+    features.set_enabled("equalizer", False)               # coupé ailleurs (Préférences)
+    yield pump(0.2)
+    check(not eq.switch.get_active(), "interrupteur suit les Préférences")
+    if player.eq is not None:
+        check(player.eq.get_property("band0") == 0.0, "égaliseur coupé : son à plat")
+    check(win.show_equalizer() is eq, "une seule fenêtre de l'égaliseur")
+    eq.close()
+    yield pump(0.2)
+    check(win._equalizer is None, "fenêtre oubliée à la fermeture")
+    settings["eq_bands"] = []
 
 
 @step

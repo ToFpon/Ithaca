@@ -22,6 +22,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from gi.repository import GLib  # noqa: E402
 
 import media  # noqa: E402
+from ithaca.backend import equalizer  # noqa: E402
 from ithaca.backend import player as player_mod  # noqa: E402
 from ithaca.backend import song as song_mod  # noqa: E402
 from ithaca.backend.controller import Controller  # noqa: E402
@@ -178,6 +179,60 @@ class ReplayGainTest(unittest.TestCase):
         only_album = song_mod.Song("/x", album_gain=-2.0)
         self.assertAlmostEqual(player_mod.replaygain_factor(only_album, "track"), 10 ** (-2 / 20), places=4)
         self.assertEqual(player_mod.replaygain_factor(song_mod.Song("/x"), "album"), 1.0)
+
+
+class EqualizerTest(unittest.TestCase):
+    def test_clean_and_presets(self):
+        self.assertEqual(equalizer.clean([]), [0.0] * 10)
+        self.assertEqual(equalizer.clean([1] * 9), [0.0] * 10, "mauvaise longueur : à plat")
+        self.assertEqual(equalizer.clean(["3"] + [0] * 9), [0.0] * 10, "réglage retouché à la main")
+        self.assertEqual(equalizer.clean([True] + [0] * 9), [0.0] * 10)
+        self.assertEqual(equalizer.clean([float("nan")] + [0] * 9), [0.0] * 10)
+        self.assertEqual(equalizer.clean([40, -40] + [0] * 8)[:2], [12.0, -12.0], "bornes ±12 dB")
+        for pid, gains in equalizer.PRESETS.items():
+            self.assertEqual(len(gains), 10, pid)
+            self.assertEqual(equalizer.preset_of(gains), pid)
+        self.assertEqual(equalizer.preset_of([1] * 10), equalizer.CUSTOM)
+        self.assertEqual(equalizer.headroom(equalizer.PRESETS["bass"]), 7)
+        self.assertEqual(equalizer.headroom([-3] * 10), 0)
+
+    def test_player_applies_bands_and_headroom(self):
+        """Bandes posées sur equalizer-10bands, et gain d'ensemble réduit de la plus forte bande (jamais de
+        saturation) ; égaliseur coupé → tout à 0, ReplayGain seul."""
+        settings.data.update({"features": {"equalizer": True}, "eq_bands": list(equalizer.PRESETS["rock"]),
+                              "replaygain": "off"})
+        c = Controller(os.path.join(tempfile.mkdtemp(dir=TMP), "queue.json"))
+        try:
+            p = c.player
+            self.assertIsNotNone(p.eq, "equalizer-10bands présent (gstreamer1.0-plugins-good)")
+            self.assertEqual(p.eq.get_property("band0"), 5.0)
+            self.assertAlmostEqual(p.rg.get_property("volume"), 10 ** (-5 / 20), places=4)
+            settings["features"] = {"equalizer": False}
+            self.assertEqual(p.eq.get_property("band0"), 0.0)
+            self.assertAlmostEqual(p.rg.get_property("volume"), 1.0, places=4)
+            settings["features"] = {"equalizer": True}
+            settings["eq_bands"] = [0, 0, 0, 0, 0, 0, 0, 0, 0, -6]
+            self.assertEqual(p.eq.get_property("band9"), -6.0)
+            self.assertAlmostEqual(p.rg.get_property("volume"), 1.0, places=4, msg="baisser ne coûte rien")
+        finally:
+            c.shutdown()
+            settings.data.update({"features": {}, "eq_bands": [], "replaygain": "album"})
+
+    def test_plays_with_equalizer(self):
+        """Un morceau se lit jusqu'au bout avec l'égaliseur dans la chaîne."""
+        settings.data.update({"features": {"equalizer": True}, "eq_bands": list(equalizer.PRESETS["loudness"])})
+        c = Controller(os.path.join(tempfile.mkdtemp(dir=TMP), "queue.json"))
+        events = []
+        c.connect(lambda ev, *a: events.append(ev))
+        try:
+            done = []
+            c.add_paths([LIB["a1"]], play=True, on_done=lambda r, s: done.append(1))
+            self.assertTrue(wait(lambda: done, 30))
+            self.assertTrue(wait(lambda: c.player.position() > 0.3, 10), "le son avance")
+            self.assertNotIn("error", events)
+        finally:
+            c.shutdown()
+            settings.data.update({"features": {}, "eq_bands": []})
 
 
 class PlayerTest(unittest.TestCase):

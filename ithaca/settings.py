@@ -25,6 +25,7 @@ DEFAULTS: dict[str, Any] = {
     "repeat": "consecutive",        # consecutive (s'arrête à la fin), all, one
     "shuffle": False,
     "replaygain": "album",          # album, track, off
+    "eq_bands": [],                 # égaliseur : 10 gains en dB (vide = plat) ; marche / arrêt dans features
     # Fenêtre
     "window_width": 800,
     "window_height": 720,

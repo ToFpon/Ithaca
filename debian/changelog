@@ -1,3 +1,11 @@
+ithaca (1.4.1~noble1) noble; urgency=medium
+
+  * Préférences → Général : « Lecteur de musique par défaut », un
+    interrupteur pour ouvrir les fichiers musicaux dans Ithaca (pas les
+    listes de lecture ni les dossiers) ; coupé, le lecteur d'avant revient.
+
+ -- Tof <nourpon@gmail.com>  Mon, 16 Nov 2026 12:00:00 +0000
+
 ithaca (1.4.0~noble1) noble; urgency=medium
 
   * Égaliseur 10 bandes avec préréglages (Rock, Pop, Jazz, Classique,

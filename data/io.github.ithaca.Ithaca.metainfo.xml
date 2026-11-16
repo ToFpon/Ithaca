@@ -73,6 +73,13 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.4.2" date="2026-11-16">
+      <description>
+        <ul>
+          <li>Default music player: the switch no longer reads as off at the next launch (desktop-specific association file read first, MIME type aliases such as audio/x-wav)</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.4.1" date="2026-11-16">
       <description>
         <ul>

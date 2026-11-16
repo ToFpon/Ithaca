@@ -1,3 +1,11 @@
+ithaca (1.4.2~noble1) noble; urgency=medium
+
+  * Lecteur de musique par défaut : l'interrupteur se relisait éteint au
+    lancement suivant (fichier d'associations propre au bureau, lu avant
+    mimeapps.list, et types en double nom comme audio/x-wav).
+
+ -- Tof <nourpon@gmail.com>  Mon, 16 Nov 2026 18:00:00 +0000
+
 ithaca (1.4.1~noble1) noble; urgency=medium
 
   * Préférences → Général : « Lecteur de musique par défaut », un

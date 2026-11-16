@@ -32,6 +32,7 @@ DEFAULTS: dict[str, Any] = {
     "playlist_visible": True,
     "playlist_side": "start",       # file à gauche (start, comme Amberol) ou à droite (end) — gauchers / droitiers
     "features": {},                 # fonctionnalités activées / désactivées (voir features.py)
+    "previous_audio_apps": {},      # lecteur par défaut d'avant, par type audio (backend/defaultapp.py)
 }
 
 

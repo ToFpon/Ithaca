@@ -30,6 +30,8 @@ accent color), or, if you wish, tints the window after the album cover like Ambe
 - **No library**: open songs or folders (buttons, drag and drop, "Open With" from your file manager, command
   line). Folders are read in natural order (1, 2… 10). The queue is remembered: **Restore Playlist** brings it
   back with the song and position where you left off.
+- **Default music player** in one switch (Preferences → General): music files open in Ithaca, playlists and
+  folders keep their application; switched off, your previous player takes over again.
 - **Large cover art** (embedded in the file, or `cover.jpg` / `folder.png`… from the folder), **waveform
   progress bar** (click or drag to seek, ← / → keys), title, artist, album.
 - **Gapless playback**, shuffle, repeat (playlist or song), **search in the queue** (accents ignored),
@@ -128,6 +130,8 @@ d'après la pochette comme Amberol.
 - **Pas de bibliothèque** : on ouvre des morceaux ou des dossiers (boutons, glisser-déposer, « Ouvrir avec »
   depuis le gestionnaire de fichiers, ligne de commande). Dossiers lus dans l'ordre naturel (1, 2… 10). La file
   est retenue : **Restaurer la file** la remet, sur le morceau et à la position où on l'avait laissée.
+- **Lecteur de musique par défaut** en un interrupteur (Préférences → Général) : les fichiers musicaux s'ouvrent
+  dans Ithaca, listes de lecture et dossiers gardent leur application ; coupé, le lecteur d'avant revient.
 - **Grande pochette** (intégrée au fichier, ou `cover.jpg` / `folder.png`… du dossier), **barre de progression
   en forme d'onde** (clic ou glisser pour avancer, touches ← / →), titre, artiste, album.
 - **Enchaînement sans blanc**, aléatoire, répétition (file ou morceau), **recherche dans la file** (accents

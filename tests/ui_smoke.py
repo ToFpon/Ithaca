@@ -375,6 +375,18 @@ def preferences(win):
     ds = [w for w in dialogs(win) if isinstance(w, Adw.PreferencesWindow)]
     check(len(ds) == 1, "préférences ouvertes")
     if ds:
+        def rows(w):
+            if isinstance(w, Adw.SwitchRow):
+                yield w
+            c = w.get_first_child()
+            while c is not None:
+                yield from rows(c)
+                c = c.get_next_sibling()
+        default = [r for r in rows(ds[0]) if r.get_title() == tr("Lecteur de musique par défaut")]
+        check(len(default) == 1, "Préférences : lecteur de musique par défaut")
+        from ithaca.backend import defaultapp
+        if default and not defaultapp.installed():
+            check(not default[0].get_activatable(), "lancé depuis les sources : interrupteur grisé")
         ds[0].set_visible_page_name("features")
         ds[0].feature_rows["waveform"].set_active(False)
         yield pump(0.3)

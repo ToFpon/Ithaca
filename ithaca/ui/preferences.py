@@ -6,7 +6,7 @@ import gi
 
 gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
-from gi.repository import Adw, Gtk  # noqa: E402
+from gi.repository import Adw, GLib, Gtk  # noqa: E402
 
 from .. import features  # noqa: E402
 from ..i18n import LANGUAGE_NAMES, ntr, tr  # noqa: E402
@@ -21,6 +21,20 @@ def apply_theme():
     }.get(settings["theme"], Adw.ColorScheme.DEFAULT))
 
 
+def _lock_switch(row: Adw.SwitchRow):
+    """Interrupteur grisé, ligne lisible (repris d'Odysseus) : seul le Gtk.Switch interne est insensible."""
+    row.set_activatable(False)
+
+    def walk(w):
+        if isinstance(w, Gtk.Switch):
+            w.set_sensitive(False)
+        c = w.get_first_child()
+        while c is not None:
+            walk(c)
+            c = c.get_next_sibling()
+    walk(row)
+
+
 def _choice(title: str, key: str, labels: list[str], values: list, subtitle: str = "") -> Adw.ComboRow:
     cur = settings[key]
     row = combo_row(title, labels, values.index(cur) if cur in values else 0, subtitle)
@@ -30,7 +44,7 @@ def _choice(title: str, key: str, labels: list[str], values: list, subtitle: str
 
 class PreferencesWindow(Adw.PreferencesWindow):
     def __init__(self):
-        super().__init__(title=tr("Préférences"), search_enabled=False, default_width=620, default_height=620)
+        super().__init__(title=tr("Préférences"), search_enabled=False, default_width=620, default_height=760)
         self.add(self._general())
         self.add(self._features())
 
@@ -62,7 +76,32 @@ class PreferencesWindow(Adw.PreferencesWindow):
         play.add(_choice(tr("Cran de molette"), "wheel_step", ["2 %", "5 %", "10 %"], [2, 5, 10],
                          tr("Volume ajouté ou retiré à chaque cran de la molette")))
         page.add(play)
+
+        system = Adw.PreferencesGroup(title=tr("Système"))
+        system.add(self._default_player_row())
+        page.add(system)
         return page
+
+    @staticmethod
+    def _default_player_row() -> Adw.SwitchRow:
+        """Fichiers audio ouverts par Ithaca (xdg-mime) ; ni les dossiers ni les listes de lecture."""
+        from ..backend import defaultapp
+        row = Adw.SwitchRow(title=tr("Lecteur de musique par défaut"), active=defaultapp.is_default())
+        subtitle = (tr("Les fichiers musicaux s'ouvrent dans Ithaca (pas les listes de lecture) ; coupé, "
+                       "le lecteur d'avant reprend la main.") + "\n" + defaultapp.SHORT_COMMAND)
+        row.set_subtitle_lines(0)
+        if not defaultapp.installed():
+            row.set_subtitle(GLib.markup_escape_text(
+                subtitle + "\n" + tr("Ithaca n'est pas installé (lancé depuis les sources)")))
+            _lock_switch(row)
+            return row
+        row.set_subtitle(GLib.markup_escape_text(subtitle))
+
+        def toggled(r, *_):
+            if r.get_active() != defaultapp.is_default() and not defaultapp.set_default(r.get_active()):
+                r.set_active(defaultapp.is_default())
+        row.connect("notify::active", toggled)
+        return row
 
     def _features(self) -> Adw.PreferencesPage:
         page = Adw.PreferencesPage(title=tr("Fonctionnalités"), icon_name="application-x-addon-symbolic",

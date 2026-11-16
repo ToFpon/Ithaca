@@ -293,6 +293,15 @@ avant de toucher à ces sujets.
   — EventControllerScroll en capture sur la ToolbarView du lecteur, avant le Gtk.Scale dont le pas ne
   se règle pas ; pas sur la file, qui défile ; et sur l'icône de la barre système). Testé :
   `reglages_lecture` d'ui_smoke, vraie molette dans `tests/ui_drag.py` (pochette / file).
+- « Lecteur de musique par défaut » (Préférences → Général → Système, demande de Tof, comme Odysseus) :
+  `backend/defaultapp.py`, `set_as_default_for_type` de GIO (= `xdg-mime default`, écrit dans
+  ~/.config/mimeapps.list) pour les types AUDIO du .desktop seulement — jamais inode/directory (Ithaca
+  ouvrirait les dossiers) ni les listes de lecture (choix de Tof : VLC, webradios). L'ancien lecteur de
+  chaque type est retenu (`previous_audio_apps`) et rétabli quand on coupe ; désinstallé entre-temps →
+  `reset_type_associations` (le système choisit). État affiché = celui du système ; lancé depuis les
+  sources (pas de .desktop installé) : interrupteur grisé (`_lock_switch`), ligne lisible. Testé :
+  `test_defaultapp.py` (dossier personnel jetable, faux lecteur, processus à part : GIO lit les dossiers
+  XDG une fois), `preferences` d'ui_smoke.
 - Valeur du volume (demande de Tof) : « 65 % » / « Muet » à droite du curseur (`volume_label`, chiffres à
   largeur fixe) et pastille `osd` sur la pochette (`show_volume_osd`, Gtk.Revealer dans un Gtk.Overlay,
   effacée 1,2 s après) pour tout changement qui ne vient PAS du curseur (`_volume_from_slider`) : molette,

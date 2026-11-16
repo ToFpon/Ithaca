@@ -302,7 +302,11 @@ avant de toucher à ces sujets.
   sources (pas de .desktop installé) : interrupteur grisé (`_lock_switch`), ligne lisible. PIÈGE (retour
   de Tof, 1.4.1 : interrupteur éteint à la réouverture) : GIO cherche l'application par défaut sous le nom
   CANONIQUE du type (audio/x-wav → audio/vnd.wave, mime/aliases) mais écrit sous l'alias ; l'ancien lecteur
-  inscrit sous audio/vnd.wave restait le choix → on écrit aussi sous le nom canonique (`_targets`). Testé :
+  inscrit sous audio/vnd.wave restait le choix → on écrit aussi sous le nom canonique (`_targets`). Et
+  surtout, module aligné sur celui de Nausicaa (validé chez Tof) : « <bureau>-mimeapps.list » (zorin-,
+  gnome-, d'après XDG_CURRENT_DESKTOP) est lu AVANT mimeapps.list → ses lignes pour nos types retirées
+  (`_drop_default_lines`), alias déjà présents dans les fichiers repris (`set_default_app`), état lu sur
+  le seul type principal `MAIN` (audio/mpeg), comme Nausicaa. Testé :
   `test_defaultapp.py` (dossier personnel jetable, faux lecteur, processus à part : GIO lit les dossiers
   XDG une fois), `preferences` d'ui_smoke.
 - Valeur du volume (demande de Tof) : « 65 % » / « Muet » à droite du curseur (`volume_label`, chiffres à

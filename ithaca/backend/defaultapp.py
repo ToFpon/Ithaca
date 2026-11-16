@@ -1,19 +1,22 @@
-"""Ithaca lecteur de musique par défaut (Préférences → Général, demande de Tof, comme Odysseus) : un
-interrupteur qui fait l'équivalent de `xdg-mime default io.github.ithaca.Ithaca.desktop <type>` pour
-les fichiers audio SEULEMENT — ni les dossiers (inode/directory, déclaré par le .desktop pour « Ouvrir
-avec ») ni les listes de lecture (souvent ouvertes avec VLC, webradios : choix de Tof).
+"""Ithaca lecteur de musique par défaut (Préférences → Général, demande de Tof), un seul interrupteur,
+repris de celui de Nausicaa (validé chez Tof) et d'Odysseus :
 
-GIO écrit dans ~/.config/mimeapps.list. Avant de prendre la main, l'application par défaut de chaque
-type est retenue (réglage `previous_audio_apps`) ; coupé, elle est rétablie (Rhythmbox, VLC…), sinon
-notre association est retirée et le système reprend son choix. L'état affiché est celui du système.
+- activé : Ithaca devient l'application par défaut des fichiers AUDIO seulement — ni les dossiers
+  (inode/directory, déclaré par le .desktop pour « Ouvrir avec ») ni les listes de lecture (VLC, webradios :
+  choix de Tof) — dans ~/.config/mimeapps.list, comme `xdg-mime default` ; l'application d'avant est notée
+  pour chaque type (`previous_audio_apps`) ;
+- coupé : l'application d'avant revient (sinon les associations du système).
 
-PIÈGE (retour de Tof : interrupteur éteint à la réouverture) : GIO cherche l'application par défaut sous
-le nom CANONIQUE du type (audio/x-wav → audio/vnd.wave, d'après mime/aliases), mais n'écrit pas toujours
-sous ce nom. L'ancien lecteur inscrit pour audio/vnd.wave restait le choix du système. On écrit donc
-sous le type ET sous son nom canonique (`_targets`)."""
+L'état affiché est celui du système pour le type principal `MAIN` (audio/mpeg), relu à l'ouverture des
+Préférences. PIÈGES (retour de Tof, 1.4.1 : interrupteur éteint à la réouverture) :
+- « <bureau>-mimeapps.list » (zorin-, gnome-…, d'après XDG_CURRENT_DESKTOP) est lu AVANT mimeapps.list :
+  ses lignes pour nos types sont retirées (leçon de Nausicaa / Odysseus) ;
+- les ALIAS : GIO cherche sous le nom canonique (audio/x-wav → audio/vnd.wave, mime/aliases) ; on écrit
+  sous chaque type, son nom canonique (`_targets`) et les alias déjà présents dans les fichiers."""
 
 from __future__ import annotations
 
+import configparser
 import os
 
 from gi.repository import Gio, GLib
@@ -28,21 +31,33 @@ AUDIO_TYPES = (
     "audio/mp4", "audio/x-m4a", "audio/aac", "audio/x-wav", "audio/x-wavpack", "audio/x-ape",
     "audio/x-musepack", "audio/x-aiff", "audio/x-ms-wma", "audio/x-matroska",
 )
+MAIN = AUDIO_TYPES[0]
 COMMAND = f"xdg-mime default {DESKTOP} " + " ".join(AUDIO_TYPES)
 # affiché dans les Préférences : 16 types en entier seraient illisibles
 SHORT_COMMAND = f"xdg-mime default {DESKTOP} audio/mpeg audio/flac …"
 
 
-def _app() -> Gio.DesktopAppInfo | None:
+def _app(desktop_id: str):
+    if not desktop_id:
+        return None
     try:
-        return Gio.DesktopAppInfo.new(DESKTOP)
-    except (TypeError, GLib.Error):
+        return Gio.DesktopAppInfo.new(desktop_id)
+    except (TypeError, GLib.Error):          # PyGObject : « constructor returned NULL »
         return None
 
 
 def installed() -> bool:
     """Le .desktop d'Ithaca est-il installé ? (lancé depuis les sources : le système ne le connaît pas)"""
-    return _app() is not None
+    return _app(DESKTOP) is not None
+
+
+def current(ctype: str) -> str:
+    app = Gio.AppInfo.get_default_for_type(ctype, False)
+    return (app.get_id() or "") if app is not None else ""
+
+
+def is_default() -> bool:
+    return current(MAIN) == DESKTOP
 
 
 def _aliases() -> dict[str, str]:
@@ -71,43 +86,100 @@ def _targets() -> list[str]:
     return out
 
 
-def _default_id(mime: str) -> str:
-    app = Gio.AppInfo.get_default_for_type(mime, False)
-    return app.get_id() or "" if app is not None else ""
-
-
-def is_default() -> bool:
-    return all(_default_id(t) == DESKTOP for t in AUDIO_TYPES)
-
-
 def set_default(on: bool) -> bool:
     """Fait (ou défait) d'Ithaca le lecteur par défaut des fichiers audio. True si c'est fait."""
     try:
         if on:
-            app = _app()
+            app = _app(DESKTOP)
             if app is None:
                 return False
-            previous = dict(settings["previous_audio_apps"])
-            for mime in _targets():
-                old = _default_id(mime)
-                if old and old != DESKTOP:
-                    previous[mime] = old
-                app.set_as_default_for_type(mime)
-            settings["previous_audio_apps"] = previous
+            before = dict(settings["previous_audio_apps"])
+            for t in _targets():
+                cur = current(t)
+                if cur and cur != DESKTOP:
+                    before[t] = cur
+                set_default_app(app, t)
+            settings["previous_audio_apps"] = before
         else:
-            previous = settings["previous_audio_apps"]
-            for mime in _targets():
-                old = previous.get(mime)
-                try:
-                    back = Gio.DesktopAppInfo.new(old) if isinstance(old, str) and old else None
-                except (TypeError, GLib.Error):
-                    back = None
-                if back is not None:                     # l'ancien lecteur, s'il est encore installé
-                    back.set_as_default_for_type(mime)
-                elif _default_id(mime) == DESKTOP:
-                    Gio.AppInfo.reset_type_associations(mime)
+            before = settings["previous_audio_apps"]
+            for t in _targets():
+                other = _app(before.get(t, ""))
+                if other is not None and other.get_id() != DESKTOP:
+                    set_default_app(other, t)
+                else:
+                    Gio.AppInfo.reset_type_associations(t)
+                    _forget_us(t)
             settings["previous_audio_apps"] = {}
     except GLib.Error as e:
-        print("ithaca: lecteur par défaut :", e.message)
+        print(f"{APP_ID}: lecteur par défaut :", e.message)
         return False
     return True
+
+
+def _mimeapps_files() -> list:
+    config = GLib.get_user_config_dir()
+    names = ["mimeapps.list"] + [d.lower() + "-mimeapps.list"
+                                 for d in os.environ.get("XDG_CURRENT_DESKTOP", "").split(":") if d]
+    return [os.path.join(config, n) for n in names]
+
+
+def set_default_app(app: Gio.AppInfo, ctype: str):
+    """`app` par défaut pour `ctype`, alias compris (repris de Nausicaa / Odysseus)."""
+    app.set_as_default_for_type(ctype)
+    files = _mimeapps_files()
+    aliases = set()
+    for path in files:
+        parser = configparser.RawConfigParser(strict=False, delimiters=("=",), interpolation=None)
+        parser.optionxform = str
+        try:
+            parser.read(path, encoding="utf-8")
+        except (configparser.Error, UnicodeDecodeError):
+            continue
+        if parser.has_section("Default Applications"):
+            aliases.update(k for k in parser.options("Default Applications")
+                           if k != ctype and Gio.content_type_equals(k, ctype))
+    for alias in sorted(aliases):
+        try:
+            app.set_as_default_for_type(alias)
+        except GLib.Error:
+            pass
+    for path in files[1:]:                   # « <bureau>-mimeapps.list », lu avant mimeapps.list
+        _drop_default_lines(path, ctype)
+
+
+def _forget_us(ctype: str):
+    """Coupé sans application d'avant : nos lignes pour ce type et ses alias retirées partout."""
+    for path in _mimeapps_files():
+        _drop_default_lines(path, ctype, only=DESKTOP)
+
+
+def _drop_default_lines(path: str, ctype: str, only: str = ""):
+    try:
+        with open(path, encoding="utf-8") as f:
+            lines = f.readlines()
+    except (OSError, UnicodeDecodeError):
+        return
+    out, section, changed = [], "", False
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("[") and stripped.endswith("]"):
+            section = stripped[1:-1]
+        elif section == "Default Applications" and "=" in stripped and not stripped.startswith("#"):
+            key, value = (x.strip() for x in stripped.split("=", 1))
+            if (key == ctype or Gio.content_type_equals(key, ctype)) and (not only or value.split(";")[0] == only):
+                changed = True
+                continue
+        out.append(line)
+    if changed:
+        tmp = path + ".tmp-defaultapp"
+        try:
+            with open(tmp, "w", encoding="utf-8") as f:
+                f.writelines(out)
+                f.flush()
+                os.fsync(f.fileno())
+            os.replace(tmp, path)
+        except OSError:
+            try:
+                os.unlink(tmp)
+            except OSError:
+                pass

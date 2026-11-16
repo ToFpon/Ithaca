@@ -85,9 +85,14 @@ class DefaultPlayerTest(unittest.TestCase):
             fh.write("[Default Applications]\ninode/directory=fakefiles.desktop\n"
                      + "".join(f"{canonical.get(m, m)}=fakeplayer.desktop\n" for m in defaultapp.AUDIO_TYPES)
                      + "audio/x-mpegurl=fakeplayer.desktop\n")
+        # Zorin : « <bureau>-mimeapps.list » est lu AVANT mimeapps.list (leçon de Nausicaa / Odysseus) ;
+        # le dossier jetable n'est pas une vraie session : XDG_CURRENT_DESKTOP posé à la main
+        with open(os.path.join(self.config, "zorin-mimeapps.list"), "w", encoding="utf-8") as fh:
+            fh.write("[Default Applications]\naudio/mpeg=fakeplayer.desktop\naudio/vnd.wave=fakeplayer.desktop\n"
+                     "inode/directory=fakefiles.desktop\n")
         self.env = dict(os.environ, XDG_CONFIG_HOME=self.config, XDG_DATA_HOME=os.path.join(self.tmp, "data"),
                         XDG_DATA_DIRS=os.path.join(self.tmp, "sys"), XDG_CONFIG_DIRS=os.path.join(self.tmp, "no"),
-                        HOME=self.tmp, PYTHONPATH=ROOT, LANGUAGE="fr")
+                        HOME=self.tmp, PYTHONPATH=ROOT, LANGUAGE="fr", XDG_CURRENT_DESKTOP="zorin:GNOME")
 
     def tearDown(self):
         shutil.rmtree(self.tmp, ignore_errors=True)

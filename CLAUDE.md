@@ -299,7 +299,10 @@ avant de toucher à ces sujets.
   ouvrirait les dossiers) ni les listes de lecture (choix de Tof : VLC, webradios). L'ancien lecteur de
   chaque type est retenu (`previous_audio_apps`) et rétabli quand on coupe ; désinstallé entre-temps →
   `reset_type_associations` (le système choisit). État affiché = celui du système ; lancé depuis les
-  sources (pas de .desktop installé) : interrupteur grisé (`_lock_switch`), ligne lisible. Testé :
+  sources (pas de .desktop installé) : interrupteur grisé (`_lock_switch`), ligne lisible. PIÈGE (retour
+  de Tof, 1.4.1 : interrupteur éteint à la réouverture) : GIO cherche l'application par défaut sous le nom
+  CANONIQUE du type (audio/x-wav → audio/vnd.wave, mime/aliases) mais écrit sous l'alias ; l'ancien lecteur
+  inscrit sous audio/vnd.wave restait le choix → on écrit aussi sous le nom canonique (`_targets`). Testé :
   `test_defaultapp.py` (dossier personnel jetable, faux lecteur, processus à part : GIO lit les dossiers
   XDG une fois), `preferences` d'ui_smoke.
 - Valeur du volume (demande de Tof) : « 65 % » / « Muet » à droite du curseur (`volume_label`, chiffres à

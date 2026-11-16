@@ -68,7 +68,13 @@ class DefaultPlayerTest(unittest.TestCase):
         os.makedirs(self.config)
         sys.path.insert(0, ROOT)
         from ithaca.backend import defaultapp
-        audio = ";".join(defaultapp.AUDIO_TYPES) + ";audio/x-mpegurl;"
+        # base MIME avec des alias, comme shared-mime-info d'Ubuntu 24.04 : GIO cherche l'application par
+        # défaut sous le nom CANONIQUE (retour de Tof : interrupteur éteint à la réouverture)
+        canonical = {"audio/x-wav": "audio/vnd.wave", "audio/x-flac": "audio/flac", "audio/x-m4a": "audio/mp4"}
+        os.makedirs(os.path.join(self.tmp, "sys", "mime"))
+        with open(os.path.join(self.tmp, "sys", "mime", "aliases"), "w", encoding="utf-8") as fh:
+            fh.write("".join(f"{a} {c}\n" for a, c in canonical.items()))
+        audio = ";".join(defaultapp.AUDIO_TYPES) + ";audio/vnd.wave;audio/x-mpegurl;"
         files = {"fakeplayer.desktop": DESKTOP.format(name="Fake player", mimes=audio),
                  "fakefiles.desktop": DESKTOP.format(name="Fake files", mimes="inode/directory;"),
                  "io.github.ithaca.Ithaca.desktop": DESKTOP.format(name="Ithaca", mimes=audio + "inode/directory;")}
@@ -77,10 +83,10 @@ class DefaultPlayerTest(unittest.TestCase):
                 fh.write(text)
         with open(os.path.join(self.config, "mimeapps.list"), "w", encoding="utf-8") as fh:
             fh.write("[Default Applications]\ninode/directory=fakefiles.desktop\n"
-                     + "".join(f"{m}=fakeplayer.desktop\n" for m in defaultapp.AUDIO_TYPES)
+                     + "".join(f"{canonical.get(m, m)}=fakeplayer.desktop\n" for m in defaultapp.AUDIO_TYPES)
                      + "audio/x-mpegurl=fakeplayer.desktop\n")
         self.env = dict(os.environ, XDG_CONFIG_HOME=self.config, XDG_DATA_HOME=os.path.join(self.tmp, "data"),
-                        XDG_DATA_DIRS=os.path.join(self.tmp, "nothing"), XDG_CONFIG_DIRS=os.path.join(self.tmp, "no"),
+                        XDG_DATA_DIRS=os.path.join(self.tmp, "sys"), XDG_CONFIG_DIRS=os.path.join(self.tmp, "no"),
                         HOME=self.tmp, PYTHONPATH=ROOT, LANGUAGE="fr")
 
     def tearDown(self):

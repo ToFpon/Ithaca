@@ -73,6 +73,13 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.4.3" date="2026-11-22">
+      <description>
+        <ul>
+          <li>Opened from Odysseus or “Open With”, the player shows directly: the welcome page no longer flashes for a split second first</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.4.2" date="2026-11-16">
       <description>
         <ul>

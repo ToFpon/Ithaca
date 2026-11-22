@@ -10,6 +10,8 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
 ## Règles
 
 - Répondre à Tof en français, tutoiement, avis francs. Messages de commit en français.
+- Dossiers des dépôts chez Tof (la casse compte, dans les commandes à lui donner) : ~/argos, ~/Calypso,
+  ~/Ithaca, ~/Nausicaa, ~/Odysseus, ~/Sirene, ~/Telemaque. Toujours donner les commandes complètes, `git pull` compris.
 - Cible : Zorin OS 18.1 (Ubuntu 24.04, GNOME 46, X11, GTK 4.14, libadwaita 1.5, GStreamer 1.24,
   Python 3.12). Pas d'API plus récente (pas d'Adw.Spinner, Adw.Dialog, Adw.AlertDialog…). Paquets
   apt seulement.

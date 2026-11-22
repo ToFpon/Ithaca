@@ -58,6 +58,7 @@ class MainWindow(Adw.ApplicationWindow):
         # et la fenêtre perdait ses couleurs (texte blanc sur fond blanc)
         self.add_css_class("ithaca-window")
         self.c = app.controller
+        self._opening = 0                        # ouvertures en cours (add_paths) : le lecteur reste affiché
         self.set_default_size(settings["window_width"], settings["window_height"])
         self.set_size_request(MIN_WIDTH, 540)
         self.waveforms = WaveformGenerator()
@@ -534,7 +535,15 @@ class MainWindow(Adw.ApplicationWindow):
         choose_folder(self, tr("Ajouter un dossier"), self._music_dir(), lambda p: self.add_paths([p]))
 
     def add_paths(self, paths: list[str], play: bool = False):
+        # file vide : le lecteur tout de suite, sans attendre la lecture des étiquettes (fil) — ouvert de
+        # l'extérieur (Odysseus, « Ouvrir avec »), l'accueil passait une fraction de seconde avant (vu chez
+        # Tof, comme dans Argos) ; rien de lisible : retour à l'accueil
+        self._opening += 1
+        self._sync_page()
+
         def done(read, skipped):
+            self._opening -= 1
+            self._sync_page()
             if not read and skipped:
                 toast(self, tr("Aucun morceau lisible"))
             elif skipped:
@@ -648,7 +657,7 @@ class MainWindow(Adw.ApplicationWindow):
 
     def _sync_page(self):
         has = len(self.c.queue) > 0
-        self.stack.set_visible_child_name("main" if has else "empty")
+        self.stack.set_visible_child_name("main" if has or self._opening else "empty")
         self.restore_btn.set_visible(not has and load_saved() is not None)
         self.restore_btn.set_sensitive(not self.c.loading)
 

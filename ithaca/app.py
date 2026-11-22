@@ -123,9 +123,9 @@ class IthacaApp(Adw.Application):
 
     def do_open(self, files, n, hint):
         paths = [f.get_path() for f in files if f.get_path()]
+        if paths:                                # avant present : la fenêtre ne montre pas l'accueil
+            self._main_window().add_paths(paths, play=True)
         self.present()
-        if paths:
-            self.window.add_paths(paths, play=True)
 
     def do_command_line(self, cmd):
         opts = cmd.get_options_dict().end().unpack()
@@ -138,9 +138,9 @@ class IthacaApp(Adw.Application):
             f = Gio.File.new_for_commandline_arg_and_cwd(a, cwd)
             if f.get_path():
                 paths.append(f.get_path())
-        self.present()
         if paths:
-            self.window.add_paths(paths, play=True)
+            self._main_window().add_paths(paths, play=True)
+        self.present()
         return 0
 
     def _quit(self):

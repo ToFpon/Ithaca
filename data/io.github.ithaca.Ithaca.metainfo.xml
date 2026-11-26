@@ -73,6 +73,13 @@
   </requires>
   <content_rating type="oars-1.1"/>
   <releases>
+    <release version="1.4.4" date="2026-11-26">
+      <description>
+        <ul>
+          <li>Hiding and showing the playlist is a smooth transition: the window width changes gently while the playlist slides, the player no longer jumps</li>
+        </ul>
+      </description>
+    </release>
     <release version="1.4.3" date="2026-11-22">
       <description>
         <ul>

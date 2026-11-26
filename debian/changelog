@@ -1,3 +1,11 @@
+ithaca (1.4.4~noble1) noble; urgency=medium
+
+  * File de lecture masquée ou réaffichée : transition douce, la largeur
+    de la fenêtre change en même temps que la file glisse, le lecteur ne
+    saute plus.
+
+ -- Tof <nourpon@gmail.com>  Thu, 26 Nov 2026 10:09:39 +0000
+
 ithaca (1.4.3~noble1) noble; urgency=medium
 
   * Ouvert depuis Odysseus ou « Ouvrir avec », le lecteur s'affiche

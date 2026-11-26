@@ -48,7 +48,10 @@ accent color), or, if you wish, tints the window after the album cover like Ambe
 - **Background playback**: closing the window while playing keeps the music going, with a tray icon (via the
   [AppIndicator extension](https://github.com/ubuntu/gnome-shell-extension-appindicator)) and a notification
   to show the window again or quit. No automatic suspend while music is playing.
-- Each optional feature (waveform, system controls, background playback, cover colors) can be switched off
+- **Compact player**: F9 hides the queue and the window shrinks smoothly to the player alone, then grows back.
+  Long titles scroll gently instead of being cut. The mouse wheel changes the volume anywhere on the player
+  (up to 150 % if you allow it in the Preferences), with the value shown on the cover.
+- Each optional feature (waveform, system controls, background playback, cover colors, equalizer) can be switched off
   in **Preferences → Features**, without restarting. The playlist opens on the left or on the right, as you
   prefer (**Preferences → General**).
 
@@ -148,8 +151,11 @@ d'après la pochette comme Amberol.
 - **Lecture en arrière-plan** : fermer la fenêtre pendant la lecture laisse la musique jouer, avec une icône dans
   la barre système (par l'[extension AppIndicator](https://github.com/ubuntu/gnome-shell-extension-appindicator))
   et une notification pour revenir ou quitter. Pas de mise en veille automatique pendant la lecture.
+- **Lecteur compact** : F9 masque la file et la fenêtre se resserre en douceur sur le lecteur seul, puis
+  s'élargit de nouveau. Un titre trop long défile doucement au lieu d'être coupé. La molette règle le volume
+  partout sur le lecteur (jusqu'à 150 % si on l'autorise dans les Préférences), valeur affichée sur la pochette.
 - Chaque fonctionnalité facultative (forme d'onde, contrôle depuis le système, arrière-plan, couleurs de la
-  pochette) se coupe dans **Préférences → Fonctionnalités**, sans redémarrer. La file s'ouvre à gauche ou à
+  pochette, égaliseur) se coupe dans **Préférences → Fonctionnalités**, sans redémarrer. La file s'ouvre à gauche ou à
   droite, au choix (**Préférences → Général**).
 
 ### Installation

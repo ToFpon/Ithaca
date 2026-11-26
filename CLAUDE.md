@@ -127,6 +127,12 @@ téléchargements (abandonné, historique repris de zéro à la demande de Tof).
   réaffichée → largeur d'avant (`_wide`), ou élargie de la file si redimensionnée entre-temps (demande
   de Tof : masquer laissait une grande fenêtre vide) ; pas de
   changement agrandie / plein écran ; `set_default_size` compte le cadre CSD (10 px), `get_width` non.
+  Transition douce (demande de Tof) : la largeur de la fenêtre est ANIMÉE pendant que la file glisse
+  (`_animate_width`, Adw.TimedAnimation 250 ms, EASE_OUT_CUBIC, suit le réglage « animations » du système) ; avant,
+  elle sautait d'un coup et le lecteur était écrasé (210 px) ou étiré (858 px) puis se remettait — mesuré image par
+  image sous openbox. Clic pendant l'animation : celle-ci est mise en pause (pas d'à-coup), calculs à partir de la
+  largeur VISÉE (`_width_target`). Testé : `replier_la_file` (étapes intermédiaires, largeur qui ne fait que
+  baisser, lecteur jamais écrasé).
   Calcul sur la taille DEMANDÉE (`get_default_size` − cadre), jamais sur la taille mesurée : sous un
   vrai gestionnaire de fenêtres le redimensionnement arrive en différé, des clics rapides faisaient
   grandir la fenêtre. Mode « replié » (file par-dessus le lecteur) : le point de rupture n'a plus de

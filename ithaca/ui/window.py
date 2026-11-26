@@ -28,6 +28,7 @@ MIN_WIDTH = 360                       # largeur minimale de la fenêtre
 SIDEBAR_MAX, SIDEBAR_FRACTION = 360, 0.4
 COLLAPSE_SP = 560                     # en dessous, la file passe par-dessus le lecteur (Adw.Breakpoint)
 COMPACT_WIDTH = 370                   # file masquée : le lecteur seul, comme la capture « compact » du site
+RESIZE_MS = 250                       # file masquée / réaffichée : la fenêtre change de largeur en douceur
 
 
 def width_with_playlist(content: int) -> int:
@@ -90,6 +91,8 @@ class MainWindow(Adw.ApplicationWindow):
         self.add_breakpoint(bp)
         self._frame = None                  # cadre de la fenêtre (CSD) : taille par défaut − largeur
         self._wide = None                   # (largeur avec la file, largeur compacte posée) pour revenir
+        self._width_anim = None             # largeur de la fenêtre animée en même temps que la file (demande de Tof)
+        self._width_target = None           # largeur visée par l'animation en cours (calculs des clics rapides)
         low = Adw.Breakpoint.new(Adw.BreakpointCondition.parse("max-height: 680sp"))
         self.cover.add_size_setters(low, 180)
         self.add_breakpoint(low)
@@ -418,6 +421,8 @@ class MainWindow(Adw.ApplicationWindow):
             return
         free = self.get_mapped() and not self.is_maximized() and not self.is_fullscreen()
         dw, dh = self.get_default_size()
+        if self._width_target is not None:            # clic pendant l'animation : on part de la largeur visée
+            dw = self._width_target
         width = None
         if free and dw > 0:
             # Calcul sur la taille DEMANDÉE (connue tout de suite), jamais sur la taille mesurée : avec un
@@ -443,7 +448,31 @@ class MainWindow(Adw.ApplicationWindow):
             self.split.set_collapsed(False)
         self.split.set_show_sidebar(show)
         if width is not None:
-            self.set_default_size(width + self._frame, dh)
+            self._animate_width(width + self._frame, dh)
+
+    def _animate_width(self, target: int, height: int):
+        """La fenêtre change de largeur EN MÊME TEMPS que la file glisse (demande de Tof : transition plus douce).
+        Avant, la largeur sautait d'un coup : le lecteur était d'abord écrasé (210 px) ou étiré (858 px) puis se
+        remettait — mesuré image par image sous openbox. Animations coupées dans le système : tout de suite
+        (Adw.TimedAnimation va directement à la fin)."""
+        if self._width_anim is not None:            # clic rapide : on repart d'où elle en est, sans à-coup
+            self._width_anim.pause()
+            self._width_anim = None
+        start = self.get_default_size()[0]
+        self._width_target = target
+
+        def step(value):
+            self.set_default_size(int(round(value)), height)
+
+        def done(a):
+            if self._width_anim is a:
+                self._width_anim = None
+                self._width_target = None
+        anim = Adw.TimedAnimation.new(self, start, target, RESIZE_MS, Adw.CallbackAnimationTarget.new(step))
+        anim.set_easing(Adw.Easing.EASE_OUT_CUBIC)
+        anim.connect("done", done)
+        self._width_anim = anim
+        anim.play()
 
     @staticmethod
     def _playlist_side() -> Gtk.PackType:

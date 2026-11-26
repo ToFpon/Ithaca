@@ -482,9 +482,21 @@ def replier_la_file(win):
     yield Wait(0.6)                                     # fin de l'animation de la file
     w0 = win.get_width()
     check(win.sidebar_btn.get_active() and win.playlist_btn.get_active(), "boutons de la file actifs")
+    # transition douce (demande de Tof) : la largeur passe par des valeurs intermédiaires, toujours en baissant,
+    # et le lecteur n'est jamais écrasé (avant : fenêtre au format compact d'un coup, lecteur à 210 px)
+    frames = []
+    tick = win.add_tick_callback(lambda w, _c: frames.append((w.get_width(), w.split.get_content().get_width()))
+                                 or True)
     win.activate_action("win.toggle-playlist", None)
     yield Wait(3, until=lambda: win.get_width() < w0)
     yield Wait(0.6)
+    win.remove_tick_callback(tick)
+    widths = [f[0] for f in frames]
+    between = {x for x in widths if COMPACT_WIDTH + 5 < x < w0 - 5}
+    if Gtk.Settings.get_default().get_property("gtk-enable-animations"):
+        check(len(between) >= 3, f"masquer : largeur animée ({len(between)} étapes intermédiaires)")
+    check(all(b <= a + 1 for a, b in zip(widths, widths[1:])), "masquer : la largeur ne fait que baisser")
+    check(min(f[1] for f in frames) >= COMPACT_WIDTH - 15, f"masquer : lecteur jamais écrasé ({min(f[1] for f in frames)} px)")
     check(not win.split.get_show_sidebar(), "F9 masque la file")
     check(abs(win.get_width() - COMPACT_WIDTH) <= 2, f"fenêtre compacte ({w0} → {win.get_width()})")
     check(abs(win.split.get_content().get_width() - win.get_width()) <= 2, "le lecteur occupe la fenêtre")
